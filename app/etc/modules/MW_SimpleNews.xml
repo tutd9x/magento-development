@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <MW_SimpleNews>
+            <active>true</active>
+            <codePool>local</codePool>
+        </MW_SimpleNews>
+    </modules>
+</config>
