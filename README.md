@@ -1,2 +1,2 @@
-# magento-dev
-learning magento
+# magento-development
+magento source code
