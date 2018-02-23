@@ -137,7 +137,7 @@ class Conditions extends Generic implements TabInterface
      * @return \Magento\Framework\Data\Form
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    protected function addTabToForm($model, $fieldsetId = 'conditions_fieldset', $formName = 'catalog_rule_form')
+    protected function addTabToForm($model, $fieldsetId = 'conditions_fieldset', $formName = 'mw_freegift_catalog_rule_form')
     {
         /** @var \Magento\Framework\Data\Form $form */
         $form = $this->_formFactory->create();
@@ -185,13 +185,24 @@ class Conditions extends Generic implements TabInterface
         $fieldset->addField(
             'buy_x',
             'text',
-            ['name' => 'buy_x', 'label' => __('Minimum Quantity Required'), 'title' => __('Minimum Quantity Required'), 'required' => false, 'style' => 'width: 80px;']
+            [
+                'name' => 'buy_x',
+                'label' => __('Minimum Quantity Required'),
+                'title' => __('Minimum Quantity Required'),
+                'required' => false,
+                'style' => 'width: 80px;',
+                'data-form-part' => $formName
+            ]
         );
 
         $fieldset->addField(
             'get_y',
             'hidden',
-            ['name' => 'get_y', 'required' => false]
+            [
+                'name' => 'get_y',
+                'required' => false,
+                'data-form-part' => $formName
+            ]
         );
 
         $form->setValues($model->getData());

@@ -45,7 +45,7 @@
                     </arguments>
                 </block>
 
-                <block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\Gift" name="promo_catalog_edit_tab_gift">
+                <block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\Main" name="promo_catalog_edit_tab_gift">
                     <arguments>
                         <argument name="config" xsi:type="array">
                             <item name="label" xsi:type="string" translate="true">Gift Items</item>

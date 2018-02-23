@@ -47,14 +47,14 @@ class Save extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
                     return;
                 }
 
-
-
                 /* Add new feature Buy X get Y - 17/12/13 */
                 $custom_cdn['buy_x_get_y']['bx'] = ( $data['buy_x'] ? (int)$data['buy_x'] : 1);
                 $custom_cdn['buy_x_get_y']['gy'] = ( $data['get_y'] ? (int)$data['get_y'] : 1);
                 $custom_cdn = serialize($custom_cdn);
                 $data['condition_customized'] = $custom_cdn;
                 /* [bX-gY]*/
+
+                \Zend_Debug::dump($data); die;
 
                 $data['conditions'] = $data['rule']['conditions'];
                 unset($data['rule']);
