@@ -62,7 +62,7 @@ class Main extends Generic implements TabInterface
      */
     public function getTabLabel()
     {
-        return __('Rule Information');
+        return __('Rule Information 123');
     }
 
     /**
@@ -74,6 +74,15 @@ class Main extends Generic implements TabInterface
     public function getTabTitle()
     {
         return __('Rule Information');
+    }
+
+    /**
+     * {@inheritdoc}
+     * @codeCoverageIgnore
+     */
+    public function isAjaxLoaded()
+    {
+        return false;
     }
 
     /**
@@ -105,7 +114,7 @@ class Main extends Generic implements TabInterface
     protected function _prepareForm()
     {
         $model = $this->_coreRegistry->registry('current_promo_catalog_rule');
-
+        $formName = 'mw_freegift_catalog_rule_form';
         /** @var \Magento\Framework\Data\Form $form */
         $form = $this->_formFactory->create();
         $form->setHtmlIdPrefix('rule_');
@@ -119,7 +128,7 @@ class Main extends Generic implements TabInterface
         $fieldset->addField(
             'name_name',
             'text',
-            ['name' => 'name_name', 'label' => __('Name Name'), 'title' => __('Name Name'), 'required' => true]
+            ['name' => 'name_name', 'label' => __('Name Name'), 'title' => __('Name Name'), 'required' => true, 'data-form-part' => $formName]
         );
 
 //        $fieldset->addField(

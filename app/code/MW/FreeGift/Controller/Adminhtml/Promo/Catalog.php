@@ -5,6 +5,8 @@ use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Registry;
 use Magento\Framework\Stdlib\DateTime\Filter\Date;
+use MW\FreeGift\Model\RuleFactory;
+
 //use Magento\Catalog\Controller\Product\View\ViewInterface;
 
 abstract class Catalog extends Action
@@ -31,6 +33,10 @@ abstract class Catalog extends Action
      */
     protected $_dateFilter;
 
+    /**
+     * @var RuleFactory
+     */
+    protected $ruleFactory;
 
     /**
      * Constructor
@@ -42,11 +48,13 @@ abstract class Catalog extends Action
     public function __construct(
         Context $context,
         Registry $coreRegistry,
-        Date $dateFilter
+        Date $dateFilter,
+        RuleFactory $ruleFactory
     ) {
         parent::__construct($context);
         $this->_coreRegistry = $coreRegistry;
         $this->_dateFilter = $dateFilter;
+        $this->ruleFactory = $ruleFactory;
     }
 
     /**

@@ -9,7 +9,7 @@ class Edit extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
     public function execute()
     {
         $id = $this->getRequest()->getParam('id');
-        $model = $this->_objectManager->create('MW\FreeGift\Model\Rule');
+        $model = $this->ruleFactory->create(); // $model = $this->_objectManager->create('MW\FreeGift\Model\Rule');
 
         if ($id) {
             $model->load($id);

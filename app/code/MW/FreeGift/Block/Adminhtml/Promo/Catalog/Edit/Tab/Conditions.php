@@ -180,6 +180,8 @@ class Conditions extends Generic implements TabInterface
             }
         }
 
+        $model->loadPost($data);
+
         $fieldset = $form->addFieldset('base_fieldset', ['legend' => __('Apply when buy X get Y')]);
 
         $fieldset->addField(
