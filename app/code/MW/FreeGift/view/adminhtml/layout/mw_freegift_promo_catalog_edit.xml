@@ -1,54 +1,12 @@
 <?xml version="1.0"?>
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
-        <!--<referenceContainer name="left">-->
-            <!--<block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tabs" name="promo_catalog_edit_tabs">-->
-                <!--<block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\Main" name="promo_catalog_edit_tab_main"/>-->
-                <!--<block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\Conditions" name="promo_catalog_edit_tab_conditions"/>-->
-                <!--<block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\Gift" name="promo_catalog_edit_tab_gift">-->
-                    <!--<block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\Gift\Form" name="promo_catalog_edit_tab_gift_form"/>-->
-                    <!--<block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\Gift\Grid" name="promo_catalog_edit_tab_gift_grid"/>-->
-                <!--</block>-->
-                <!--<action method="addTab">-->
-                    <!--<argument name="name" xsi:type="string">main_section</argument>-->
-                    <!--<argument name="block" xsi:type="string">promo_catalog_edit_tab_main</argument>-->
-                <!--</action>-->
-                <!--<action method="addTab">-->
-                    <!--<argument name="name" xsi:type="string">conditions_section</argument>-->
-                    <!--<argument name="block" xsi:type="string">promo_catalog_edit_tab_conditions</argument>-->
-                <!--</action>-->
-                <!--<action method="addTab">-->
-                    <!--<argument name="name" xsi:type="string">gift_section</argument>-->
-                    <!--<argument name="block" xsi:type="string">promo_catalog_edit_tab_gift</argument>-->
-                <!--</action>-->
-            <!--</block>-->
-        <!--</referenceContainer>-->
-        <!--<referenceContainer name="content">-->
-            <!--<block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit" name="promo_catalog_edit"/>-->
-        <!--</referenceContainer>-->
         <!--<referenceContainer name="js">-->
             <!--<block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Js" template="promo/js.phtml"/>-->
         <!--</referenceContainer>-->
 
         <referenceContainer name="content">
             <referenceBlock name="mw_freegift_catalog_rule_form">
-
-                <!--<block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\View" name="customer_edit_tab_view111" template="tab/view.phtml">-->
-                    <!--<arguments>-->
-                        <!--<argument name="tab_label" xsi:type="string" translate="true">Customer View</argument>-->
-                        <!--<argument name="sort_order" xsi:type="number">10</argument>-->
-                        <!--<argument name="config" xsi:type="array">-->
-                            <!--<item name="label" xsi:type="string" translate="true">Customer View</item>-->
-                            <!--<item name="collapsible" xsi:type="boolean">true</item>-->
-                            <!--<item name="opened" xsi:type="boolean">false</item>-->
-                            <!--<item name="sortOrder" xsi:type="number">20</item>-->
-                            <!--<item name="canShow" xsi:type="boolean">true</item>-->
-                            <!--<item name="componentType" xsi:type="string">fieldset</item>-->
-                        <!--</argument>-->
-                    <!--</arguments>-->
-                    <!--<block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\View\PersonalInfo" name="personal_info11" template="tab/view/personal_info.phtml"/>-->
-                <!--</block>-->
-
                 <block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\Conditions" name="promo_catalog_edit_tab_conditions">
                     <arguments>
                         <argument name="config" xsi:type="array">
@@ -62,18 +20,17 @@
                     </arguments>
                 </block>
 
-                <!--<block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\Main" name="promo_catalog_edit_tab_gift">-->
-                    <!--<arguments>-->
-                        <!--<argument name="config" xsi:type="array">-->
-                            <!--<item name="label" xsi:type="string" translate="true">Gift Items</item>-->
-                            <!--<item name="collapsible" xsi:type="boolean">true</item>-->
-                            <!--<item name="opened" xsi:type="boolean">false</item>-->
-                            <!--<item name="sortOrder" xsi:type="number">40</item>-->
-                            <!--<item name="canShow" xsi:type="boolean">true</item>-->
-                            <!--<item name="componentType" xsi:type="string">fieldset</item>-->
-                        <!--</argument>-->
-                    <!--</arguments>-->
-                <!--</block>-->
+                <!--<block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\ReviewTab" name="reviews" />-->
+                <!--<block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\Agreement" name="customer_edit_tab_agreements234" />-->
+                <!--<block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\GiftForm" name="customer_edit_tab_agreement12" />-->
+                <!--<block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\GiftGrid" name="reviews123" />-->
+
+                <block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\GiftTab" name="promo_sales_rule_edit_tab_coupons123" template="tab/view.phtml">
+                    <block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\GiftForm" name="promo_quote_edit_tab_coupons_form"/>
+                    <block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\Agreement" name="promo_quote_edit_tab_coupons_grid"/>
+                    <block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\GiftGrid" name="promo_quote_edit_tab_coupons_grid1"/>
+                </block>
+
             </referenceBlock>
 
             <uiComponent name="mw_freegift_catalog_rule_form"/>

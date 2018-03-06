@@ -131,7 +131,7 @@ class Conditions extends Generic implements TabInterface
     }
 
     /**
-     * @param \Magento\CatalogRule\Api\Data\RuleInterface $model
+     * @param \MW\FreeGift\Api\Data\RuleInterface $model
      * @param string $fieldsetId
      * @param string $formName
      * @return \Magento\Framework\Data\Form
@@ -172,15 +172,16 @@ class Conditions extends Generic implements TabInterface
             ->setRenderer($this->_conditions);
 
         if ($model->getId()) {
-            $custom_cdn = unserialize($model->getConditionCustomized());
-
-            if(isset($custom_cdn['buy_x_get_y'])){
-                $data['buy_x'] = (isset($custom_cdn['buy_x_get_y']['bx'])) ? $custom_cdn['buy_x_get_y']['bx'] : 1;
-                $data['get_y'] = (isset($custom_cdn['buy_x_get_y']['gy'])) ? $custom_cdn['buy_x_get_y']['gy'] : 1;
+            if($model->getConditionCustomized() != ''){
+                $custom_cdn = unserialize($model->getConditionCustomized());
+                if(isset($custom_cdn['buy_x_get_y'])){
+                    $data['buy_x'] = (isset($custom_cdn['buy_x_get_y']['bx'])) ? $custom_cdn['buy_x_get_y']['bx'] : 1;
+                    $data['get_y'] = (isset($custom_cdn['buy_x_get_y']['gy'])) ? $custom_cdn['buy_x_get_y']['gy'] : 1;
+                    $model->setBuyX($data['buy_x']);
+                    $model->setGetY($data['get_y']);
+                }
             }
         }
-
-        $model->loadPost($data);
 
         $fieldset = $form->addFieldset('base_fieldset', ['legend' => __('Apply when buy X get Y')]);
 

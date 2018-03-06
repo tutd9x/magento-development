@@ -56,6 +56,15 @@ interface RuleInterface
      */
     public function getUpdateTime();
 
+
+    /**
+     * Get condition_customized
+     *
+     * @return string|null
+     */
+    public function getConditionCustomized();
+
+
     /**
      * Is active
      *
@@ -118,4 +127,22 @@ interface RuleInterface
      * @return \MW\FreeGift\Api\Data\RuleInterface
      */
     public function setIsActive($isActive);
+
+    /**
+     * Set is buy_x
+     *
+     * @param int|string $buy_x
+     * @return \MW\FreeGift\Api\Data\RuleInterface
+     */
+    public function setBuyX($buyX);
+
+    /**
+     * Set is get_y
+     *
+     * @param int|string $get_y
+     * @return \MW\FreeGift\Api\Data\RuleInterface
+     */
+    public function setGetY($getY);
+
+
 }

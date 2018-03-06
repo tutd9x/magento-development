@@ -27,10 +27,10 @@ class Edit extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
         }
 
         $model->getConditions()->setJsFormObject('rule_conditions_fieldset');
-//        $model->getConditions()->setFormName('catalog_rule_form');
-//        $model->getConditions()->setJsFormObject(
-//            $model->getConditionsFieldSetId($model->getConditions()->getFormName())
-//        );
+        $model->getConditions()->setFormName('mw_freegift_catalog_rule_form');
+        $model->getConditions()->setJsFormObject(
+            $model->getConditionsFieldSetId($model->getConditions()->getFormName())
+        );
 
         $this->_coreRegistry->register('current_promo_catalog_rule', $model);
 

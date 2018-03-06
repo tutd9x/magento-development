@@ -1,8 +1,0 @@
-<?php
-
-namespace MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab;
-
-class Upsell extends \Magento\Backend\Block\Widget\Grid\Extended
-{
-
-}

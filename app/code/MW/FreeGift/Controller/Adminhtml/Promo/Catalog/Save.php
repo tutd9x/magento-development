@@ -48,6 +48,11 @@ class Save extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
 //                    ['request' => $this->getRequest()]
 //                );
                 $data = $this->getRequest()->getPostValue();
+                if( isset($data['rule_information']) ){
+                    $rule_information = ( isset($data['rule_information']) ? $data['rule_information'] : []);
+                    unset($data['rule_information']);
+                    $data = array_merge($rule_information,$data);
+                }
 
                 $inputFilter = new \Zend_Filter_Input(
                     ['from_date' => $this->_dateFilter, 'to_date' => $this->_dateFilter],
@@ -55,12 +60,6 @@ class Save extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
                     $data
                 );
                 $data = $inputFilter->getUnescaped();
-
-                if( isset($data['rule_information']) ){
-                    $rule_information = ( isset($data['rule_information']) ? $data['rule_information'] : []);
-                    unset($data['rule_information']);
-                    $data = array_merge($rule_information,$data);
-                }
 
                 $id = ( isset($data['rule_id']) ? (int) $data['rule_id'] : null);
                 if ($id) {
@@ -83,12 +82,14 @@ class Save extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
                     return;
                 }
 
-                /* Add new feature Buy X get Y - 17/12/13 */
-                $custom_cdn['buy_x_get_y']['bx'] = ( isset($data['buy_x']) ? (int)$data['buy_x'] : 1);
-                $custom_cdn['buy_x_get_y']['gy'] = ( isset($data['get_y']) ? (int)$data['get_y'] : 1);
-                $custom_cdn = serialize($custom_cdn);
-                $data['condition_customized'] = $custom_cdn;
-                /* [bX-gY]*/
+                /* [bX-gY] */
+                if(isset($data['buy_x'])){
+                    $custom_cdn['buy_x_get_y']['bx'] = ( isset($data['buy_x']) ? (int)$data['buy_x'] : 1);
+                    $custom_cdn['buy_x_get_y']['gy'] = ( isset($data['get_y']) ? (int)$data['get_y'] : 1);
+                    $custom_cdn = serialize($custom_cdn);
+                    $data['condition_customized'] = $custom_cdn;
+                }
+                /* [bX-gY] */
 
 
                 if( isset($data['rule']) ){
