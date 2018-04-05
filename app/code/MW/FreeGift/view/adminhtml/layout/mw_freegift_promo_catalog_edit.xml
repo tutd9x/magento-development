@@ -20,15 +20,9 @@
                     </arguments>
                 </block>
 
-                <!--<block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\ReviewTab" name="reviews" />-->
-                <!--<block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\Agreement" name="customer_edit_tab_agreements234" />-->
-                <!--<block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\GiftForm" name="customer_edit_tab_agreement12" />-->
-                <!--<block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\GiftGrid" name="reviews123" />-->
-
-                <block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\GiftTab" name="promo_sales_rule_edit_tab_coupons123" template="tab/view.phtml">
-                    <block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\GiftForm" name="promo_quote_edit_tab_coupons_form"/>
-                    <block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\Agreement" name="promo_quote_edit_tab_coupons_grid"/>
-                    <block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\GiftGrid" name="promo_quote_edit_tab_coupons_grid1"/>
+                <block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\GiftTab" name="promo_catalog_rule_edit_tab_gifttab" template="tab/view.phtml">
+                    <block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\GiftForm" name="promo_catalog_rule_edit_tab_giftform"/>
+                    <block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\GiftGrid" name="promo_catalog_rule_edit_tab_giftgrid"/>
                 </block>
 
             </referenceBlock>

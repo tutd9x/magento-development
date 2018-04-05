@@ -20,8 +20,9 @@
 namespace MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab;
 
 use Magento\Store\Model\Store;
+use Magento\Backend\Block\Widget\Grid\Extended;
 
-class GiftGrid extends \Magento\Backend\Block\Widget\Grid\Extended
+class GiftGrid extends Extended
 {
     /**
      * @var \Magento\Framework\Module\Manager
@@ -59,6 +60,13 @@ class GiftGrid extends \Magento\Backend\Block\Widget\Grid\Extended
     protected $_websiteFactory;
 
     /**
+     * Core registry
+     *
+     * @var \Magento\Framework\Registry
+     */
+    protected $_coreRegistry = null;
+
+    /**
      * @param \Magento\Backend\Block\Template\Context $context
      * @param \Magento\Backend\Helper\Data $backendHelper
      * @param \Magento\Store\Model\WebsiteFactory $websiteFactory
@@ -68,6 +76,7 @@ class GiftGrid extends \Magento\Backend\Block\Widget\Grid\Extended
      * @param \Magento\Catalog\Model\Product\Attribute\Source\Status $status
      * @param \Magento\Catalog\Model\Product\Visibility $visibility
      * @param \Magento\Framework\Module\Manager $moduleManager
+     * @param \Magento\Framework\Registry $registry
      * @param array $data
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -82,6 +91,7 @@ class GiftGrid extends \Magento\Backend\Block\Widget\Grid\Extended
         \Magento\Catalog\Model\Product\Attribute\Source\Status $status,
         \Magento\Catalog\Model\Product\Visibility $visibility,
         \Magento\Framework\Module\Manager $moduleManager,
+        \Magento\Framework\Registry $registry,
         array $data = []
     ) {
         $this->_websiteFactory = $websiteFactory;
@@ -91,6 +101,7 @@ class GiftGrid extends \Magento\Backend\Block\Widget\Grid\Extended
         $this->_status = $status;
         $this->_visibility = $visibility;
         $this->moduleManager = $moduleManager;
+        $this->_coreRegistry = $registry;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -187,6 +198,9 @@ class GiftGrid extends \Magento\Backend\Block\Widget\Grid\Extended
             $collection->joinAttribute('visibility', 'catalog_product/visibility', 'entity_id', null, 'inner');
         }
 
+        $productIds = $this->_getSelectedProducts();
+        $collection->addFieldToFilter('entity_id', ['in' => implode(',', $productIds)]);
+
         $this->setCollection($collection);
 
         $this->getCollection()->addWebsiteNamesToResult();
@@ -194,6 +208,12 @@ class GiftGrid extends \Magento\Backend\Block\Widget\Grid\Extended
         parent::_prepareCollection();
 
         return $this;
+    }
+
+    protected function _getSelectedProducts(){
+        $model = $this->_coreRegistry->registry('current_promo_catalog_rule');
+        $productIds = $model->getGiftProductIds();
+        return explode(',', $productIds);
     }
 
     /**
@@ -218,11 +238,30 @@ class GiftGrid extends \Magento\Backend\Block\Widget\Grid\Extended
     }
 
     /**
+     * @throws
      * @return $this
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function _prepareColumns()
     {
+
+//        if (!$this->getCategory()->getProductsReadonly()) {
+            $this->addColumn(
+                'product_ids',
+                [
+                    'type' => 'checkbox',
+                    'name' => 'entity_id',
+                    'values' => $this->_getSelectedProducts(),
+                    'index' => 'entity_id',
+                    'header_css_class' => 'col-select col-massaction',
+                    'column_css_class' => 'col-select col-massaction',
+                    'data-form-part' => 'mw_freegift_catalog_rule_form'
+
+                ]
+            );
+//        }
+
+
         $this->addColumn(
             'entity_id',
             [
@@ -230,9 +269,10 @@ class GiftGrid extends \Magento\Backend\Block\Widget\Grid\Extended
                 'type' => 'number',
                 'index' => 'entity_id',
                 'header_css_class' => 'col-id',
-                'column_css_class' => 'col-id'
+                'column_css_class' => 'col-id',
             ]
         );
+
         $this->addColumn(
             'name',
             [
@@ -350,29 +390,29 @@ class GiftGrid extends \Magento\Backend\Block\Widget\Grid\Extended
             );
         }
 
-        $this->addColumn(
-            'edit',
-            [
-                'header' => __('Edit'),
-                'type' => 'action',
-                'getter' => 'getId',
-                'actions' => [
-                    [
-                        'caption' => __('Edit'),
-                        'url' => [
-                            'base' => '*/*/edit',
-                            'params' => ['store' => $this->getRequest()->getParam('store')]
-                        ],
-                        'field' => 'id'
-                    ]
-                ],
-                'filter' => false,
-                'sortable' => false,
-                'index' => 'stores',
-                'header_css_class' => 'col-action',
-                'column_css_class' => 'col-action'
-            ]
-        );
+//        $this->addColumn(
+//            'edit',
+//            [
+//                'header' => __('Edit'),
+//                'type' => 'action',
+//                'getter' => 'getId',
+//                'actions' => [
+//                    [
+//                        'caption' => __('Edit'),
+//                        'url' => [
+//                            'base' => '*/*/edit',
+//                            'params' => ['store' => $this->getRequest()->getParam('store')]
+//                        ],
+//                        'field' => 'id'
+//                    ]
+//                ],
+//                'filter' => false,
+//                'sortable' => false,
+//                'index' => 'stores',
+//                'header_css_class' => 'col-action',
+//                'column_css_class' => 'col-action'
+//            ]
+//        );
 
         $block = $this->getLayout()->getBlock('grid.bottom.links');
         if ($block) {
@@ -387,50 +427,22 @@ class GiftGrid extends \Magento\Backend\Block\Widget\Grid\Extended
      */
     protected function _prepareMassaction()
     {
-        $this->setMassactionIdField('entity_id');
-        $this->getMassactionBlock()->setTemplate('Magento_Catalog::product/grid/massaction_extended.phtml');
+        $this->setMassactionIdField('product_ids');
+//        $this->getMassactionBlock()->setTemplate('Magento_Catalog::product/grid/massaction_extended.phtml');
         $this->getMassactionBlock()->setFormFieldName('product');
+        $this->getMassactionBlock()->setUseAjax(true);
+        $this->getMassactionBlock()->setHideFormElement(true);
+
 
         $this->getMassactionBlock()->addItem(
-            'delete',
+            'update',
             [
-                'label' => __('Delete'),
-                'url' => $this->getUrl('catalog/*/massDelete'),
-                'confirm' => __('Are you sure?')
+                'label' => __('Update'),
+                'url' => $this->getUrl('*/*/giftsMassUpdate',['_current' => true]),
+                'confirm' => __('Are you sure?'),
+                'selected' => true
             ]
         );
-
-        $statuses = $this->_status->getOptionArray();
-
-        array_unshift($statuses, ['label' => '', 'value' => '']);
-        $this->getMassactionBlock()->addItem(
-            'status',
-            [
-                'label' => __('Change Status'),
-                'url' => $this->getUrl('catalog/*/massStatus', ['_current' => true]),
-                'additional' => [
-                    'visibility' => [
-                        'name' => 'status',
-                        'type' => 'select',
-                        'class' => 'required-entry',
-                        'label' => __('Status'),
-                        'values' => $statuses
-                    ]
-                ]
-            ]
-        );
-
-        if ($this->_authorization->isAllowed('Magento_Catalog::update_attributes')) {
-            $this->getMassactionBlock()->addItem(
-                'attributes',
-                [
-                    'label' => __('Update Attributes'),
-                    'url' => $this->getUrl('catalog/product_action_attribute/edit', ['_current' => true])
-                ]
-            );
-        }
-
-        $this->_eventManager->dispatch('adminhtml_catalog_product_grid_prepare_massaction', ['block' => $this]);
         return $this;
     }
 
@@ -446,11 +458,11 @@ class GiftGrid extends \Magento\Backend\Block\Widget\Grid\Extended
      * @param \Magento\Catalog\Model\Product|\Magento\Framework\DataObject $row
      * @return string
      */
-    public function getRowUrl($row)
-    {
-        return $this->getUrl(
-            'catalog/*/edit',
-            ['store' => $this->getRequest()->getParam('store'), 'id' => $row->getId()]
-        );
-    }
+//    public function getRowUrl($row)
+//    {
+//        return $this->getUrl(
+//            'catalog/*/edit',
+//            ['store' => $this->getRequest()->getParam('store'), 'id' => $row->getId()]
+//        );
+//    }
 }

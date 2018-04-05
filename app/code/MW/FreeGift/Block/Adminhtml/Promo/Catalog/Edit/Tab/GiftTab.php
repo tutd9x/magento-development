@@ -3,12 +3,33 @@ namespace MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab;
 
 use \Magento\Framework\View\Element\Template;
 use \Magento\Backend\Block\Widget\Tab\TabInterface;
+use Magento\Framework\Registry;
+use Magento\Framework\View\Element\Template\Context;
 
 /**
  * "Gift Items" Tab
  */
 class GiftTab extends Template implements TabInterface
 {
+    /**
+     * Core registry
+     *
+     * @var Registry
+     */
+    protected $_coreRegistry = null;
+    /**
+     * Constructor
+     *
+     * @param Context $context
+     * @param Registry $registry
+     * @param array $data
+     */
+    public function __construct(Context $context, Registry $registry, array $data = [])
+    {
+        $this->_coreRegistry = $registry;
+        parent::__construct($context, $data);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -30,7 +51,11 @@ class GiftTab extends Template implements TabInterface
      */
     public function canShowTab()
     {
-        return true;
+        $model = $this->_coreRegistry->registry('current_promo_catalog_rule');
+        if($model->getId()){
+            return true;
+        }
+        return false;
     }
 
     /**

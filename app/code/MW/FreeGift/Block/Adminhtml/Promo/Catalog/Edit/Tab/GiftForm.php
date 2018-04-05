@@ -122,9 +122,12 @@ class GiftForm extends Generic implements TabInterface
                 'title' => __('Discard subsequent rules'),
                 'name' => 'stop_rules_processing',
                 'values' => ['1' => __('Yes'), '0' => __('No')],
-                'value' => $model->getStopRulesProcessing() ? $model->getStopRulesProcessing() : 0
+                'value' => $model->getStopRulesProcessing() ? $model->getStopRulesProcessing() : 0,
+                'data-form-part' => $formName
             ]
         );
+
+        $form->addFieldset('grid_head_text', ['legend' => __('Select gift items (Note: Click Submit to Update Changes)')]);
 
         $form->setValues($model->getData());
         return $form;

@@ -313,7 +313,7 @@ class InstallSchema implements InstallSchemaInterface
                 )
                 ->addColumn(
                     'customer_group_id',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
+                    \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
                     null,
                     ['unsigned' => true, 'nullable' => false, 'default' => '0'],
                     'Customer Group Id'
@@ -404,7 +404,7 @@ class InstallSchema implements InstallSchemaInterface
                 )
                 ->addColumn(
                     'customer_group_id',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
+                    \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
                     null,
                     ['unsigned' => true, 'nullable' => false, 'primary' => true, 'default' => '0'],
                     'Customer Group Id'
@@ -511,7 +511,7 @@ class InstallSchema implements InstallSchemaInterface
                 )
                 ->addColumn(
                     'customer_group_id',
-                    \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
+                    \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
                     null,
                     ['unsigned' => true, 'nullable' => false, 'primary' => true],
                     'Customer Group Id'
@@ -969,7 +969,7 @@ class InstallSchema implements InstallSchemaInterface
                 'Website Id'
             )->addColumn(
                 'customer_group_id',
-                \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
                 null,
                 ['unsigned' => true, 'nullable' => false, 'primary' => true],
                 'Customer Group Id'
@@ -1293,7 +1293,7 @@ class InstallSchema implements InstallSchemaInterface
                 'Rule Id'
             )->addColumn(
                 'customer_group_id',
-                \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
                 null,
                 ['unsigned' => true, 'nullable' => false, 'primary' => true],
                 'Customer Group Id'

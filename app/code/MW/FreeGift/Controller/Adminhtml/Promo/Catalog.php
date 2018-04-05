@@ -58,6 +58,28 @@ abstract class Catalog extends Action
     }
 
     /**
+     * Initiate rule
+     * Used for mass action ajax request
+     * @return void
+     */
+    protected function _initRule()
+    {
+        $this->_coreRegistry->register(
+            'current_promo_catalog_rule',
+            $this->ruleFactory->create() //$this->_objectManager->create('MW\FreeGift\Model\Rule')
+        );
+        $id = (int)$this->getRequest()->getParam('id');
+
+        if (!$id && $this->getRequest()->getParam('rule_id')) {
+            $id = (int)$this->getRequest()->getParam('rule_id');
+        }
+
+        if ($id) {
+            $this->_coreRegistry->registry('current_promo_catalog_rule')->load($id);
+        }
+    }
+
+    /**
      * Init action
      *
      * @return $this
