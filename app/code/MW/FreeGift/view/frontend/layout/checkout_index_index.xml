@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <!--<update handle="checkout_cart_item_renderers"/>-->
+    <!--<update handle="checkout_shipping_price_renderer"/>-->
+    <head>
+        <!--<link src="requirejs/require.js"/>-->
+        <!--<css src="extjs/resources/css/ext-all.css"/>-->
+        <!--<css src="extjs/resources/css/ytheme-magento.css"/>-->
+        <!--<link src="Magento_Backend::js/bootstrap/editor.js"/>-->
+        <!--<css src="prototype/windows/themes/default.css"/>-->
+        <!--<attribute name="prefix" value="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# product: http://ogp.me/ns/product#" />-->
+        <!--<css src="mage/gallery.css"/>-->
+        <!--<title>MAGE-WORLD | FREE GIFT PRO</title>-->
+        <!--<link src="Magento_Backend::js/bootstrap/editor.js"/>-->
+        <!--<css src="MW_FreeGift::css/mw_freegift_css.css"/>-->
+        <css src="MW_FreeGift::css/style.css"/>
+        <css src="MW_FreeGift::js/lib/custombox/jquery.custombox.css"/>
+        <css src="MW_FreeGift::js/lib/iosOverlay/css/iosOverlay.css"/>
+        <css src="MW_FreeGift::css/jquery.jscrollpane.css"/>
+        <css src="MW_FreeGift::css/skin.css"/>
+        <css src="MW_FreeGift::css/bcarousel.css"/>
+        <css src="MW_FreeGift::css/fancybox/jquery.fancybox.css"/>
+        <css src="MW_FreeGift::css/jquery.custombox.css"/>
+        <link src="MW_FreeGift::js/mw_freegift_js.js"/>
+
+    </head>
+
+    <body>
+        <referenceBlock name="head.additional">
+            <block class="MW\FreeGift\Block\Checkout\Top" name="onestepcheckout.head" template="MW_FreeGift::top.phtml" ifconfig="mw_freegift/group_general/active" />
+        </referenceBlock>
+        <referenceContainer name="content" ifconfig="mw_freegift/group_general/active" >
+            <block class="MW\FreeGift\Block\Hidden\Inject\Checkout\Cart\Init" name="cart.freegift.init" as="cart_freegift_init" template="MW_FreeGift::hidden/inject/checkout/cart/init.phtml" cacheable="false" before="-" />
+            <block class="MW\FreeGift\Block\Hidden\Inject\Template" template="MW_FreeGift::hidden/inject/template.phtml" cacheable="false" before="-"/>
+            <block class="MW\FreeGift\Block\Product" name="cart.freegift" as="freegiftbox" cacheable="false" before="-"/>
+            <block class="MW\FreeGift\Block\Quote" name="cart.freegift.quote" cacheable="false" before="-"/>
+            <block class="MW\FreeGift\Block\Promotionbanner" name="cart.freegift.promotion_banner" cacheable="false" before="-"/>
+        </referenceContainer>
+    </body>
+</page>

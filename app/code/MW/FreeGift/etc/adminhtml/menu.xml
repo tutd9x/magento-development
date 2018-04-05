@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="MW_FreeGift::promo" title="Free Gift Pro" module="MW_FreeGift" sortOrder="10" parent="Magento_Backend::marketing" dependsOnModule="MW_FreeGift"  resource="MW_FreeGift::promo"/>
+        <add id="MW_FreeGift::promo_catalog" title="Catalog Price Rule" module="MW_FreeGift" sortOrder="10" parent="MW_FreeGift::promo" dependsOnModule="MW_FreeGift"  action="mw_freegift/promo_catalog/" resource="MW_FreeGift::promo_catalog"/>
+        <add id="MW_FreeGift::mw_freegift_salesrule" title="Shopping Cart Rule" module="MW_FreeGift" sortOrder="10" parent="MW_FreeGift::promo" dependsOnModule="MW_FreeGift"  action="mw_freegift/promo_quote/" resource="MW_FreeGift::mw_freegift_salesrule"/>
+        <add id="MW_FreeGift::mw_freegift_dashboard" title="Report" module="MW_FreeGift" sortOrder="10" parent="MW_FreeGift::promo" dependsOnModule="MW_FreeGift" action="mw_freegift/promo_dashboard" resource="MW_FreeGift::mw_freegift_dashboard"/>
+        <add id="MW_FreeGift::mw_freegift_config" title="Configuration" module="MW_FreeGift" sortOrder="10" parent="MW_FreeGift::promo" dependsOnModule="MW_FreeGift"  action="adminhtml/system_config/edit/section/mw_freegift" resource="MW_FreeGift::mw_freegift_config"/>
+    </menu>
+</config>

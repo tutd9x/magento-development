@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="left">
+            <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tabs" name="promo_quote_edit_tabs">
+                <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Main" name="promo_quote_edit_tab_main"/>
+                <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Conditions" name="promo_quote_edit_tab_conditions"/>
+                <!--<block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Actions" name="promo_quote_edit_tab_actions"/>-->
+                <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Coupons" name="promo_quote_edit_tab_coupons">
+                    <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Coupons\Form" name="promo_quote_edit_tab_coupons_form"/>
+                    <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Coupons\Grid" name="promo_quote_edit_tab_coupons_grid"/>
+                </block>
+                <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Gift" name="promo_quote_edit_tab_gift">
+                    <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Gift\Form" name="promo_quote_edit_tab_gift_form"/>
+                    <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Gift\Grid" name="promo_quote_edit_tab_gift_grid"/>
+                </block>
+                <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Social" name="promo_quote_edit_tab_social"/>
+
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">main_section</argument>
+                    <argument name="block" xsi:type="string">promo_quote_edit_tab_main</argument>
+                </action>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">conditions_section</argument>
+                    <argument name="block" xsi:type="string">promo_quote_edit_tab_conditions</argument>
+                </action>
+                <!--<action method="addTab">-->
+                    <!--<argument name="name" xsi:type="string">actions_section</argument>-->
+                    <!--<argument name="block" xsi:type="string">promo_quote_edit_tab_actions</argument>-->
+                <!--</action>-->
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">coupons_section</argument>
+                    <argument name="block" xsi:type="string">promo_quote_edit_tab_coupons</argument>
+                </action>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">gift_section</argument>
+                    <argument name="block" xsi:type="string">promo_quote_edit_tab_gift</argument>
+                </action>
+                <action method="addTab">
+                    <argument name="name" xsi:type="string">social_section</argument>
+                    <argument name="block" xsi:type="string">promo_quote_edit_tab_social</argument>
+                </action>
+            </block>
+            <block class="Magento\Backend\Block\Template" template="MW_FreeGift::promo/salesrulejs.phtml" name="promo_quote_edit_jsinit"/>
+
+        </referenceContainer>
+        <referenceContainer name="content">
+            <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit" name="promo_quote_edit"/>
+        </referenceContainer>
+        <referenceContainer name="js">
+            <!--<block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Js" template="promo/js.phtml"/>-->
+        </referenceContainer>
+    </body>
+</page>

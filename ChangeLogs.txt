@@ -1,0 +1,9 @@
+FREE GIFT PRO
+
+v0.0.5 (Feb 19, 2016)
++ Fix bugs: 8, 11, 12, 13, 14, 15, 19, 20, 24
+
+v0.0.5
+
+Extension realease
+

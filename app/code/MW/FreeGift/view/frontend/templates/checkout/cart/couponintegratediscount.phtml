@@ -1,0 +1,30 @@
+<form id="freegift-coupon-form" action="<?php echo $this->getUrl('freegift/checkout/freegiftdiscountPost') ?>" method="post">
+    <div class="discount">
+        <h2><?php echo Mage::helper('freegift')->__('Coupon/Discount Code') ?></h2>
+        <div class="discount-form">
+            <label for="coupon_code"><?php echo Mage::helper('freegift')->__('Enter your free gift code if you have one.') ?></label>
+            <input type="hidden" name="freegift_remove" id="remove-freegift-coupone" value="0" />
+            <div class="input-box">
+                <input class="input-text" id="coupon_code" name="coupon_code" value="" />
+            </div>
+            <div class="buttons-set">
+                <button type="button" title="<?php echo $this->__('Apply Coupon') ?>" class="button" onclick="freegiftForm.submit(false)" value="<?php echo $this->__('Apply Coupon') ?>"><span><span><?php echo $this->__('Apply Coupon') ?></span></span></button>
+            </div>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+//<![CDATA[
+var freegiftForm = new VarienForm('freegift-coupon-form');
+freegiftForm.submit = function (isRemove) {
+    if (isRemove) {
+        $('coupon_code').removeClassName('required-entry');
+        $('remove-freegift-coupone').value = "1";
+    } else {
+        $('coupon_code').addClassName('required-entry');
+        $('remove-freegift-coupone').value = "0";
+    }
+    return VarienForm.prototype.submit.bind(freegiftForm)();
+}
+//]]>
+</script>

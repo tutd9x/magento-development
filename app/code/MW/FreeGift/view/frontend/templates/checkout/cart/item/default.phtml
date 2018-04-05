@@ -1,0 +1,26 @@
+<?php
+
+$str = Mage::getVersion();
+
+$version = Mage::helper('freegift')->checkVersion($str);
+
+$skinName = Mage::getDesign()->getTheme('frontend');
+
+$path_to_skin = Mage::getSingleton('core/design_package')->getPackageName()."/".Mage::getSingleton('core/design_package')->getTheme('frontend');
+
+if($version == "mg1.9" || $version == "enterprise14"){
+	include Mage::getBaseDir('app'). "/design/frontend/$path_to_skin/template/mw_freegift/checkout/cart/item/version1.9/default.phtml";
+}
+if($version == "mg1.7" || $version == "enterprise12"){
+    include Mage::getBaseDir('app'). "/design/frontend/$path_to_skin/template/mw_freegift/checkout/cart/item/version1.7/default.phtml";
+}
+if($version == "mg1.6"){
+    include Mage::getBaseDir('app'). "/design/frontend/$path_to_skin/template/mw_freegift/checkout/cart/item/version1.6/default.phtml";
+}
+if($version == "mg1.4"){
+    include Mage::getBaseDir('app'). "/design/frontend/$path_to_skin/template/mw_freegift/checkout/cart/item/version1.4/default.phtml";
+}
+if($version == "mg1.5" || $version == "enterprise10"){
+    include Mage::getBaseDir('app'). "/design/frontend/$path_to_skin/template/mw_freegift/checkout/cart/item/version1.5/default.phtml";
+}
+?>

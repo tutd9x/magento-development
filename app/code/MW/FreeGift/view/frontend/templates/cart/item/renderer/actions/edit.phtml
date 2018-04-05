@@ -1,0 +1,27 @@
+<?php
+$product = $this->getItem()->getProduct();
+$gift_options = $product->getCustomOption('free_catalog_gift');
+if($gift_options && $gift_options->getValue() == '1') : ?>
+<input type="hidden" class="mw_disbable_qty_edit" name="mw_disbable_qty_edit" value="0" data-qtyid="cart-<?php echo $this->getItem()->getId() ?>-qty" />
+<?php else:?>
+<?php if ($block->isProductVisibleInSiteVisibility()): ?>
+    <a class="action action-edit"
+       href="javascript:void(0); <?php echo $block->getConfigureUrl() ?>"
+       title="<?php echo $block->escapeHtml(__('Edit item parameters')); ?>"
+       data-product-name="<?php echo $product->getName()?>"
+       data-product-id="<?php echo $product->getId();?>"
+       data-has-options="<?php echo ($product->getOptions() ? '1' : '0')?>"
+       data-item-id="<?php echo $this->getItem()->getId()?>"
+       data-type-id="<?php echo $product->getTypeId()?>"
+       data-product-image="<?php echo $this->helper('Magento\Catalog\Helper\Image')->init($product, 'category_page_list')->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(TRUE)->resize(265)->getUrl(); ?>"
+       data-ffg-type="catalog"
+       >
+        <span>
+            <?php echo __('Edit') ?>
+        </span>
+   </a>
+<?php endif ?>
+<?php endif; ?>
+
+
+

@@ -1,0 +1,38 @@
+<div class="block discount" id="block-freegift" data-mage-init='{"collapsible":{"openedState": "active", "saveState": false}}'>
+    <div class="title" data-role="title">
+        <strong id="block-freegift-heading" role="heading" aria-level="2"><?php echo __('Free Gift Code') ?></strong>
+    </div>
+    <div class="content" data-role="content" aria-labelledby="block-freegift-heading">
+        <form id="freegift-coupon-form"
+              action="<?php echo $block->getUrl('freegift/cart/couponPost') ?>"
+              method="post"
+              data-mage-init='{"freegiftCode":{"freecouponCodeSelector": "#freegift_coupon_code",
+                                           "removefreeCouponSelector": "#remove-freegift-coupon",
+                                           "mwapplyButton": "button.action.apply.apply_freegift_coupon",
+                                           "mwcancelButton": "button.action.cancel.cancel_freegift_coupon"}}'>
+            <div class="fieldset coupon<?php strlen($block->getFreegiftCode()) ? ' applied' : ''?>">
+                <input type="hidden" name="remove" id="remove-freegift-coupon" value="0" />
+                <div class="field">
+                    <label for="freegift_coupon_code" class="label"><span><?php echo __('Enter your free gift code if you have one.') ?></span></label>
+                    <div class="control">
+                        <input type="text" class="input-text" id="freegift_coupon_code" name="freegift_coupon_code" value="<?php echo $block->escapeHtml($block->getFreegiftCode()) ?>" placeholder="<?php echo $block->escapeHtml(__('Enter your free gift code if you have one.'));?>" />
+                    </div>
+                </div>
+                <div class="actions-toolbar">
+                    <?php if (!strlen($block->getFreegiftCode())): ?>
+                        <div class="primary">
+                            <button class="action apply apply_freegift_coupon primary" type="button" value="<?php echo __('Apply Code') ?>">
+                                <span><?php echo __('Apply Code') ?></span>
+                            </button>
+                        </div>
+                    <?php else: ?>
+                        <div class="primary">
+                            <button  type="button" class="action cancel cancel_freegift_coupon primary" value="<?php echo __('Cancel') ?>"><span><?php echo __('Cancel') ?></span></button>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+

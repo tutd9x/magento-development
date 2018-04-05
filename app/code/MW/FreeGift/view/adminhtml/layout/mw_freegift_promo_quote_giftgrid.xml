@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <container name="root" label="Root">
+        <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Gift\Form" name="promo.quote.edit.tab.form"/>
+        <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Gift\Grid" name="promo.quote.edit.tab.gift"/>
+        <block class="Magento\Backend\Block\Widget\Grid\Serializer" name="related_grid_serializer">
+            <arguments>
+                <argument name="input_names" xsi:type="string">position</argument>
+                <argument name="grid_block" xsi:type="string">promo.quote.edit.tab.gift</argument>
+                <argument name="callback" xsi:type="string">getSelectedGiftProducts</argument>
+                <argument name="input_element_name" xsi:type="string">links[related]</argument>
+                <argument name="reload_param_name" xsi:type="string">gift_product_ids</argument>
+            </arguments>
+        </block>
+
+    </container>
+</layout>

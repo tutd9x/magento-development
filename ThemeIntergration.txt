@@ -1,0 +1,51 @@
+====Free Gift Pro ======
+
+THEME INTERGRATION GUIDE
+
+Show free gift block on category page
++ Edit the file \vendor\magento\module-catalog\view\frontend\templates\product\list.phtml
++ Insert this code
+  <?php
+  if(class_exists('MW\FreeGift\Helper\Data')){
+      echo $this->helper('MW\FreeGift\Helper\Data')->renderFreeGiftCatalogList($_product);
+  }
+  ?>
+  after this code
+  <div class="product-item-inner">
+
+Show free gift label on category page
++ Edit the file \vendor\magento\module-catalog\view\frontend\templates\product\list.phtml
+
++ Insert this code
+  <?php
+  if(class_exists('MW\FreeGift\Helper\Data')){
+      echo $this->helper('MW\FreeGift\Helper\Data')->renderFreeGiftLabel($_product);
+  }?>
+  inside the <A> tag of product image
+  <a href="<?php /* @escapeNotVerified */ echo $_product->getProductUrl() ?>" class="product photo product-item-photo" tabindex="-1"><!--   INSERT CODE HERE --> <?php echo $productImage->toHtml(); ?></a>
+  
+Show free gift coupon box
++ Edit the file \vendor\magento\module-checkout\view\frontend\templates\cart\coupon.phtml
++ Insert this code to end of file:
+  <?php
+  if(class_exists('MW\FreeGift\Helper\Data')){
+      echo  $this->helper('MW\FreeGift\Helper\Data')->renderFreegitCodeForm();
+  }
+  ?>
+
+<!-- Integrate free gift coupon with default discount coupon box
++ Edit the file app\design\frontend\<your_package>\<your_theme>\layout\mw_freegift.xml
+  In tag <reference name="checkout.cart.coupon">
+  Comment this code 
+  <action method="setTemplate"><template>mw_freegift/checkout/cart/coupon.phtml</template></action>
+  And insert this code
+  <action method="setTemplate"><template>mw_freegift/checkout/cart/couponintegratediscount.phtml</template></action>
+
+Show social sharing on shopping cart page
++ Edit the file app\design\frontend\<your_package>\<your_theme>\template\checkout\cart.phtm 
+   Inser this code: 
+   <?php echo $this->getChildHtml('checkout.cart.social') ?>
+   above this code
+   <?php echo $this->getChildHtml('coupon') ?>
+  	
+If you have any questions or problems, please post a ticket on website www.mage-world.com/contacts or send a message to support@mage-world.com  -->

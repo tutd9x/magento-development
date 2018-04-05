@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="mw_freegift" translate="label" sortOrder="130" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>Free Gift Pro</label>
+            <tab>mageworld</tab>
+            <resource>MW_FreeGift::mw_freegift_config</resource>
+            <class>separator-top</class>
+            <group id="group_general" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>General</label>
+                <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable Module</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="showfreegiftpromotion" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Show Free Gift Promotion</label>
+                    <source_model>MW\FreeGift\Model\System\Config\Showfreegiftpromotion</source_model>
+                </field>
+                <field id="showfreegiftlabel" translate="label" type="image" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Free Gift Label</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Image</backend_model>
+                    <upload_dir config="system/filesystem/media" scope_info="1">catalog/product/placeholder</upload_dir>
+                    <base_url type="media" scope_info="1">catalog/product/placeholder</base_url>
+                    <comment>
+                        <![CDATA[Logo for HTML documents only. If empty, default will be used.<br />(jpeg, gif, png)]]>
+                    </comment>
+                </field>
+                <field id="showfreegiftoncategory" translate="label" type="select" sortOrder="4" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Show Free Gift on Category</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="sizepromotionbanner" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Size Promotion Banner</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[Set height vs width for Promotion Banner. (120x900)]]>
+                    </comment>
+                </field>
+            </group>
+            <group id="group_social" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Social Sharing Setting</label>
+                <field id="facebookid" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Facebook App ID</label>
+                </field>
+                <field id="boxtitle" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Sharing Block Title</label>
+                </field>
+                <field id="description" translate="label" type="textarea" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Sharing Block Description</label>
+                </field>
+            </group>
+            <group id="group_author" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Author</label>
+                <field id="author" translate="label" type="label" sortOrder="6" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <frontend_model>MW\FreeGift\Block\Adminhtml\System\Config\AuthorInformation</frontend_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
