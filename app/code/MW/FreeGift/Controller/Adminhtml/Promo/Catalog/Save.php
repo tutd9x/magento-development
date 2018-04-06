@@ -41,7 +41,6 @@ class Save extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
     {
         if ($this->getRequest()->getPostValue()) {
             $model = $this->ruleFactory->create(); //$this->_objectManager->create('MW\FreeGift\Model\Rule');
-
             try {
 //                $this->_eventManager->dispatch(
 //                    'adminhtml_controller_catalogrule_prepare_save',
@@ -97,9 +96,9 @@ class Save extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
                     unset($data['rule']);
                 }
 
-                if(isset($data['gift_product_ids']) && is_array($data['gift_product_ids'])){
-                    $data['gift_product_ids'] = implode(',', $data['gift_product_ids']);
-                }
+//                if(isset($data['product_ids']) && is_array($data['gift_product_ids'])){
+                    $data['gift_product_ids'] = str_replace("&",",",$data['product_ids']);
+//                }
 
                 $model->loadPost($data);
                 //$model->setData('condition_customized', $custom_cdn);
