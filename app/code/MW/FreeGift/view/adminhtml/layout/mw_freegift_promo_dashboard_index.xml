@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <title>FreeGift Report</title>
+    </head>
+    <body>
+        <referenceContainer name="content">
+            <block class="MW\FreeGift\Block\Adminhtml\Report" name="freegift_report">
+                <block class="MW\FreeGift\Block\Adminhtml\Report\Form" name="form">
+                    <block class="MW\FreeGift\Block\Adminhtml\Report\Renderer" name="freegift_report_render" template="MW_FreeGift::report/view.phtml"/>
+                </block>
+            </block>
+        </referenceContainer>
+    </body>
+</page>
