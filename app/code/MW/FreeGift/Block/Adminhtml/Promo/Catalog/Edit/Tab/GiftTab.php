@@ -76,6 +76,17 @@ class GiftTab extends Template implements TabInterface
     }
 
     /**
+     * Return URL link to Tab content
+     *
+     * @return string
+     */
+    public function getTabUrl()
+    {
+        //return (string) $this->getData('tab_url');
+        return $this->getUrl('mw_freegift/promo_catalog/gifttab', ['_current' => true]);
+    }
+
+    /**
      * Tab should be loaded trough Ajax call
      *
      * @return bool

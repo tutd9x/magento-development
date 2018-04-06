@@ -1,26 +1,10 @@
 <?php
-/**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
 
-// @codingStandardsIgnoreFile
-
-/**
- * Adminhtml reviews grid
- *
- * @method int getProductId() getProductId()
- * @method \Magento\Review\Block\Adminhtml\Grid setProductId() setProductId(int $productId)
- * @method int getCustomerId() getCustomerId()
- * @method \Magento\Review\Block\Adminhtml\Grid setCustomerId() setCustomerId(int $customerId)
- * @method \Magento\Review\Block\Adminhtml\Grid setMassactionIdFieldOnlyIndexValue() setMassactionIdFieldOnlyIndexValue(bool $onlyIndex)
- *
- * @author      Magento Core Team <core@magentocommerce.com>
- */
 namespace MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab;
 
 use Magento\Store\Model\Store;
 use Magento\Backend\Block\Widget\Grid\Extended;
+
 
 class GiftGrid extends Extended
 {
@@ -67,6 +51,11 @@ class GiftGrid extends Extended
     protected $_coreRegistry = null;
 
     /**
+     * @var \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options\Converter
+     */
+    protected $_converter;
+
+    /**
      * @param \Magento\Backend\Block\Template\Context $context
      * @param \Magento\Backend\Helper\Data $backendHelper
      * @param \Magento\Store\Model\WebsiteFactory $websiteFactory
@@ -77,6 +66,7 @@ class GiftGrid extends Extended
      * @param \Magento\Catalog\Model\Product\Visibility $visibility
      * @param \Magento\Framework\Module\Manager $moduleManager
      * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options\Converter $converter
      * @param array $data
      *
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
@@ -92,6 +82,7 @@ class GiftGrid extends Extended
         \Magento\Catalog\Model\Product\Visibility $visibility,
         \Magento\Framework\Module\Manager $moduleManager,
         \Magento\Framework\Registry $registry,
+        \Magento\Backend\Block\Widget\Grid\Column\Renderer\Options\Converter $converter,
         array $data = []
     ) {
         $this->_websiteFactory = $websiteFactory;
@@ -102,6 +93,7 @@ class GiftGrid extends Extended
         $this->_visibility = $visibility;
         $this->moduleManager = $moduleManager;
         $this->_coreRegistry = $registry;
+        $this->_converter = $converter;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -260,7 +252,6 @@ class GiftGrid extends Extended
                 ]
             );
 //        }
-
 
         $this->addColumn(
             'entity_id',
@@ -425,26 +416,26 @@ class GiftGrid extends Extended
     /**
      * @return $this
      */
-    protected function _prepareMassaction()
-    {
-        $this->setMassactionIdField('product_ids');
-//        $this->getMassactionBlock()->setTemplate('Magento_Catalog::product/grid/massaction_extended.phtml');
-        $this->getMassactionBlock()->setFormFieldName('product');
-        $this->getMassactionBlock()->setUseAjax(true);
-        $this->getMassactionBlock()->setHideFormElement(true);
-
-
-        $this->getMassactionBlock()->addItem(
-            'update',
-            [
-                'label' => __('Update'),
-                'url' => $this->getUrl('*/*/giftsMassUpdate',['_current' => true]),
-                'confirm' => __('Are you sure?'),
-                'selected' => true
-            ]
-        );
-        return $this;
-    }
+//    protected function _prepareMassaction()
+//    {
+//        $this->setMassactionIdField('product_ids');
+////        $this->getMassactionBlock()->setTemplate('Magento_Catalog::product/grid/massaction_extended.phtml');
+//        $this->getMassactionBlock()->setFormFieldName('product');
+//        $this->getMassactionBlock()->setUseAjax(true);
+//        $this->getMassactionBlock()->setHideFormElement(true);
+//
+//
+//        $this->getMassactionBlock()->addItem(
+//            'update',
+//            [
+//                'label' => __('Update'),
+//                'url' => $this->getUrl('*/*/giftsMassUpdate',['_current' => true]),
+//                'confirm' => __('Are you sure?'),
+//                'selected' => true
+//            ]
+//        );
+//        return $this;
+//    }
 
     /**
      * @return string
@@ -465,4 +456,111 @@ class GiftGrid extends Extended
 //            ['store' => $this->getRequest()->getParam('store'), 'id' => $row->getId()]
 //        );
 //    }
+
+    /**
+     * get selected row values.
+     *
+     * @return array
+     */
+    public function getSelectedGiftProducts()
+    {
+        $selectedStores = $this->_converter->toFlatArray(
+            $this->getTreeSelectedStores()
+        );
+
+        return array_values($selectedStores);
+    }
+
+
+    /**
+     * get selected stores in serilaze grid store.
+     *
+     * @return array
+     */
+    public function getTreeSelectedStores()
+    {
+
+        $ids = $this->_getSelectedProducts();//[2046,2045];
+        return $this->_converter->toTreeArray($ids);
+
+//        $sessionData = $this->_getSessionData();
+//
+//        if ($sessionData) {
+//            return $this->_converter->toTreeArray(
+//                $this->_backendHelperJs->decodeGridSerializedInput($sessionData)
+//            );
+//        }
+//
+//        $entityType = $this->_getRequest()->getParam('entity_type');
+//        $id = $this->_getRequest()->getParam('enitity_id');
+//
+//        /** @var \Magestore\Storelocator\Model\AbstractModelManageStores $model */
+//        $model = $this->_factory->create($entityType)->load($id);
+//
+//        return $model->getId() ? $this->_converter->toTreeArray($model->getStorelocatorIds()) : [];
+    }
+
+    /**
+     * Get session data.
+     *
+     * @return array
+     */
+//    protected function _getSessionData()
+//    {
+//        $serializedName = $this->_getRequest()->getParam('serialized_name');
+//        if ($this->_sessionData === null) {
+//            $this->_sessionData = $this->_backendSession->getData($serializedName, true);
+//        }
+//
+//        return $this->_sessionData;
+//    }
+
+
+    /**
+     * Retrieve related products
+     *
+     * @return array
+     */
+//    public function getSelectedGiftProducts()
+//    {
+//        return $products = [
+//            2046 => ['position' => 0],
+//            2045 => ['position' => 0]
+//        ];
+//        $products = [];
+//
+//        if($this->getRequest()->getPost('gift_product_ids', null) == null){
+//            if(!isset($this->gift_product_id)){
+//                $model = $this->getRule();
+//                if($model){
+//                    $this->gift_product_id = explode(',',$model->getGiftProductIds());
+//                }else if($gift_product_ids = $this->_coreRegistry->registry('gift_product_ids')) {
+//                    $this->gift_product_id = explode(',', $gift_product_ids);
+//                }else{
+//                    $this->gift_product_id = [];
+//                }
+////                return $this->gift_product_id;
+//                if(!empty($this->gift_product_id)){
+//                    foreach ($this->gift_product_id as $product_id) {
+//                        $products[$product_id] = ['position' => 0];
+//                    }
+//                }
+//                $this->gift_products = $products;
+//                return $products;
+//            }
+//            if($this->gift_products){
+//                return $this->gift_products;
+//            }
+//        }
+//
+//        $gift_product_ids = $this->getRequest()->getPost('gift_product_ids', null);
+//        if(!empty($gift_product_ids)){
+//            foreach ($gift_product_ids as $product_id) {
+//                $products[$product_id] = ['position' => 0];
+//            }
+//        }
+//        return $products;
+//    }
+
+
 }

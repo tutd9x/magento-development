@@ -23,8 +23,17 @@
                 <block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\GiftTab" name="promo_catalog_rule_edit_tab_gifttab" template="tab/view.phtml">
                     <block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\GiftForm" name="promo_catalog_rule_edit_tab_giftform"/>
                     <block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\GiftGrid" name="promo_catalog_rule_edit_tab_giftgrid"/>
+                    <block class="Magento\Backend\Block\Widget\Grid\Serializer" name="promo_catalog_rule_edit_tab_giftgrid_serializer" template="MW_FreeGift::tab/grid/serializer.phtml">
+                        <arguments>
+                            <!--<argument name="input_names" xsi:type="string">position</argument>-->
+                            <argument name="grid_block" xsi:type="string">promo_catalog_rule_edit_tab_giftgrid</argument>
+                            <argument name="callback" xsi:type="string">getSelectedGiftProducts</argument>
+                            <argument name="input_element_name" xsi:type="string">product_ids</argument>
+                            <argument name="reload_param_name" xsi:type="string">gift_product_ids</argument>
+                            <argument name="form_name" xsi:type="string">mw_freegift_catalog_rule_form</argument>
+                        </arguments>
+                    </block>
                 </block>
-
             </referenceBlock>
 
             <uiComponent name="mw_freegift_catalog_rule_form"/>
