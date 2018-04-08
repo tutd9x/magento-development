@@ -127,8 +127,6 @@ class GiftForm extends Generic implements TabInterface
             ]
         );
 
-        $form->addFieldset('grid_head_text', ['legend' => __('Select gift items (Note: Click Submit to Update Changes)')]);
-
         $form->setValues($model->getData());
         return $form;
     }

@@ -5,7 +5,6 @@ namespace MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab;
 use Magento\Store\Model\Store;
 use Magento\Backend\Block\Widget\Grid\Extended;
 
-
 class GiftGrid extends Extended
 {
     /**
@@ -109,6 +108,15 @@ class GiftGrid extends Extended
         $this->setSaveParametersInSession(true);
         $this->setUseAjax(true);
         $this->setVarNameFilter('product_filter');
+
+        if ($this->_getRule() && $this->_getRule()->getGiftProductIds()) {
+            $this->setDefaultFilter(['product_ids' => 1]);
+        }
+    }
+
+    public function _getRule()
+    {
+        return $this->_coreRegistry->registry('current_promo_catalog_rule');
     }
 
     /**
@@ -190,9 +198,6 @@ class GiftGrid extends Extended
             $collection->joinAttribute('visibility', 'catalog_product/visibility', 'entity_id', null, 'inner');
         }
 
-        $productIds = $this->_getSelectedProducts();
-        $collection->addFieldToFilter('entity_id', ['in' => implode(',', $productIds)]);
-
         $this->setCollection($collection);
 
         $this->getCollection()->addWebsiteNamesToResult();
@@ -202,8 +207,39 @@ class GiftGrid extends Extended
         return $this;
     }
 
-    protected function _getSelectedProducts(){
-        $model = $this->_coreRegistry->registry('current_promo_catalog_rule');
+    /**
+     * get selected row values.
+     *
+     * @return array
+     */
+    public function getSelectedGiftProducts()
+    {
+        $selectedStores = $this->_converter->toFlatArray(
+            $this->getTreeSelectedStores()
+        );
+
+        return array_values($selectedStores);
+    }
+
+    /**
+     * get selected stores in serilaze grid store.
+     *
+     * @return array
+     */
+    public function getTreeSelectedStores()
+    {
+        $gift_product_ids = $this->getRequest()->getParam('gift_product_ids');
+        if(is_array($gift_product_ids) && !empty($gift_product_ids)){
+            $ids = $gift_product_ids;
+        }else{
+            $ids = $this->_getSelectedProducts();
+        }
+        return $this->_converter->toTreeArray($ids);
+    }
+
+    protected function _getSelectedProducts()
+    {
+        $model = $this->_getRule();
         $productIds = $model->getGiftProductIds();
         return explode(',', $productIds);
     }
@@ -226,7 +262,24 @@ class GiftGrid extends Extended
                 );
             }
         }
-        return parent::_addColumnFilterToCollection($column);
+
+        // Set custom filter for in product flag
+        if ($column->getId() == 'product_ids') {
+            $productIds = $this->_getSelectedProducts();
+            if (empty($productIds)) {
+                $productIds = 0;
+            }
+            if ($column->getFilter()->getValue()) {
+                $this->getCollection()->addFieldToFilter('entity_id', ['in' => $productIds]);
+            } else {
+                if ($productIds) {
+                    $this->getCollection()->addFieldToFilter('entity_id', ['nin' => $productIds]);
+                }
+            }
+        } else {
+            parent::_addColumnFilterToCollection($column);
+        }
+        return $this;
     }
 
     /**
@@ -236,14 +289,13 @@ class GiftGrid extends Extended
      */
     protected function _prepareColumns()
     {
-
 //        if (!$this->getCategory()->getProductsReadonly()) {
             $this->addColumn(
                 'product_ids',
                 [
                     'type' => 'checkbox',
                     'name' => 'entity_id',
-                    'values' => $this->_getSelectedProducts(),
+                    'values' => $this->getSelectedGiftProducts(),
                     'index' => 'entity_id',
                     'header_css_class' => 'col-select col-massaction',
                     'column_css_class' => 'col-select col-massaction',
@@ -414,153 +466,33 @@ class GiftGrid extends Extended
     }
 
     /**
-     * @return $this
-     */
-//    protected function _prepareMassaction()
-//    {
-//        $this->setMassactionIdField('product_ids');
-////        $this->getMassactionBlock()->setTemplate('Magento_Catalog::product/grid/massaction_extended.phtml');
-//        $this->getMassactionBlock()->setFormFieldName('product');
-//        $this->getMassactionBlock()->setUseAjax(true);
-//        $this->getMassactionBlock()->setHideFormElement(true);
-//
-//
-//        $this->getMassactionBlock()->addItem(
-//            'update',
-//            [
-//                'label' => __('Update'),
-//                'url' => $this->getUrl('*/*/giftsMassUpdate',['_current' => true]),
-//                'confirm' => __('Are you sure?'),
-//                'selected' => true
-//            ]
-//        );
-//        return $this;
-//    }
-
-    /**
      * @return string
      */
     public function getGridUrl()
     {
-        return $this->getUrl('catalog/*/grid', ['_current' => true]);
+        return $this->getUrl('mw_freegift/*/gifttab', ['_current' => true]);
+    }
+
+    protected function _getProducts()
+    {
+        if ($products = $this->getRequest()->getPost('gift_product_ids', null)) {
+            return $products;
+        } else {
+            if ($productss = $this->getRequest()->getParam('gift_product_ids', null)) {
+                return explode(',', $productss);
+            } else {
+                return [];
+            }
+        }
     }
 
     /**
      * @param \Magento\Catalog\Model\Product|\Magento\Framework\DataObject $row
      * @return string
      */
-//    public function getRowUrl($row)
-//    {
-//        return $this->getUrl(
-//            'catalog/*/edit',
-//            ['store' => $this->getRequest()->getParam('store'), 'id' => $row->getId()]
-//        );
-//    }
-
-    /**
-     * get selected row values.
-     *
-     * @return array
-     */
-    public function getSelectedGiftProducts()
+    public function getRowUrl($row)
     {
-        $selectedStores = $this->_converter->toFlatArray(
-            $this->getTreeSelectedStores()
-        );
-
-        return array_values($selectedStores);
+        return "";
     }
-
-
-    /**
-     * get selected stores in serilaze grid store.
-     *
-     * @return array
-     */
-    public function getTreeSelectedStores()
-    {
-
-        $ids = $this->_getSelectedProducts();//[2046,2045];
-        return $this->_converter->toTreeArray($ids);
-
-//        $sessionData = $this->_getSessionData();
-//
-//        if ($sessionData) {
-//            return $this->_converter->toTreeArray(
-//                $this->_backendHelperJs->decodeGridSerializedInput($sessionData)
-//            );
-//        }
-//
-//        $entityType = $this->_getRequest()->getParam('entity_type');
-//        $id = $this->_getRequest()->getParam('enitity_id');
-//
-//        /** @var \Magestore\Storelocator\Model\AbstractModelManageStores $model */
-//        $model = $this->_factory->create($entityType)->load($id);
-//
-//        return $model->getId() ? $this->_converter->toTreeArray($model->getStorelocatorIds()) : [];
-    }
-
-    /**
-     * Get session data.
-     *
-     * @return array
-     */
-//    protected function _getSessionData()
-//    {
-//        $serializedName = $this->_getRequest()->getParam('serialized_name');
-//        if ($this->_sessionData === null) {
-//            $this->_sessionData = $this->_backendSession->getData($serializedName, true);
-//        }
-//
-//        return $this->_sessionData;
-//    }
-
-
-    /**
-     * Retrieve related products
-     *
-     * @return array
-     */
-//    public function getSelectedGiftProducts()
-//    {
-//        return $products = [
-//            2046 => ['position' => 0],
-//            2045 => ['position' => 0]
-//        ];
-//        $products = [];
-//
-//        if($this->getRequest()->getPost('gift_product_ids', null) == null){
-//            if(!isset($this->gift_product_id)){
-//                $model = $this->getRule();
-//                if($model){
-//                    $this->gift_product_id = explode(',',$model->getGiftProductIds());
-//                }else if($gift_product_ids = $this->_coreRegistry->registry('gift_product_ids')) {
-//                    $this->gift_product_id = explode(',', $gift_product_ids);
-//                }else{
-//                    $this->gift_product_id = [];
-//                }
-////                return $this->gift_product_id;
-//                if(!empty($this->gift_product_id)){
-//                    foreach ($this->gift_product_id as $product_id) {
-//                        $products[$product_id] = ['position' => 0];
-//                    }
-//                }
-//                $this->gift_products = $products;
-//                return $products;
-//            }
-//            if($this->gift_products){
-//                return $this->gift_products;
-//            }
-//        }
-//
-//        $gift_product_ids = $this->getRequest()->getPost('gift_product_ids', null);
-//        if(!empty($gift_product_ids)){
-//            foreach ($gift_product_ids as $product_id) {
-//                $products[$product_id] = ['position' => 0];
-//            }
-//        }
-//        return $products;
-//    }
-
 
 }
