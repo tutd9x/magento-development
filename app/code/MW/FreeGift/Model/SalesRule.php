@@ -222,7 +222,6 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
     protected function _construct()
     {
         parent::_construct();
-//        $this->_init('Magento\SalesRule\Model\ResourceModel\Rule');
         $this->_init('MW\FreeGift\Model\ResourceModel\SalesRule');
         $this->setIdFieldName('rule_id');
     }

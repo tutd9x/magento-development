@@ -11,7 +11,7 @@
             <item name="navContainerName" xsi:type="string">left</item>
         </item>
 
-        <item name="label" xsi:type="string" translate="true">Catalog Price Rule</item>
+        <item name="label" xsi:type="string" translate="true">Catalog Rule</item>
         <item name="config" xsi:type="array">
             <item name="dataScope" xsi:type="string">data</item>
             <item name="namespace" xsi:type="string">mw_freegift_catalog_rule_form</item>
@@ -27,7 +27,7 @@
             <item name="save" xsi:type="string">Magento\CatalogRule\Block\Adminhtml\Edit\SaveButton</item>
             <item name="reset" xsi:type="string">Magento\CatalogRule\Block\Adminhtml\Edit\ResetButton</item>
             <item name="save_and_continue" xsi:type="string">Magento\CatalogRule\Block\Adminhtml\Edit\SaveAndContinueButton</item>
-            <item name="save_and_apply" xsi:type="string">Magento\CatalogRule\Block\Adminhtml\Edit\SaveAndApplyButton</item>
+            <item name="save_and_apply" xsi:type="string">MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\SaveAndApplyButton</item>
             <item name="delete" xsi:type="string">Magento\CatalogRule\Block\Adminhtml\Edit\DeleteButton</item>
         </item>
     </argument>

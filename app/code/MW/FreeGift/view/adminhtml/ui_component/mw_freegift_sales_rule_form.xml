@@ -1,20 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-/**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
--->
 <form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
     <argument name="data" xsi:type="array">
         <item name="js_config" xsi:type="array">
-            <item name="provider" xsi:type="string">sales_rule_form.sales_rule_form_data_source</item>
-            <item name="deps" xsi:type="string">sales_rule_form.sales_rule_form_data_source</item>
+            <item name="provider" xsi:type="string">mw_freegift_sales_rule_form.sales_rule_form_data_source</item>
+            <item name="deps" xsi:type="string">mw_freegift_sales_rule_form.sales_rule_form_data_source</item>
         </item>
-        <item name="label" xsi:type="string" translate="true">Cart Price Rule</item>
+        <item name="label" xsi:type="string" translate="true">Shopping Cart Rule</item>
         <item name="config" xsi:type="array">
             <item name="dataScope" xsi:type="string">data</item>
-            <item name="namespace" xsi:type="string">sales_rule_form</item>
+            <item name="namespace" xsi:type="string">mw_freegift_sales_rule_form</item>
         </item>
         <item name="template" xsi:type="string">templates/form/collapsible</item>
         <item name="buttons" xsi:type="array">
@@ -32,13 +26,13 @@
     </argument>
     <dataSource name="sales_rule_form_data_source">
         <argument name="dataProvider" xsi:type="configurableObject">
-            <argument name="class" xsi:type="string">Magento\SalesRule\Model\Rule\DataProvider</argument>
+            <argument name="class" xsi:type="string">MW\FreeGift\Model\SalesRule\DataProvider</argument>
             <argument name="name" xsi:type="string">sales_rule_form_data_source</argument>
             <argument name="primaryFieldName" xsi:type="string">rule_id</argument>
             <argument name="requestFieldName" xsi:type="string">id</argument>
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
-                    <item name="submit_url" xsi:type="url" path="sales_rule/promo_quote/save"/>
+                    <item name="submit_url" xsi:type="url" path="*/promo_quote/save"/>
                 </item>
             </argument>
         </argument>
@@ -48,14 +42,6 @@
             </item>
         </argument>
     </dataSource>
-    <fieldset name="general">
-        <argument name="data" xsi:type="array">
-            <item name="config" xsi:type="array">
-                <item name="label" xsi:type="string">Currently Active</item>
-                <item name="additionalClasses" xsi:type="string">fieldset-schedule</item>
-            </item>
-        </argument>
-    </fieldset>
     <fieldset name="rule_information">
         <argument name="data" xsi:type="array">
             <item name="config" xsi:type="array">
@@ -89,6 +75,33 @@
                     <item name="formElement" xsi:type="string">textarea</item>
                     <item name="source" xsi:type="string">sales_rule</item>
                     <item name="dataScope" xsi:type="string">description</item>
+                </item>
+            </argument>
+        </field>
+        <field name="promotion_message">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Promotion Message</item>
+                    <item name="visible" xsi:type="boolean">true</item>
+                    <item name="dataType" xsi:type="string">text</item>
+                    <item name="formElement" xsi:type="string">textarea</item>
+                    <item name="source" xsi:type="string">sales_rule</item>
+                    <item name="dataScope" xsi:type="string">promotion_message</item>
+                </item>
+            </argument>
+        </field>
+        <field name="promotion_banner">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="label" xsi:type="string" translate="true">Promotion Banner</item>
+                    <item name="formElement" xsi:type="string">fileUploader</item>
+                    <item name="componentType" xsi:type="string">fileUploader</item>
+                    <item name="notice" xsi:type="string" translate="true">Allowed file types: jpg, jpeg, gif, png. To optimize logo for high-resolution displays, upload an image that is 3x normal size and then specify 1x dimensions in the width/height fields below.</item>
+                    <item name="maxFileSize" xsi:type="number">2097152</item>
+                    <item name="allowedExtensions" xsi:type="string">jpg jpeg gif png</item>
+                    <item name="uploaderConfig" xsi:type="array">
+                        <item name="url" xsi:type="string">theme/design_config_fileUploader/save</item>
+                    </item>
                 </item>
             </argument>
         </field>
@@ -143,6 +156,7 @@
                 </item>
             </argument>
         </field>
+
         <field name="coupon_type">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
@@ -162,15 +176,15 @@
                                 <item name="value" xsi:type="number">1</item>
                                 <item name="actions" xsi:type="array">
                                     <item name="0" xsi:type="array">
-                                        <item name="target" xsi:type="string">sales_rule_form.sales_rule_form.rule_information.coupon_code</item>
+                                        <item name="target" xsi:type="string">mw_freegift_sales_rule_form.mw_freegift_sales_rule_form.rule_information.coupon_code</item>
                                         <item name="callback" xsi:type="string">hide</item>
                                     </item>
                                     <item name="1" xsi:type="array">
-                                        <item name="target" xsi:type="string">sales_rule_form.sales_rule_form.rule_information.use_auto_generation</item>
+                                        <item name="target" xsi:type="string">mw_freegift_sales_rule_form.mw_freegift_sales_rule_form.rule_information.use_auto_generation</item>
                                         <item name="callback" xsi:type="string">hide</item>
                                     </item>
                                     <item name="2" xsi:type="array">
-                                        <item name="target" xsi:type="string">sales_rule_form.sales_rule_form.rule_information.uses_per_coupon</item>
+                                        <item name="target" xsi:type="string">mw_freegift_sales_rule_form.mw_freegift_sales_rule_form.rule_information.uses_per_coupon</item>
                                         <item name="callback" xsi:type="string">hide</item>
                                     </item>
                                 </item>
@@ -179,15 +193,15 @@
                                 <item name="value" xsi:type="number">2</item>
                                 <item name="actions" xsi:type="array">
                                     <item name="0" xsi:type="array">
-                                        <item name="target" xsi:type="string">sales_rule_form.sales_rule_form.rule_information.coupon_code</item>
+                                        <item name="target" xsi:type="string">mw_freegift_sales_rule_form.mw_freegift_sales_rule_form.rule_information.coupon_code</item>
                                         <item name="callback" xsi:type="string">show</item>
                                     </item>
                                     <item name="1" xsi:type="array">
-                                        <item name="target" xsi:type="string">sales_rule_form.sales_rule_form.rule_information.use_auto_generation</item>
+                                        <item name="target" xsi:type="string">mw_freegift_sales_rule_form.mw_freegift_sales_rule_form.rule_information.use_auto_generation</item>
                                         <item name="callback" xsi:type="string">show</item>
                                     </item>
                                     <item name="2" xsi:type="array">
-                                        <item name="target" xsi:type="string">sales_rule_form.sales_rule_form.rule_information.uses_per_coupon</item>
+                                        <item name="target" xsi:type="string">mw_freegift_sales_rule_form.mw_freegift_sales_rule_form.rule_information.uses_per_coupon</item>
                                         <item name="callback" xsi:type="string">show</item>
                                     </item>
                                 </item>
@@ -196,15 +210,15 @@
                                 <item name="value" xsi:type="number">3</item>
                                 <item name="actions" xsi:type="array">
                                     <item name="0" xsi:type="array">
-                                        <item name="target" xsi:type="string">sales_rule_form.sales_rule_form.rule_information.coupon_code</item>
+                                        <item name="target" xsi:type="string">mw_freegift_sales_rule_form.mw_freegift_sales_rule_form.rule_information.coupon_code</item>
                                         <item name="callback" xsi:type="string">hide</item>
                                     </item>
                                     <item name="1" xsi:type="array">
-                                        <item name="target" xsi:type="string">sales_rule_form.sales_rule_form.rule_information.use_auto_generation</item>
+                                        <item name="target" xsi:type="string">mw_freegift_sales_rule_form.mw_freegift_sales_rule_form.rule_information.use_auto_generation</item>
                                         <item name="callback" xsi:type="string">hide</item>
                                     </item>
                                     <item name="2" xsi:type="array">
-                                        <item name="target" xsi:type="string">sales_rule_form.sales_rule_form.rule_information.uses_per_coupon</item>
+                                        <item name="target" xsi:type="string">mw_freegift_sales_rule_form.mw_freegift_sales_rule_form.rule_information.uses_per_coupon</item>
                                         <item name="callback" xsi:type="string">hide</item>
                                     </item>
                                 </item>
@@ -256,7 +270,7 @@
                                 <item name="value" xsi:type="number">0</item>
                                 <item name="actions" xsi:type="array">
                                     <item name="0" xsi:type="array">
-                                        <item name="target" xsi:type="string">sales_rule_form.sales_rule_form.rule_information.coupon_code</item>
+                                        <item name="target" xsi:type="string">mw_freegift_sales_rule_form.mw_freegift_sales_rule_form.rule_information.coupon_code</item>
                                         <item name="callback" xsi:type="string">enable</item>
                                     </item>
                                 </item>
@@ -265,7 +279,7 @@
                                 <item name="value" xsi:type="number">1</item>
                                 <item name="actions" xsi:type="array">
                                     <item name="0" xsi:type="array">
-                                        <item name="target" xsi:type="string">sales_rule_form.sales_rule_form.rule_information.coupon_code</item>
+                                        <item name="target" xsi:type="string">mw_freegift_sales_rule_form.mw_freegift_sales_rule_form.rule_information.coupon_code</item>
                                         <item name="callback" xsi:type="string">disable</item>
                                     </item>
                                 </item>

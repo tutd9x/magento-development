@@ -96,9 +96,9 @@ class Save extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
                     unset($data['rule']);
                 }
 
-//                if(isset($data['product_ids']) && is_array($data['gift_product_ids'])){
+                if(isset($data['product_ids']) && is_array($data['product_ids'])){
                     $data['gift_product_ids'] = str_replace("&",",",$data['product_ids']);
-//                }
+                }
 
                 $model->loadPost($data);
                 //$model->setData('condition_customized', $custom_cdn);
