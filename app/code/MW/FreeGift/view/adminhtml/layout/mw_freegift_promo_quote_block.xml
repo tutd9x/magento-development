@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
-        <referenceBlock name="adminhtml.promo.catalog.grid.container">
-            <block class="Magento\Backend\Block\Widget\Grid" name="promo.catalog.grid" as="grid">
+        <referenceBlock name="adminhtml.promo.quote.grid.container">
+            <block class="Magento\Backend\Block\Widget\Grid" name="promo.quote.grid" as="grid">
                 <arguments>
-                    <argument name="id" xsi:type="string">promo_catalog_grid</argument>
-                    <argument name="dataSource" xsi:type="object">MW\FreeGift\Model\ResourceModel\Grid\GridRuleCollection</argument>
+                    <argument name="id" xsi:type="string">promo_quote_grid</argument>
+                    <argument name="dataSource" xsi:type="object">MW\FreeGift\Model\ResourceModel\Grid\GridSalesRuleCollection</argument>
                     <argument name="default_sort" xsi:type="string">name</argument>
                     <argument name="default_dir" xsi:type="string">ASC</argument>
                     <argument name="save_parameters_in_session" xsi:type="string">1</argument>
                 </arguments>
-                <block class="Magento\Backend\Block\Widget\Grid\ColumnSet" name="promo.catalog.grid.columnSet" as="grid.columnSet">
+                <block class="Magento\Backend\Block\Widget\Grid\ColumnSet" name="promo.quote.grid.columnSet" as="grid.columnSet">
                     <arguments>
                         <argument name="rowUrl" xsi:type="array">
                             <item name="path" xsi:type="string">mw_freegift/*/edit</item>
@@ -30,9 +30,15 @@
                     </block>
                     <block class="Magento\Backend\Block\Widget\Grid\Column" as="name">
                         <arguments>
-                            <argument name="header" xsi:type="string" translate="true">Rule name</argument>
+                            <argument name="header" xsi:type="string" translate="true">Rule Name</argument>
                             <argument name="index" xsi:type="string">name</argument>
                             <argument name="type" xsi:type="string">text</argument>
+                        </arguments>
+                    </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" as="coupon_code">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Coupon Code</argument>
+                            <argument name="index" xsi:type="string">code</argument>
                         </arguments>
                     </block>
                     <block class="Magento\Backend\Block\Widget\Grid\Column" as="from_date">

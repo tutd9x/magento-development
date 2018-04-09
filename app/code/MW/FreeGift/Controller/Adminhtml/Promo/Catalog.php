@@ -66,7 +66,7 @@ abstract class Catalog extends Action
     {
         $this->_coreRegistry->register(
             'current_promo_catalog_rule',
-            $this->ruleFactory->create() //$this->_objectManager->create('MW\FreeGift\Model\Rule')
+            $this->ruleFactory->create()
         );
         $id = (int)$this->getRequest()->getParam('id');
 

@@ -1,22 +1,16 @@
 <?php
 namespace MW\FreeGift\Controller\Adminhtml\Promo\Quote;
+use MW\FreeGift\Controller\Adminhtml\Promo\Quote;
 
-class Index extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
+class Index extends Quote
 {
     /**
      * @return void
      */
     public function execute()
     {
-        $dirtyRules = $this->_objectManager->create('MW\FreeGift\Model\Flag')->loadSelf();
-        if (!empty($dirtyRules)) {
-            if ($dirtyRules->getState()) {
-                $this->messageManager->addNotice($this->getDirtyRulesNoticeMessage());
-            }
-        }
-
-        $this->_initAction()->_addBreadcrumb(__('Catalog'), __('Catalog'));
-        $this->_view->getPage()->getConfig()->getTitle()->prepend(__('Catalog Price Rule'));
+        $this->_initAction()->_addBreadcrumb(__('Shopping Cart'), __('Shopping Cart'));
+        $this->_view->getPage()->getConfig()->getTitle()->prepend(__('Shopping Cart Rules'));
         $this->_view->renderLayout();
     }
 }

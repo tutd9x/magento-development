@@ -1,46 +1,50 @@
 <?php
 namespace MW\FreeGift\Controller\Adminhtml\Promo;
-use Magento\Framework\App\Filesystem\DirectoryList;
-abstract class Quote extends \Magento\Backend\App\Action
+
+use Magento\Backend\App\Action;
+use Magento\Backend\App\Action\Context;
+use Magento\Framework\Registry;
+use Magento\Framework\Stdlib\DateTime\Filter\Date;
+use MW\FreeGift\Model\SalesRuleFactory;
+
+abstract class Quote extends Action
 {
     /**
      * Core registry
      *
-     * @var \Magento\Framework\Registry
+     * @var Registry
      */
     protected $_coreRegistry = null;
 
     /**
-     * @var \Magento\Framework\App\Response\Http\FileFactory
-     */
-    protected $_fileFactory;
-
-    /**
+     * Date filter instance
+     *
      * @var \Magento\Framework\Stdlib\DateTime\Filter\Date
      */
     protected $_dateFilter;
+
     /**
-     * @var \Magento\Framework\Filesystem\Directory\Write
+     * @var SalesRuleFactory
      */
-    protected $_directory;
+    protected $salesruleFactory;
+
     /**
-     * @param \Magento\Backend\App\Action\Context $context
-     * @param \Magento\Framework\Registry $coreRegistry
-     * @param \Magento\Framework\App\Response\Http\FileFactory $fileFactory
-     * @param \Magento\Framework\Stdlib\DateTime\Filter\Date $dateFilter
+     * Constructor
+     *
+     * @param Context $context
+     * @param Registry $coreRegistry
+     * @param Date $dateFilter
      */
     public function __construct(
-        \Magento\Backend\App\Action\Context $context,
-        \Magento\Framework\Registry $coreRegistry,
-        \Magento\Framework\App\Response\Http\FileFactory $fileFactory,
-        \Magento\Framework\Stdlib\DateTime\Filter\Date $dateFilter,
-        \Magento\Framework\Filesystem $filesystem
+        Context $context,
+        Registry $coreRegistry,
+        Date $dateFilter,
+        SalesRuleFactory $salesruleFactory
     ) {
         parent::__construct($context);
         $this->_coreRegistry = $coreRegistry;
-        $this->_fileFactory = $fileFactory;
         $this->_dateFilter = $dateFilter;
-        $this->_directory = $filesystem->getDirectoryWrite(DirectoryList::MEDIA);
+        $this->salesruleFactory = $salesruleFactory;
     }
 
     /**
@@ -52,7 +56,7 @@ abstract class Quote extends \Magento\Backend\App\Action
     {
         $this->_coreRegistry->register(
             'current_promo_quote_rule',
-            $this->_objectManager->create('MW\FreeGift\Model\Salesrule')
+            $this->salesruleFactory->create()
         );
         $id = (int)$this->getRequest()->getParam('id');
 
@@ -66,19 +70,20 @@ abstract class Quote extends \Magento\Backend\App\Action
     }
 
     /**
-     * Initiate action
+     * Init action
      *
-     * @return this
+     * @return $this
      */
     protected function _initAction()
     {
         $this->_view->loadLayout();
-        $this->_setActiveMenu('MW_FreeGift::mw_freegift_salesrule')->_addBreadcrumb(__('Promotions'), __('Promotions'));
+        $this->_setActiveMenu('MW_FreeGift::mw_freegift_salesrule')
+            ->_addBreadcrumb(__('Promotions'), __('Promotions'));
         return $this;
     }
 
     /**
-     * Returns result of current user permission check on resource and privilege
+     * Is access to section allowed
      *
      * @return bool
      */
