@@ -1,12 +1,10 @@
 <?php
-/**
- *
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
 namespace MW\FreeGift\Controller\Adminhtml\Promo\Quote;
 
-class Edit extends \Magento\SalesRule\Controller\Adminhtml\Promo\Quote
+use \MW\FreeGift\Controller\Adminhtml\Promo\Quote;
+use MW\FreeGift\Model\SalesRuleFactory;
+
+class Edit extends Quote
 {
     /**
      * @var \Magento\Framework\View\Result\PageFactory
@@ -23,14 +21,16 @@ class Edit extends \Magento\SalesRule\Controller\Adminhtml\Promo\Quote
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\Registry $coreRegistry,
-        \Magento\Framework\App\Response\Http\FileFactory $fileFactory,
         \Magento\Framework\Stdlib\DateTime\Filter\Date $dateFilter,
+        SalesRuleFactory $salesruleFactory,
+        \Magento\Framework\App\Response\Http\FileFactory $fileFactory,
         \Magento\Framework\View\Result\PageFactory $resultPageFactory
     ) {
-        parent::__construct($context, $coreRegistry, $fileFactory, $dateFilter);
+        parent::__construct($context, $coreRegistry, $dateFilter, $salesruleFactory);
         $this->_coreRegistry = $coreRegistry;
-        $this->_fileFactory = $fileFactory;
         $this->_dateFilter = $dateFilter;
+        $this->salesruleFactory = $salesruleFactory;
+        $this->_fileFactory = $fileFactory;
         $this->resultPageFactory = $resultPageFactory;
     }
 
@@ -43,11 +43,11 @@ class Edit extends \Magento\SalesRule\Controller\Adminhtml\Promo\Quote
     public function execute()
     {
         $id = $this->getRequest()->getParam('id');
-        $model = $this->_objectManager->create('Magento\SalesRule\Model\Rule');
+        $model = $this->salesruleFactory->create();
 
-        $this->_coreRegistry->register(\Magento\SalesRule\Model\RegistryConstants::CURRENT_SALES_RULE, $model);
+        $this->_coreRegistry->register('current_promo_sales_rule', $model);
 
-        $resultPage = $this->resultPageFactory->create();
+//        $resultPage = $this->resultPageFactory->create();
         if ($id) {
             $model->load($id);
             if (!$model->getRuleId()) {
@@ -59,12 +59,12 @@ class Edit extends \Magento\SalesRule\Controller\Adminhtml\Promo\Quote
             $model->getConditions()->setJsFormObject(
                 $model->getConditionsFieldSetId($model->getConditions()->getFormName())
             );
-            $model->getActions()->setFormName('sales_rule_form');
-            $model->getActions()->setJsFormObject(
-                $model->getActionsFieldSetId($model->getActions()->getFormName())
-            );
+//            $model->getActions()->setFormName('sales_rule_form');
+//            $model->getActions()->setJsFormObject(
+//                $model->getActionsFieldSetId($model->getActions()->getFormName())
+//            );
 
-            $resultPage->getLayout()->getBlock('promo_sales_rule_edit_tab_coupons')->setCanShow(true);
+//            $resultPage->getLayout()->getBlock('promo_sales_rule_edit_tab_coupons')->setCanShow(true);
         }
 
         // set entered data if was error when we do save

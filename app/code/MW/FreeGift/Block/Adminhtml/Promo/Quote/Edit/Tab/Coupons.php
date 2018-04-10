@@ -1,15 +1,12 @@
 <?php
-namespace MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab;
+namespace MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab;
 
 use \Magento\Framework\View\Element\Template;
 use \Magento\Backend\Block\Widget\Tab\TabInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Template\Context;
 
-/**
- * "Gift Items" Tab
- */
-class GiftTab extends Template implements TabInterface
+class Coupons extends Template implements TabInterface
 {
     /**
      * Core registry
@@ -35,7 +32,7 @@ class GiftTab extends Template implements TabInterface
      */
     public function getTabLabel()
     {
-        return __('Gift Items');
+        return __('Manage Coupon Codes');
     }
 
     /**
@@ -43,7 +40,7 @@ class GiftTab extends Template implements TabInterface
      */
     public function getTabTitle()
     {
-        return __('Gift Items');
+        return __('Manage Coupon Codes');
     }
 
     /**
@@ -51,12 +48,11 @@ class GiftTab extends Template implements TabInterface
      */
     public function canShowTab()
     {
-        return true;
-//        $model = $this->_coreRegistry->registry('current_promo_catalog_rule');
-//        if(isset($model) && $model->getId()){
-//            return true;
-//        }
-//        return false;
+        $model = $this->_coreRegistry->registry('current_promo_sales_rule');
+        if(isset($model) && $model->getId()){
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -75,16 +71,6 @@ class GiftTab extends Template implements TabInterface
     {
         $this->_data['config']['canShow'] = $canShow;
     }
-
-    /**
-     * Return URL link to Tab content
-     *
-     * @return string
-     */
-//    public function getTabUrl()
-//    {
-//        return $this->getUrl('mw_freegift/*/gifttab', ['_current' => true]);
-//    }
 
     /**
      * Tab should be loaded trough Ajax call

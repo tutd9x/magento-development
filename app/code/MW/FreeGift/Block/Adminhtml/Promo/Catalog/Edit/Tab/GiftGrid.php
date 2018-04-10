@@ -2,6 +2,7 @@
 
 namespace MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab;
 
+use Magento\Checkout\Exception;
 use Magento\Store\Model\Store;
 use Magento\Backend\Block\Widget\Grid\Extended;
 
@@ -239,8 +240,12 @@ class GiftGrid extends Extended
 
     protected function _getSelectedProducts()
     {
+        $productIds = '';
         $model = $this->_getRule();
-        $productIds = $model->getGiftProductIds();
+
+        if(isset($model) && $model->getGiftProductIds())
+            $productIds = $model->getGiftProductIds();
+
         return explode(',', $productIds);
     }
 

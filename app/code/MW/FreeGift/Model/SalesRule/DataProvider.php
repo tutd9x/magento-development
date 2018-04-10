@@ -50,7 +50,7 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
         $requestFieldName,
         CollectionFactory $collectionFactory,
         \Magento\Framework\Registry $registry,
-        \Magento\SalesRule\Model\Rule\Metadata\ValueProvider $metadataValueProvider,
+        \MW\FreeGift\Model\SalesRule\Metadata\ValueProvider $metadataValueProvider,
         array $meta = [],
         array $data = []
     ) {
@@ -68,7 +68,7 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
      */
     protected function getMetadataValues()
     {
-        $rule = $this->coreRegistry->registry(\Magento\SalesRule\Model\RegistryConstants::CURRENT_SALES_RULE);
+        $rule = $this->coreRegistry->registry('current_promo_sales_rule');
         return $this->metadataValueProvider->getMetadataValues($rule);
     }
 

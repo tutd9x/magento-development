@@ -114,6 +114,11 @@ class GiftForm extends Generic implements TabInterface
 
         $fieldset = $form->addFieldset($fieldsetId, ['legend' => __('Update gift items using following information')]);
 
+        $stopRulesProcessing = 0;
+        if(isset($model) && $model->getStopRulesProcessing()){
+            $stopRulesProcessing = $model->getStopRulesProcessing();
+        }
+
         $fieldset->addField(
             'stop_rules_processing',
             'select',
@@ -122,12 +127,14 @@ class GiftForm extends Generic implements TabInterface
                 'title' => __('Discard subsequent rules'),
                 'name' => 'stop_rules_processing',
                 'values' => ['1' => __('Yes'), '0' => __('No')],
-                'value' => $model->getStopRulesProcessing() ? $model->getStopRulesProcessing() : 0,
+                'value' => $stopRulesProcessing,
                 'data-form-part' => $formName
             ]
         );
 
-        $form->setValues($model->getData());
+        if(isset($model)){
+            $form->setValues($model->getData());
+        }
         return $form;
     }
 

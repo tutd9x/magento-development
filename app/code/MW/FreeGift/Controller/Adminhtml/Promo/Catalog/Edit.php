@@ -1,7 +1,9 @@
 <?php
 namespace MW\FreeGift\Controller\Adminhtml\Promo\Catalog;
 
-class Edit extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
+use MW\FreeGift\Controller\Adminhtml\Promo\Catalog;
+
+class Edit extends Catalog
 {
     /**
      * @return void
