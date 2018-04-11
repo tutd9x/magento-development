@@ -1,11 +1,6 @@
 <?php
 namespace MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Coupons;
 
-/**
- * Coupons generation parameters form
- *
- * @author      Magento Core Team <core@magentocommerce.com>
- */
 class Form extends \Magento\Backend\Block\Widget\Form\Generic
 {
     /**
@@ -26,7 +21,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
-        \Magento\SalesRule\Helper\Coupon $salesRuleCoupon,
+        \MW\FreeGift\Helper\Coupon $salesRuleCoupon,
         array $data = []
     ) {
         $this->_salesRuleCoupon = $salesRuleCoupon;
@@ -49,7 +44,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
          */
         $couponHelper = $this->_salesRuleCoupon;
 
-        $model = $this->_coreRegistry->registry(\Magento\SalesRule\Model\RegistryConstants::CURRENT_SALES_RULE);
+        $model = $this->_coreRegistry->registry('current_promo_sales_rule');
         $ruleId = $model->getId();
 
         $form->setHtmlIdPrefix('coupons_');

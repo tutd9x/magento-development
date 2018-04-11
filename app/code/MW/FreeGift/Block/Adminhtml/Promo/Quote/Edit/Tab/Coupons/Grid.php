@@ -4,11 +4,6 @@
 
 namespace MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Coupons;
 
-/**
- * Coupon codes grid
- *
- * @author      Magento Core Team <core@magentocommerce.com>
- */
 class Grid extends \Magento\Backend\Block\Widget\Grid\Extended
 {
     /**
@@ -19,21 +14,21 @@ class Grid extends \Magento\Backend\Block\Widget\Grid\Extended
     protected $_coreRegistry = null;
 
     /**
-     * @var \Magento\SalesRule\Model\ResourceModel\Coupon\CollectionFactory
+     * @var \MW\FreeGift\Model\ResourceModel\Coupon\CollectionFactory
      */
     protected $_salesRuleCoupon;
 
     /**
      * @param \Magento\Backend\Block\Template\Context $context
      * @param \Magento\Backend\Helper\Data $backendHelper
-     * @param \Magento\SalesRule\Model\ResourceModel\Coupon\CollectionFactory $salesRuleCoupon
+     * @param \MW\FreeGift\Model\ResourceModel\Coupon\CollectionFactory $salesRuleCoupon
      * @param \Magento\Framework\Registry $coreRegistry
      * @param array $data
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Backend\Helper\Data $backendHelper,
-        \Magento\SalesRule\Model\ResourceModel\Coupon\CollectionFactory $salesRuleCoupon,
+        \MW\FreeGift\Model\ResourceModel\Coupon\CollectionFactory $salesRuleCoupon,
         \Magento\Framework\Registry $coreRegistry,
         array $data = []
     ) {
@@ -61,10 +56,10 @@ class Grid extends \Magento\Backend\Block\Widget\Grid\Extended
      */
     protected function _prepareCollection()
     {
-        $priceRule = $this->_coreRegistry->registry(\Magento\SalesRule\Model\RegistryConstants::CURRENT_SALES_RULE);
+        $priceRule = $this->_coreRegistry->registry('current_promo_sales_rule');
 
         /**
-         * @var \Magento\SalesRule\Model\ResourceModel\Coupon\Collection $collection
+         * @var \MW\FreeGift\Model\ResourceModel\Coupon\Collection $collection
          */
         $collection = $this->_salesRuleCoupon->create()->addRuleToFilter($priceRule)->addGeneratedCouponsFilter();
 
@@ -101,7 +96,7 @@ class Grid extends \Magento\Backend\Block\Widget\Grid\Extended
                 'width' => '100',
                 'type' => 'options',
                 'options' => [__('No'), __('Yes')],
-                'renderer' => 'Magento\SalesRule\Block\Adminhtml\Promo\Quote\Edit\Tab\Coupons\Grid\Column\Renderer\Used',
+                'renderer' => 'MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Coupons\Grid\Column\Renderer\Used',
                 'filter_condition_callback' => [$this->_salesRuleCoupon->create(), 'addIsUsedFilterCallback']
             ]
         );

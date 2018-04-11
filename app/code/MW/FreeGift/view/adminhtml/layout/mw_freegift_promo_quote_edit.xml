@@ -43,9 +43,10 @@
                             <item name="component" xsi:type="string">Magento_SalesRule/js/form/element/manage-coupon-codes</item>
                         </argument>
                     </arguments>
+                    <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Coupons\Form" name="promo_quote_edit_tab_coupons_form"/>
+                    <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Coupons\Grid" name="promo_quote_edit_tab_coupons_grid"/>
                 </block>
-                <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Coupons\Form" name="promo_quote_edit_tab_coupons_form"/>
-                <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Coupons\Grid" name="promo_quote_edit_tab_coupons_grid"/>
+
 
             </referenceBlock>
 

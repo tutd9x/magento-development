@@ -1,9 +1,5 @@
 <?php
-/**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
-namespace Magento\SalesRule\Block\Adminhtml\Promo\Quote\Edit\Tab\Coupons\Grid\Column\Renderer;
+namespace MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Coupons\Grid\Column\Renderer;
 
 /**
  * Coupon codes grid "Used" column renderer
