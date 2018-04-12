@@ -96,7 +96,7 @@ class Save extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
                     $data['conditions'] = ( isset($data['rule']['conditions']) ? $data['rule']['conditions'] : []);
                     unset($data['rule']);
                 }
-//                if(isset($data['product_ids']) && is_array($data['product_ids'])){
+
                 if(isset($data['product_ids'])){
                     $data['gift_product_ids'] = str_replace("&",",",$data['product_ids']);
                 }

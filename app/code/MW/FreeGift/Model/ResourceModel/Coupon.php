@@ -1,9 +1,18 @@
 <?php
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
 namespace MW\FreeGift\Model\ResourceModel;
 
 use Magento\Framework\Model\AbstractModel;
 
-class Coupon extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb implements \Magento\SalesRule\Model\Spi\CouponResourceInterface
+/**
+ * SalesRule Resource Coupon
+ *
+ * @author      Magento Core Team <core@magentocommerce.com>
+ */
+class Coupon extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
     /**
      * Constructor adds unique fields
@@ -12,7 +21,7 @@ class Coupon extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb implem
      */
     protected function _construct()
     {
-        $this->_init('salesrule_coupon', 'coupon_id');
+        $this->_init('mw_freegift_salesrule_coupon', 'coupon_id');
         $this->addUniqueField(['field' => 'code', 'title' => __('Coupon with the same code')]);
     }
 
@@ -46,11 +55,11 @@ class Coupon extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb implem
      * @param \Magento\SalesRule\Model\Rule|int $rule
      * @return bool
      */
-    public function loadPrimaryByRule(\Magento\SalesRule\Model\Coupon $object, $rule)
+    public function loadPrimaryByRule(\MW\FreeGift\Model\Coupon $object, $rule)
     {
         $connection = $this->getConnection();
 
-        if ($rule instanceof \Magento\SalesRule\Model\Rule) {
+        if ($rule instanceof \MW\FreeGift\Model\Salesrule) {
             $ruleId = $rule->getId();
         } else {
             $ruleId = (int)$rule;
@@ -101,7 +110,7 @@ class Coupon extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb implem
      * @param \Magento\SalesRule\Model\Rule $rule
      * @return $this
      */
-    public function updateSpecificCoupons(\Magento\SalesRule\Model\Rule $rule)
+    public function updateSpecificCoupons(\MW\FreeGift\Model\Salesrule $rule)
     {
         if (!$rule || !$rule->getId() || !$rule->hasDataChanges()) {
             return $this;
@@ -125,7 +134,7 @@ class Coupon extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb implem
 
         if (!empty($updateArray)) {
             $this->getConnection()->update(
-                $this->getTable('salesrule_coupon'),
+                $this->getTable('mw_freegift_salesrule_coupon'),
                 $updateArray,
                 ['rule_id = ?' => $rule->getId()]
             );

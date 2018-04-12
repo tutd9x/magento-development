@@ -1,9 +1,9 @@
 <?php
 /**
- * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * Copyright © 2015 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace Magento\SalesRule\Model\ResourceModel\Coupon;
+namespace MW\FreeGift\Model\ResourceModel\Coupon;
 
 /**
  * SalesRule Model Resource Coupon_Usage
@@ -19,7 +19,7 @@ class Usage extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
      */
     protected function _construct()
     {
-        $this->_init('salesrule_coupon_usage', 'coupon_id');
+        $this->_init('mw_freegift_salesrule_coupon_usage', 'coupon_id');
     }
 
     /**
@@ -45,13 +45,13 @@ class Usage extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $timesUsed = $connection->fetchOne($select, [':coupon_id' => $couponId, ':customer_id' => $customerId]);
 
         if ($timesUsed > 0) {
-            $this->getConnection()->update(
+            $this->_getWriteAdapter()->update(
                 $this->getMainTable(),
                 ['times_used' => $timesUsed + 1],
                 ['coupon_id = ?' => $couponId, 'customer_id = ?' => $customerId]
             );
         } else {
-            $this->getConnection()->insert(
+            $this->_getWriteAdapter()->insert(
                 $this->getMainTable(),
                 ['coupon_id' => $couponId, 'customer_id' => $customerId, 'times_used' => 1]
             );
@@ -61,7 +61,7 @@ class Usage extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     /**
      * Load an object by customer_id & coupon_id
      *
-     * @param \Magento\Framework\DataObject $object
+     * @param \Magento\Framework\Object $object
      * @param int $customerId
      * @param mixed $couponId
      * @return $this
@@ -69,6 +69,7 @@ class Usage extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     public function loadByCustomerCoupon(\Magento\Framework\DataObject $object, $customerId, $couponId)
     {
         $connection = $this->getConnection();
+
         if ($connection && $couponId && $customerId) {
             $select = $connection->select()->from(
                 $this->getMainTable()
