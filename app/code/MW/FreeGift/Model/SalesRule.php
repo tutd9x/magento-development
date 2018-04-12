@@ -106,7 +106,7 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
      *
      * @var string
      */
-    protected $_eventObject = 'rule';
+    protected $_eventObject = 'salesrule';
 
     /**
      * Rule's primary coupon

@@ -3,8 +3,13 @@ namespace MW\FreeGift\Model\ResourceModel\Coupon;
 
 use Magento\Backend\Block\Widget\Grid\Column;
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
-use MW\FreeGift\Model\SalesRule as Rule;
+use MW\FreeGift\Model\Salesrule;
 
+/**
+ * SalesRule Model Resource Coupon_Collection
+ *
+ * @author      Magento Core Team <core@magentocommerce.com>
+ */
 class Collection extends AbstractCollection
 {
     /**
@@ -26,7 +31,7 @@ class Collection extends AbstractCollection
      */
     public function addRuleToFilter($rule)
     {
-        if ($rule instanceof Rule) {
+        if ($rule instanceof Salesrule) {
             $ruleId = $rule->getId();
         } else {
             $ruleId = (int)$rule;
