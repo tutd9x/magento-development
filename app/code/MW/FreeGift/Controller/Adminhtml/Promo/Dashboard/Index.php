@@ -28,7 +28,7 @@ class Index extends \MW\FreeGift\Controller\Adminhtml\Promo\Dashboard
     {
         /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
-        $resultPage->setActiveMenu('MW_FreeGift::mw_freegift_dashboard');
+        $resultPage->setActiveMenu('MW_FreeGift::promo_dashboard');
         $resultPage->addBreadcrumb(__('Report'), __('Report'));
         $resultPage->getConfig()->getTitle()->prepend(__('Report'));
 

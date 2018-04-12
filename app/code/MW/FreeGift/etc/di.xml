@@ -12,4 +12,20 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="MW\FreeGift\Model\Rule\Condition\Combine">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item name="form_name" xsi:type="string">mw_freegift_catalog_rule_form</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="MW\FreeGift\Model\Rule\Condition\Product">
+        <arguments>
+            <argument name="data" xsi:type="array">
+                <item name="form_name" xsi:type="string">mw_freegift_catalog_rule_form</item>
+            </argument>
+        </arguments>
+    </type>
+
 </config>

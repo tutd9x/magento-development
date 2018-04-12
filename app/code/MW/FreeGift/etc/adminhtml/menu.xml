@@ -3,8 +3,8 @@
     <menu>
         <add id="MW_FreeGift::promo" title="Free Gift Pro" translate="title" module="MW_FreeGift" sortOrder="10" parent="Magento_Backend::marketing" dependsOnModule="MW_FreeGift"  resource="MW_FreeGift::promo"/>
         <add id="MW_FreeGift::promo_catalog" title="Catalog Rules" translate="title" module="MW_FreeGift" sortOrder="10" parent="MW_FreeGift::promo" dependsOnModule="MW_FreeGift"  action="mw_freegift/promo_catalog/" resource="MW_FreeGift::promo_catalog"/>
-        <add id="MW_FreeGift::mw_freegift_salesrule" title="Shopping Cart Rules" translate="title" module="MW_FreeGift" sortOrder="10" parent="MW_FreeGift::promo" dependsOnModule="MW_FreeGift"  action="mw_freegift/promo_quote/" resource="MW_FreeGift::mw_freegift_salesrule"/>
-        <add id="MW_FreeGift::mw_freegift_dashboard" title="Report" translate="title" module="MW_FreeGift" sortOrder="10" parent="MW_FreeGift::promo" dependsOnModule="MW_FreeGift" action="mw_freegift/promo_dashboard" resource="MW_FreeGift::mw_freegift_dashboard"/>
+        <add id="MW_FreeGift::promo_quote" title="Shopping Cart Rules" translate="title" module="MW_FreeGift" sortOrder="10" parent="MW_FreeGift::promo" dependsOnModule="MW_FreeGift"  action="mw_freegift/promo_quote/" resource="MW_FreeGift::promo_quote"/>
+        <add id="MW_FreeGift::promo_dashboard" title="Report" translate="title" module="MW_FreeGift" sortOrder="10" parent="MW_FreeGift::promo" dependsOnModule="MW_FreeGift" action="mw_freegift/promo_dashboard" resource="MW_FreeGift::promo_dashboard"/>
         <add id="MW_FreeGift::mw_freegift_config" title="Configuration" translate="title" module="MW_FreeGift" sortOrder="10" parent="MW_FreeGift::promo" dependsOnModule="MW_FreeGift"  action="adminhtml/system_config/edit/section/mw_freegift" resource="MW_FreeGift::mw_freegift_config"/>
     </menu>
 </config>

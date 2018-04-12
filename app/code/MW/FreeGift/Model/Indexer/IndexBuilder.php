@@ -103,6 +103,7 @@ class IndexBuilder
         $batchCount = 1000
     ) {
         $this->resource = $resource;
+        $this->connection = $resource->getConnection();
         $this->storeManager = $storeManager;
         $this->ruleCollectionFactory = $ruleCollectionFactory;
         $this->logger = $logger;
@@ -140,7 +141,9 @@ class IndexBuilder
             $this->doReindexByIds($ids);
         } catch (\Exception $e) {
             $this->critical($e);
-            throw new \Magento\Framework\Exception\LocalizedException(__($e->getMessage()), $e);
+            throw new \Magento\Framework\Exception\LocalizedException(
+                __("Catalog rule indexing failed. See details in exception log.")
+            );
         }
     }
 
@@ -185,9 +188,6 @@ class IndexBuilder
     protected function doReindexFull()
     {
         foreach ($this->getAllRules() as $rule) {
-//            $this->xlog('1111');
-//            $this->xlog($rule->getId());
-            // 1 2 da vao day
             $this->updateRuleProductData($rule);
         }
         $this->deleteOldData()->applyAllRules();
@@ -201,19 +201,22 @@ class IndexBuilder
      */
     protected function cleanByIds($productIds)
     {
-        $this->getWriteAdapter()->deleteFromSelect(
-            $this->getWriteAdapter()
+        $query = $this->connection->deleteFromSelect(
+            $this->connection
                 ->select($this->resource->getTableName('mw_freegift_rule_product'), 'product_id')
                 ->distinct()
                 ->where('product_id IN (?)', $productIds),
             $this->resource->getTableName('mw_freegift_rule_product')
         );
-        $this->getWriteAdapter()->deleteFromSelect(
-            $this->getWriteAdapter()->select($this->resource->getTableName('mw_freegift_rule_product_price'), 'product_id')
+        $this->connection->query($query);
+
+        $query = $this->connection->deleteFromSelect(
+            $this->connection->select($this->resource->getTableName('mw_freegift_rule_product_price'), 'product_id')
                 ->distinct()
                 ->where('product_id IN (?)', $productIds),
             $this->resource->getTableName('mw_freegift_rule_product_price')
         );
+        $this->connection->query($query);
     }
 
     /**
@@ -225,25 +228,30 @@ class IndexBuilder
      */
     protected function applyRule(Rule $rule, $product)
     {
-
         $ruleId = $rule->getId();
         $productId = $product->getId();
         $websiteIds = array_intersect($product->getWebsiteIds(), $rule->getWebsiteIds());
 
-        $write = $this->getWriteAdapter();
-
-        $write->delete(
-            $this->resource->getTableName('mw_freegift_rule_product'),
-            [$write->quoteInto('rule_id = ?', $ruleId), $write->quoteInto('product_id = ?', $productId)]
-        );
-
-        if (!$rule->getConditions()->validate($product)) {
-            $write->delete(
-                $this->resource->getTableName('mw_freegift_rule_product_price'),
-                [$write->quoteInto('product_id = ?', $productId)]
-            );
+        if (!$rule->validate($product)) {
             return $this;
         }
+
+        $this->connection->delete(
+            $this->resource->getTableName('mw_freegift_rule_product'),
+            [
+                $this->connection->quoteInto('rule_id = ?', $ruleId),
+                $this->connection->quoteInto('product_id = ?', $productId)
+            ]
+        );
+
+        $write = $this->connection; //$this->getWriteAdapter();
+//        if (!$rule->getConditions()->validate($product)) {
+//            $write->delete(
+//                $this->resource->getTableName('mw_freegift_rule_product_price'),
+//                [$write->quoteInto('product_id = ?', $productId)]
+//            );
+//            return $this;
+//        }
 
         $customerGroupIds = $rule->getCustomerGroupIds();
         $fromTime = strtotime($rule->getFromDate());
@@ -256,7 +264,6 @@ class IndexBuilder
         $subActionOperator = $rule->getSubIsEnable() ? $rule->getSubSimpleAction() : '';
         $subActionAmount = $rule->getSubDiscountAmount();
         $conditionCustomized = $rule->getConditionCustomized();
-
 
         $rows = [];
         try {
@@ -279,20 +286,21 @@ class IndexBuilder
                     ];
 
                     if (count($rows) == $this->batchCount) {
-                        $write->insertMultiple($this->getTable('mw_freegift_rule_product'), $rows);
+                        $this->connection->insertMultiple($this->getTable('mw_freegift_rule_product'), $rows);
                         $rows = [];
                     }
                 }
             }
 
             if (!empty($rows)) {
-                $write->insertMultiple($this->resource->getTableName('mw_freegift_rule_product'), $rows);
+                $this->connection->insertMultiple($this->resource->getTableName('mw_freegift_rule_product'), $rows);
             }
         } catch (\Exception $e) {
             throw $e;
         }
-//        $this->xlog("2222");
+
         $this->applyAllRules($product);
+
         return $this;
     }
 
@@ -626,7 +634,7 @@ class IndexBuilder
          * if row with sort order 1 will have stop flag we should exclude
          * all next rows for same product id from price calculation
          */
-        $select = $read->select()->from(
+        $select = $this->connection->select()->from(
             ['rp' => $this->getTable('mw_freegift_rule_product')]
         )->order(
             ['rp.website_id', 'rp.customer_group_id', 'rp.product_id', 'rp.sort_order', 'rp.rule_id']
@@ -695,10 +703,8 @@ class IndexBuilder
 //            ),
 //        ]);
 
-        return $read->query($select);
+        return $this->connection->query($select);
     }
-
-
 
     /**
      * @param array $arrData
@@ -713,7 +719,7 @@ class IndexBuilder
             return $this;
         }
 
-        $adapter = $this->getWriteAdapter();
+//        $adapter = $this->getWriteAdapter();
         $productIds = [];
 
         try {
@@ -731,7 +737,7 @@ class IndexBuilder
             }
 
             //$this->xlog(serialize($arrData));
-            $adapter->insertOnDuplicate($this->getTable('mw_freegift_rule_product_price'), $arrData);
+            $this->connection->insertOnDuplicate($this->getTable('mw_freegift_rule_product_price'), $arrData);
         } catch (\Exception $e) {
             throw $e;
         }

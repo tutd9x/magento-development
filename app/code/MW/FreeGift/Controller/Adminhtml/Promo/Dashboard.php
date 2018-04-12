@@ -18,6 +18,6 @@ abstract class Dashboard extends \Magento\Backend\App\Action
      */
     protected function _isAllowed()
     {
-        return $this->_authorization->isAllowed('MW_FreeGift::mw_freegift_dashboard');
+        return $this->_authorization->isAllowed('MW_FreeGift::promo_dashboard');
     }
 }

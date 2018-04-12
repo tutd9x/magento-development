@@ -1,12 +1,4 @@
 <?php
-/**
- * Copyright © 2015 Magento. All rights reserved.
- * See COPYING.txt for license details.
- */
-
-/**
- * Catalog Rule Product Condition data model
- */
 namespace MW\FreeGift\Model\Rule\Condition;
 
 /**

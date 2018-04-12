@@ -4,8 +4,8 @@
         <title translate="true">Catalog Rule Free Gift</title>
         <description translate="true">Indexed rule/product association for free gift</description>
     </indexer>
-    <!--<indexer id="mw_catalogrule_product" view_id="mw_catalogrule_product" class="MW\FreeGift\Model\Indexer\Product\ProductRuleIndexer">-->
-        <!--<title translate="true">Catalog Product Rule 1231</title>-->
-        <!--<description translate="true">Indexed product/rule association 1231</description>-->
-    <!--</indexer>-->
+    <indexer id="mw_catalogrule_product" view_id="mw_catalogrule_product" class="MW\FreeGift\Model\Indexer\Product\ProductRuleIndexer" shared_index="catalogrule">
+        <title translate="true">Catalog Product Rule Free Gift</title>
+        <description translate="true">Indexed product/rule association</description>
+    </indexer>
 </config>

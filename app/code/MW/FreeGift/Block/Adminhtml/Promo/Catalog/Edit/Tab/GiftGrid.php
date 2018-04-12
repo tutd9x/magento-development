@@ -106,7 +106,7 @@ class GiftGrid extends Extended
         $this->setId('productGrid');
         $this->setDefaultSort('entity_id');
         $this->setDefaultDir('DESC');
-        $this->setSaveParametersInSession(true);
+        $this->setSaveParametersInSession(false); // reset filter when load edit page
         $this->setUseAjax(true);
         $this->setVarNameFilter('product_filter');
 

@@ -1,24 +1,16 @@
 <?php
-/**
- * Copyright © 2015 Magento. All rights reserved.
- * See COPYING.txt for license details.
- */
-
-/**
- * Catalog Rule Combine Condition data model
- */
 namespace MW\FreeGift\Model\Rule\Condition;
 
 class Combine extends \Magento\Rule\Model\Condition\Combine
 {
     /**
-     * @var \Magento\CatalogRule\Model\Rule\Condition\ProductFactory
+     * @var \MW\FreeGift\Model\Rule\Condition\ProductFactory
      */
     protected $_productFactory;
 
     /**
      * @param \Magento\Rule\Model\Condition\Context $context
-     * @param \Magento\CatalogRule\Model\Rule\Condition\ProductFactory $conditionFactory
+     * @param \MW\FreeGift\Model\Rule\Condition\ProductFactory $conditionFactory
      * @param array $data
      */
     public function __construct(

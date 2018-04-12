@@ -151,8 +151,8 @@ class Rule extends \Magento\Rule\Model\AbstractModel
      * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate
      * @param \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param \Magento\CatalogRule\Model\Rule\Condition\CombineFactory $combineFactory
-     * @param \Magento\CatalogRule\Model\Rule\Action\CollectionFactory $actionCollectionFactory
+     * @param \MW\FreeGift\Model\Rule\Condition\CombineFactory $combineFactory
+     * @param \MW\FreeGift\Model\Rule\Action\CollectionFactory $actionCollectionFactory
      * @param \Magento\Catalog\Model\ProductFactory $productFactory
      * @param \Magento\Framework\Model\ResourceModel\Iterator $resourceIterator
      * @param \Magento\Customer\Model\Session $customerSession

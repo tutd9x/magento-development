@@ -77,7 +77,7 @@ abstract class Quote extends Action
     protected function _initAction()
     {
         $this->_view->loadLayout();
-        $this->_setActiveMenu('MW_FreeGift::mw_freegift_salesrule')
+        $this->_setActiveMenu('MW_FreeGift::promo_quote')
             ->_addBreadcrumb(__('Promotions'), __('Promotions'));
         return $this;
     }
@@ -89,6 +89,6 @@ abstract class Quote extends Action
      */
     protected function _isAllowed()
     {
-        return $this->_authorization->isAllowed('MW_FreeGift::quote');
+        return $this->_authorization->isAllowed('MW_FreeGift::promo_quote');
     }
 }
