@@ -3,130 +3,158 @@ namespace MW\FreeGift\Api\Data;
 
 interface RuleInterface
 {
-    /**
-     * Constants for keys of data array. Identical to the name of the getter in snake case
+    /**#@+
+     * Constants defined for keys of data array
      */
-    const POST_ID       = 'rule_id';
-    const URL_KEY       = 'url_key';
-    const TITLE         = 'title';
-    const CONTENT       = 'content';
-    const CREATION_TIME = 'creation_time';
-    const UPDATE_TIME   = 'update_time';
-    const IS_ACTIVE     = 'is_active';
+    const RULE_ID = 'rule_id';
+
+    const NAME = 'name';
+
+    const DESCRIPTION = 'description';
+
+    const IS_ACTIVE = 'is_active';
+
+    const STOP_RULES_PROCESSING = 'stop_rules_processing';
+
+    const SORT_ORDER = 'sort_order';
+
+    const SIMPLE_ACTION = 'simple_action';
+
+    const DISCOUNT_AMOUNT = 'discount_amount';
+
+    /**#@-*/
 
     /**
-     * Get ID
+     * Returns rule id field
      *
      * @return int|null
      */
-    public function getId();
+    public function getRuleId();
 
     /**
-     * Get URL Key
+     * @param int $ruleId
+     * @return $this
+     */
+    public function setRuleId($ruleId);
+
+    /**
+     * Returns rule name
      *
      * @return string
      */
-    public function getUrlKey();
+    public function getName();
 
     /**
-     * Get title
+     * @param string $name
+     * @return $this
+     */
+    public function setName($name);
+
+    /**
+     * Returns rule description
      *
      * @return string|null
      */
-    public function getTitle();
+    public function getDescription();
 
     /**
-     * Get content
-     *
-     * @return string|null
+     * @param string $description
+     * @return $this
      */
-    public function getContent();
+    public function setDescription($description);
 
     /**
-     * Get creation time
+     * Returns rule activity flag
      *
-     * @return string|null
+     * @return int
      */
-    public function getCreationTime();
+    public function getIsActive();
 
     /**
-     * Get update time
-     *
-     * @return string|null
-     */
-    public function getUpdateTime();
-
-
-    /**
-     * Get condition_customized
-     *
-     * @return string|null
-     */
-    public function getConditionCustomized();
-
-
-    /**
-     * Is active
-     *
-     * @return bool|null
-     */
-    public function isActive();
-
-    /**
-     * Set ID
-     *
-     * @param int $id
-     * @return \MW\FreeGift\Api\Data\RuleInterface
-     */
-    public function setId($id);
-
-    /**
-     * Set URL Key
-     *
-     * @param string $url_key
-     * @return \MW\FreeGift\Api\Data\RuleInterface
-     */
-    public function setUrlKey($url_key);
-
-    /**
-     * Set title
-     *
-     * @param string $title
-     * @return \MW\FreeGift\Api\Data\RuleInterface
-     */
-    public function setTitle($title);
-
-    /**
-     * Set content
-     *
-     * @param string $content
-     * @return \MW\FreeGift\Api\Data\RuleInterface
-     */
-    public function setContent($content);
-
-    /**
-     * Set creation time
-     *
-     * @param string $creationTime
-     * @return \MW\FreeGift\Api\Data\RuleInterface
-     */
-    public function setCreationTime($creationTime);
-
-    /**
-     * Set update time
-     *
-     * @param string $updateTime
-     * @return \MW\FreeGift\Api\Data\RuleInterface
-     */
-    public function setUpdateTime($updateTime);
-
-    /**
-     * Set is active
-     *
-     * @param int|bool $isActive
-     * @return \MW\FreeGift\Api\Data\RuleInterface
+     * @param int $isActive
+     * @return $this
      */
     public function setIsActive($isActive);
+
+    /**
+     * Returns rule condition
+     *
+     * @return \Magento\CatalogRule\Api\Data\ConditionInterface|null
+     */
+    public function getRuleCondition();
+
+    /**
+     * @param \Magento\CatalogRule\Api\Data\ConditionInterface $condition
+     * @return $this
+     */
+    public function setRuleCondition($condition);
+
+    /**
+     * Returns stop rule processing flag
+     *
+     * @return int|null
+     */
+    public function getStopRulesProcessing();
+
+    /**
+     * @param int $isStopProcessing
+     * @return $this
+     */
+    public function setStopRulesProcessing($isStopProcessing);
+
+    /**
+     * Returns rule sort order
+     *
+     * @return int|null
+     */
+    public function getSortOrder();
+
+    /**
+     * @param int $sortOrder
+     * @return $this
+     */
+    public function setSortOrder($sortOrder);
+
+    /**
+     * Returns rule simple action
+     *
+     * @return string
+     */
+    public function getSimpleAction();
+
+    /**
+     * @param string $action
+     * @return $this
+     */
+    public function setSimpleAction($action);
+
+    /**
+     * Returns discount amount
+     *
+     * @return float
+     */
+    public function getDiscountAmount();
+
+    /**
+     * @param float $amount
+     * @return $this
+     */
+    public function setDiscountAmount($amount);
+
+    /**
+     * Retrieve existing extension attributes object or create a new one.
+     *
+     * @return \Magento\CatalogRule\Api\Data\RuleExtensionInterface|null
+     */
+    public function getExtensionAttributes();
+
+    /**
+     * Set an extension attributes object.
+     *
+     * @param \Magento\CatalogRule\Api\Data\RuleExtensionInterface $extensionAttributes
+     * @return $this
+     */
+    public function setExtensionAttributes(\Magento\CatalogRule\Api\Data\RuleExtensionInterface $extensionAttributes);
 
     /**
      * Set is buy_x
@@ -134,7 +162,7 @@ interface RuleInterface
      * @param int|string $buy_x
      * @return \MW\FreeGift\Api\Data\RuleInterface
      */
-    public function setBuyX($buyX);
+//    public function setBuyX($buyX);
 
     /**
      * Set is get_y
@@ -142,7 +170,5 @@ interface RuleInterface
      * @param int|string $get_y
      * @return \MW\FreeGift\Api\Data\RuleInterface
      */
-    public function setGetY($getY);
-
-
+//    public function setGetY($getY);
 }

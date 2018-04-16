@@ -24,5 +24,6 @@ class RuleProductIndexer extends AbstractIndexer
     protected function doExecuteRow($id)
     {
         $this->indexBuilder->reindexFull();
+//        $this->indexBuilder->reindexByRuleId($id);
     }
 }

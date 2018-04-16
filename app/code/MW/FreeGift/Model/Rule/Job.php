@@ -44,14 +44,25 @@ class Job extends \Magento\Framework\DataObject
     /**
      * Dispatch event "catalogrule_apply_all" and set success or error message depends on result
      *
-     * @return \Magento\CatalogRule\Model\Rule\Job
+     * @return \MW\FreeGift\Model\Rule\Job
      * @api
      */
     public function applyAll()
     {
         try {
-            //$this->ruleProcessor->reindexAll();
+//            $this->ruleProcessor->reindexAll();
             $this->ruleProcessor->markIndexerAsInvalid();
+            $this->setSuccess(__('Updated rules applied.'));
+        } catch (\Magento\Framework\Exception\LocalizedException $e) {
+            $this->setError($e->getMessage());
+        }
+        return $this;
+    }
+
+    public function applyById($id)
+    {
+        try {
+            $this->ruleProcessor->reindexRow($id);
             $this->setSuccess(__('Updated rules applied.'));
         } catch (\Magento\Framework\Exception\LocalizedException $e) {
             $this->setError($e->getMessage());

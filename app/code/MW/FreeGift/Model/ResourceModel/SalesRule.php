@@ -126,11 +126,11 @@ class SalesRule extends AbstractResource
      * @return $this
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function load(AbstractModel $object, $value, $field = null)
-    {
-        $this->getEntityManager()->load($object, $value);
-        return $this;
-    }
+//    public function load(AbstractModel $object, $value, $field = null)
+//    {
+//        $this->getEntityManager()->load($object, $value);
+//        return $this;
+//    }
 
     /**
      * Bind sales rule to customer group(s) and website(s).

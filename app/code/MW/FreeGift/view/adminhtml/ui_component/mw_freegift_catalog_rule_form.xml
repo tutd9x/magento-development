@@ -27,7 +27,7 @@
             <item name="save" xsi:type="string">Magento\CatalogRule\Block\Adminhtml\Edit\SaveButton</item>
             <item name="reset" xsi:type="string">Magento\CatalogRule\Block\Adminhtml\Edit\ResetButton</item>
             <item name="save_and_continue" xsi:type="string">Magento\CatalogRule\Block\Adminhtml\Edit\SaveAndContinueButton</item>
-            <item name="save_and_apply" xsi:type="string">MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\SaveAndApplyButton</item>
+            <!--<item name="save_and_apply" xsi:type="string">MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\SaveAndApplyButton</item>-->
             <item name="delete" xsi:type="string">Magento\CatalogRule\Block\Adminhtml\Edit\DeleteButton</item>
         </item>
     </argument>
@@ -161,7 +161,7 @@
                 <item name="options" xsi:type="object">Magento\CatalogRule\Model\Rule\CustomerGroupsOptionsProvider</item>
             </argument>
         </field>
-        <field name="discount_qty">
+        <field name="times_limit">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="label" xsi:type="string" translate="true">Uses Limit</item>
@@ -169,7 +169,7 @@
                     <item name="dataType" xsi:type="string">text</item>
                     <item name="formElement" xsi:type="string">input</item>
                     <item name="source" xsi:type="string">catalog_rule</item>
-                    <item name="dataScope" xsi:type="string">discount_qty</item>
+                    <item name="dataScope" xsi:type="string">times_limit</item>
                 </item>
             </argument>
         </field>
@@ -180,7 +180,7 @@
                     <item name="visible" xsi:type="boolean">true</item>
                     <item name="dataType" xsi:type="string">text</item>
                     <item name="formElement" xsi:type="string">input</item>
-                    <item name="source" xsi:type="string">times_used</item>
+                    <item name="source" xsi:type="string">catalog_rule</item>
                     <item name="dataScope" xsi:type="string">times_used</item>
                 </item>
             </argument>

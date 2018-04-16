@@ -97,7 +97,8 @@ class Save extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
                     unset($data['rule']);
                 }
                 if(isset($data['product_ids'])){
-                    $data['gift_product_ids'] = str_replace("&",",",$data['product_ids']);
+                    $data['gift_product_ids'] = rtrim(str_replace("&",",",$data['product_ids']),",");
+                    unset($data['product_ids']);
                 }
 
                 $model->loadPost($data);
@@ -136,5 +137,4 @@ class Save extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
         }
         $this->_redirect('mw_freegift/*/');
     }
-
 }

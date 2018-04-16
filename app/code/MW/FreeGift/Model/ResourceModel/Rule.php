@@ -83,6 +83,12 @@ class Rule extends \Magento\Rule\Model\ResourceModel\AbstractResource
     protected $priceCurrency;
 
     /**
+     * @var \Magento\Framework\EntityManager\EntityManager
+     */
+    protected $entityManager;
+
+    /**
+     * Rule constructor.
      * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param Product\ConditionFactory $conditionFactory
@@ -93,7 +99,7 @@ class Rule extends \Magento\Rule\Model\ResourceModel\AbstractResource
      * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Framework\Stdlib\DateTime $dateTime
      * @param PriceCurrencyInterface $priceCurrency
-     * @param string|null $resourcePrefix
+     * @param null $connectionName
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -107,7 +113,7 @@ class Rule extends \Magento\Rule\Model\ResourceModel\AbstractResource
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\Stdlib\DateTime $dateTime,
         PriceCurrencyInterface $priceCurrency,
-        $resourcePrefix = null
+        $connectionName = null
     ) {
         $this->_storeManager = $storeManager;
         $this->_conditionFactory = $conditionFactory;
@@ -118,7 +124,8 @@ class Rule extends \Magento\Rule\Model\ResourceModel\AbstractResource
         $this->_logger = $logger;
         $this->dateTime = $dateTime;
         $this->priceCurrency = $priceCurrency;
-        parent::__construct($context, $resourcePrefix);
+        $this->_associatedEntitiesMap = $this->getAssociatedEntitiesMap();
+        parent::__construct($context, $connectionName);
     }
 
     /**
@@ -130,6 +137,24 @@ class Rule extends \Magento\Rule\Model\ResourceModel\AbstractResource
     protected function _construct()
     {
         $this->_init('mw_freegift_rule', 'rule_id');
+    }
+
+    /**
+     * @param \Magento\Framework\Model\AbstractModel $rule
+     * @return $this
+     */
+    protected function _afterDelete(\Magento\Framework\Model\AbstractModel $rule)
+    {
+        $connection = $this->getConnection();
+        $connection->delete(
+            $this->getTable('catalogrule_product'),
+            ['rule_id=?' => $rule->getId()]
+        );
+        $connection->delete(
+            $this->getTable('catalogrule_group_website'),
+            ['rule_id=?' => $rule->getId()]
+        );
+        return parent::_afterDelete($rule);
     }
 
     /**
@@ -174,27 +199,6 @@ class Rule extends \Magento\Rule\Model\ResourceModel\AbstractResource
         return $this;
     }
 
-    /**
-     * @param \Magento\Framework\Model\AbstractModel $rule
-     * @return $this
-     */
-    protected function _afterDelete(\Magento\Framework\Model\AbstractModel $rule)
-    {
-        $write = $this->getConnection();
-        $write->delete(
-            $this->getTable('mw_freegift_rule_product'),
-            ['rule_id=?' => $rule->getId()]
-        );
-        $write->delete(
-            $this->getTable('mw_freegift_rule_customer_group'),
-            ['rule_id=?' => $rule->getId()]
-        );
-        $write->delete(
-            $this->getTable('mw_freegift_rule_group_website'),
-            ['rule_id=?' => $rule->getId()]
-        );
-        return parent::_afterDelete($rule);
-    }
 
     /**
      * Get catalog rules product price for specific date, website and
@@ -229,54 +233,13 @@ class Rule extends \Magento\Rule\Model\ResourceModel\AbstractResource
     public function getRulePrices(\DateTime $date, $websiteId, $customerGroupId, $productIds)
     {
         $connection = $this->getConnection();
-        $select = $connection->select()->from(
-            $this->getTable('mw_freegift_rule_product_price'),
-            ['product_id', 'rule_price', 'rule_gift_ids']
-        )->where(
-            'rule_date = ?',
-            $date->format('Y-m-d')
-        )->where(
-            'website_id = ?',
-            $websiteId
-        )->where(
-            'customer_group_id = ?',
-            $customerGroupId
-        )->where(
-            'product_id IN(?)',
-            $productIds
-        );
-        return $connection->fetchPairs($select);
-    }
+        $select = $connection->select()
+            ->from($this->getTable('mw_freegift_rule_product_price'), ['product_id', 'rule_price', 'rule_gift_ids'])
+            ->where('rule_date = ?', $date->format('Y-m-d'))
+            ->where('website_id = ?', $websiteId)
+            ->where('customer_group_id = ?', $customerGroupId)
+            ->where('product_id IN(?)', $productIds);
 
-    /**
-     * Retrieve product prices by catalog rule for specific date, website and customer group
-     * Collect data with  product Id => price pairs
-     *
-     * @param \DateTime $date
-     * @param int $websiteId
-     * @param int $customerGroupId
-     * @param array $productIds
-     * @return array
-     */
-    public function getRulePricesGifts(\DateTime $date, $websiteId, $customerGroupId, $productIds)
-    {
-        $connection = $this->getConnection();
-        $select = $connection->select()->from(
-            $this->getTable('mw_freegift_rule_product_price'),
-            ['product_id', 'rule_gift_ids'] // return gift id
-        )->where(
-            'rule_date = ?',
-            $date->format('Y-m-d')
-        )->where(
-            'website_id = ?',
-            $websiteId
-        )->where(
-            'customer_group_id = ?',
-            $customerGroupId
-        )->where(
-            'product_id IN(?)',
-            $productIds
-        );
         return $connection->fetchPairs($select);
     }
 
@@ -295,54 +258,82 @@ class Rule extends \Magento\Rule\Model\ResourceModel\AbstractResource
         if (is_string($date)) {
             $date = strtotime($date);
         }
-        $select = $connection->select()->from(
-            $this->getTable('mw_freegift_rule_product')
-        )->where(
-            'website_id = ?',
-            $websiteId
-        )->where(
-            'customer_group_id = ?',
-            $customerGroupId
-        )->where(
-            'rule_gift_ids <> ?',
-            ""
-        );
-        if(is_array($productId)){
-            $select = $select->where(
-                'product_id IN(?)',
-                $productId
-            );
-        }else{
-            $select = $select->where(
-                'product_id = ?',
-                $productId
-            );
-        }
-        $select = $select->where(
-            'from_time = 0 or from_time < ?',
-            $date
-        );
-        $select = $select->where(
-            'to_time = 0 or to_time > ?',
-            $date
-        );
-        $select = $select->order(
-            ['sort_order ASC']
-        );
+        $select = $connection->select()
+            ->from($this->getTable('mw_freegift_rule_product'))
+            ->where('website_id = ?', $websiteId)
+            ->where('customer_group_id = ?', $customerGroupId)
+            ->where('rule_gift_ids <> ?', "")
+            ->where('product_id = ?', $productId)
+            ->where('from_time = 0 or from_time < ?', $date)
+            ->where('to_time = 0 or to_time > ?', $date);
 
         return $connection->fetchAll($select);
     }
-    function xlog($message = 'null'){
-        if(gettype($message) == 'string'){
-        }else{
-            $message = serialize($message);
-        }
 
-        \Magento\Framework\App\ObjectManager::getInstance()
-            ->get('Psr\Log\LoggerInterface')
-            ->debug($message)
-        ;
+    /**
+     * @param \Magento\Framework\Model\AbstractModel $object
+     * @param mixed $value
+     * @param string $field
+     * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function load(\Magento\Framework\Model\AbstractModel $object, $value, $field = null)
+    {
+        $this->getEntityManager()->load($object, $value);
+        return $this;
     }
+
+    /**
+     * @param AbstractModel $object
+     * @return $this
+     * @throws \Exception
+     */
+    public function save(\Magento\Framework\Model\AbstractModel $object)
+    {
+        $this->getEntityManager()->save($object);
+        return $this;
+    }
+
+    /**
+     * Delete the object
+     *
+     * @param \Magento\Framework\Model\AbstractModel $object
+     * @return $this
+     * @throws \Exception
+     */
+    public function delete(AbstractModel $object)
+    {
+        $this->getEntityManager()->delete($object);
+        return $this;
+    }
+
+    /**
+     * @return array
+     * @deprecated
+     */
+    private function getAssociatedEntitiesMap()
+    {
+        if (!$this->_associatedEntitiesMap) {
+            $this->_associatedEntitiesMap = \Magento\Framework\App\ObjectManager::getInstance()
+                ->get('Magento\CatalogRule\Model\ResourceModel\Rule\AssociatedEntityMap')
+                ->getData();
+        }
+        return $this->_associatedEntitiesMap;
+    }
+
+    /**
+     * @return \Magento\Framework\EntityManager\EntityManager
+     * @deprecated
+     */
+    private function getEntityManager()
+    {
+        if (null === $this->entityManager) {
+            $this->entityManager = \Magento\Framework\App\ObjectManager::getInstance()
+                ->get(\Magento\Framework\EntityManager\EntityManager::class);
+        }
+        return $this->entityManager;
+    }
+
     /**
      * Get active rule data based on few filters
      *

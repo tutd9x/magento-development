@@ -1,18 +1,10 @@
 <?php
 namespace MW\FreeGift\Model\Indexer;
 
-use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Product;
-//use Magento\CatalogRule\Model\ResourceModel\Rule\CollectionFactory as RuleCollectionFactory;
-//use Magento\CatalogRule\Model\Rule;
-
 use MW\FreeGift\Model\ResourceModel\Rule\CollectionFactory as RuleCollectionFactory;
 use MW\FreeGift\Model\Rule;
-
-use Magento\Framework\App\ObjectManager;
-use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
-use MW\FreeGift\Model\Indexer\IndexBuilder\ProductLoader;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -20,11 +12,6 @@ use MW\FreeGift\Model\Indexer\IndexBuilder\ProductLoader;
 class IndexBuilder
 {
     const SECONDS_IN_DAY = 86400;
-
-    /**
-     * @var \Magento\Framework\EntityManager\MetadataPool
-     */
-    protected $metadataPool;
 
     /**
      * CatalogRuleGroupWebsite columns list
@@ -36,7 +23,7 @@ class IndexBuilder
     protected $_catalogRuleGroupWebsiteColumnsList = ['rule_id', 'customer_group_id', 'website_id'];
 
     /**
-     * @var \Magento\Framework\App\ResourceConnection
+     * @var \Magento\Framework\App\Resource
      */
     protected $resource;
 
@@ -91,19 +78,9 @@ class IndexBuilder
     protected $batchCount;
 
     /**
-     * @var \Magento\Framework\DB\Adapter\AdapterInterface
-     */
-    protected $connection;
-
-    /**
-     * @var ProductLoader
-     */
-    private $productLoader;
-
-    /**
      * @param RuleCollectionFactory $ruleCollectionFactory
      * @param PriceCurrencyInterface $priceCurrency
-     * @param \Magento\Framework\App\ResourceConnection $resource
+     * @param \Magento\Framework\App\Resource $resource
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Psr\Log\LoggerInterface $logger
      * @param \Magento\Eav\Model\Config $eavConfig
@@ -111,7 +88,6 @@ class IndexBuilder
      * @param \Magento\Framework\Stdlib\DateTime\DateTime $dateTime
      * @param \Magento\Catalog\Model\ProductFactory $productFactory
      * @param int $batchCount
-     * @param ProductLoader|null $productLoader
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -124,8 +100,7 @@ class IndexBuilder
         \Magento\Framework\Stdlib\DateTime $dateFormat,
         \Magento\Framework\Stdlib\DateTime\DateTime $dateTime,
         \Magento\Catalog\Model\ProductFactory $productFactory,
-        $batchCount = 1000,
-        ProductLoader $productLoader = null
+        $batchCount = 1000
     ) {
         $this->resource = $resource;
         $this->connection = $resource->getConnection();
@@ -138,42 +113,6 @@ class IndexBuilder
         $this->dateTime = $dateTime;
         $this->productFactory = $productFactory;
         $this->batchCount = $batchCount;
-        $this->productLoader = $productLoader ?:
-            ObjectManager::getInstance()->get(ProductLoader::class);
-    }
-
-    /**
-     * Reindex by ids
-     *
-     * @param int $id
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @return void
-     * @api
-     */
-    public function reindexByRuleId($id)
-    {
-        try {
-            $this->doReindexByRuleId($id);
-        } catch (\Exception $e) {
-            $this->critical($e);
-            throw new \Magento\Framework\Exception\LocalizedException(
-                __("Catalog rule indexing failed. See details in exception log.")
-            );
-        }
-    }
-
-    /**
-     * Reindex by ids. Template method
-     *
-     * @param array $ids
-     * @return void
-     */
-    protected function doReindexByRuleId($id)
-    {
-        foreach ($this->getRuleById($id) as $rule) {
-            $this->updateRuleProductData($rule);
-            $this->updateCatalogRuleGroupWebsiteData();
-        }
     }
 
     /**
@@ -217,11 +156,9 @@ class IndexBuilder
     protected function doReindexByIds($ids)
     {
         $this->cleanByIds($ids);
-
-        $products = $this->productLoader->getProducts($ids);
         foreach ($this->getActiveRules() as $rule) {
-            foreach ($products as $product) {
-                $this->applyRule($rule, $product);
+            foreach ($ids as $productId) {
+                $this->applyRule($rule, $this->getProduct($productId));
             }
         }
     }
@@ -266,8 +203,7 @@ class IndexBuilder
     {
         $query = $this->connection->deleteFromSelect(
             $this->connection
-                ->select()
-                ->from($this->resource->getTableName('mw_freegift_rule_product'), 'product_id')
+                ->select($this->resource->getTableName('mw_freegift_rule_product'), 'product_id')
                 ->distinct()
                 ->where('product_id IN (?)', $productIds),
             $this->resource->getTableName('mw_freegift_rule_product')
@@ -275,8 +211,7 @@ class IndexBuilder
         $this->connection->query($query);
 
         $query = $this->connection->deleteFromSelect(
-            $this->connection->select()
-                ->from($this->resource->getTableName('mw_freegift_rule_product_price'), 'product_id')
+            $this->connection->select($this->resource->getTableName('mw_freegift_rule_product_price'), 'product_id')
                 ->distinct()
                 ->where('product_id IN (?)', $productIds),
             $this->resource->getTableName('mw_freegift_rule_product_price')
@@ -294,7 +229,7 @@ class IndexBuilder
     protected function applyRule(Rule $rule, $product)
     {
         $ruleId = $rule->getId();
-        $productEntityId = $product->getId();
+        $productId = $product->getId();
         $websiteIds = array_intersect($product->getWebsiteIds(), $rule->getWebsiteIds());
 
         if (!$rule->validate($product)) {
@@ -305,9 +240,18 @@ class IndexBuilder
             $this->resource->getTableName('mw_freegift_rule_product'),
             [
                 $this->connection->quoteInto('rule_id = ?', $ruleId),
-                $this->connection->quoteInto('product_id = ?', $productEntityId)
+                $this->connection->quoteInto('product_id = ?', $productId)
             ]
         );
+
+        $write = $this->connection; //$this->getWriteAdapter();
+//        if (!$rule->getConditions()->validate($product)) {
+//            $write->delete(
+//                $this->resource->getTableName('mw_freegift_rule_product_price'),
+//                [$write->quoteInto('product_id = ?', $productId)]
+//            );
+//            return $this;
+//        }
 
         $customerGroupIds = $rule->getCustomerGroupIds();
         $fromTime = strtotime($rule->getFromDate());
@@ -331,7 +275,7 @@ class IndexBuilder
                         'to_time' => $toTime,
                         'website_id' => $websiteId,
                         'customer_group_id' => $customerGroupId,
-                        'product_id' => $productEntityId,
+                        'product_id' => $productId,
                         'action_operator' => $actionOperator,
                         'action_amount' => $actionAmount,
                         'action_stop' => $actionStop,
@@ -361,6 +305,31 @@ class IndexBuilder
     }
 
     /**
+     * Retrieve connection for read data
+     *
+     * @return \Magento\Framework\DB\Adapter\AdapterInterface
+     */
+    protected function getReadAdapter()
+    {
+        $writeAdapter = $this->getWriteAdapter();
+        if ($writeAdapter && $writeAdapter->getTransactionLevel() > 0) {
+            // if transaction is started we should use write connection for reading
+            return $writeAdapter;
+        }
+        return $this->resource->getConnection('read');
+    }
+
+    /**
+     * Retrieve connection for write data
+     *
+     * @return \Magento\Framework\DB\Adapter\AdapterInterface
+     */
+    protected function getWriteAdapter()
+    {
+        return $this->resource->getConnection('write');
+    }
+
+    /**
      * @param string $tableName
      * @return string
      */
@@ -378,16 +347,14 @@ class IndexBuilder
     protected function updateRuleProductData(Rule $rule)
     {
         $ruleId = $rule->getId();
+        $write = $this->getWriteAdapter();
         if ($rule->getProductsFilter()) {
-            $this->connection->delete(
+            $write->delete(
                 $this->getTable('mw_freegift_rule_product'),
                 ['rule_id=?' => $ruleId, 'product_id IN (?)' => $rule->getProductsFilter()]
             );
         } else {
-            $this->connection->delete(
-                $this->getTable('mw_freegift_rule_product'),
-                $this->connection->quoteInto('rule_id=?', $ruleId)
-            );
+            $write->delete($this->getTable('mw_freegift_rule_product'), $write->quoteInto('rule_id=?', $ruleId));
         }
 
         if (!$rule->getIsActive()) {
@@ -432,6 +399,7 @@ class IndexBuilder
                             'rule_id' => $ruleId,
                             'from_time' => $fromTime,
                             'to_time' => $toTime,
+                            'website_id' => $websiteId,
                             'customer_group_id' => $customerGroupId,
                             'product_id' => $productId,
                             'rule_gift_ids' => $ruleGiftIds,
@@ -439,14 +407,13 @@ class IndexBuilder
                             'action_amount' => $actionAmount,
                             'action_stop' => $actionStop,
                             'sort_order' => $sortOrder,
-                            'website_id' => $websiteId,
                             'sub_simple_action' => $subActionOperator,
                             'sub_discount_amount' => $subActionAmount,
                             'condition_customized' => $conditionCustomized
                         ];
 
                         if (count($rows) == $this->batchCount) {
-                            $this->connection->insertMultiple($this->getTable('mw_freegift_rule_product'), $rows);
+                            $write->insertMultiple($this->getTable('mw_freegift_rule_product'), $rows);
                             $rows = [];
                         }
                     endif;
@@ -454,7 +421,7 @@ class IndexBuilder
             }
         }
         if (!empty($rows)) {
-            $this->connection->insertMultiple($this->getTable('mw_freegift_rule_product'), $rows);
+            $write->insertMultiple($this->getTable('mw_freegift_rule_product'), $rows);
         }
 
         return $this;
@@ -473,24 +440,26 @@ class IndexBuilder
         $fromDate = mktime(0, 0, 0, date('m'), date('d') - 1);
         $toDate = mktime(0, 0, 0, date('m'), date('d') + 1);
 
+        $productId = $product ? $product->getId() : null;
+
         /**
          * Update products rules prices per each website separately
          * because of max join limit in mysql
          */
-        foreach ($this->storeManager->getWebsites() as $website) {
-            $productsStmt = $this->getRuleProductsStmt($website->getId(), $product);
-
+        foreach ($this->storeManager->getWebsites(false) as $website) {
+            $productsStmt = $this->getRuleProductsStmt($website->getId(), $productId);
             $dayPrices = [];
             $stopFlags = [];
             $prevKey = null;
 
-            while ($ruleData = $productsStmt->fetch()) {
+//            $this->xlog(serialize($productsStmt->fetch()));
+//            $this->xlog(serialize($productsStmt->fetchAll()));
+            while ($ruleDatas = $productsStmt->fetchAll()) {
+                foreach($ruleDatas as $ruleData):
+//                $this->xlog(serialize($ruleData));
+
                 $ruleProductId = $ruleData['product_id'];
-                $productKey = $ruleProductId .
-                    '_' .
-                    $ruleData['website_id'] .
-                    '_' .
-                    $ruleData['customer_group_id'];
+                $productKey = $ruleProductId . '_' . $ruleData['rule_id'] . '_' . $ruleData['website_id'] . '_' . $ruleData['customer_group_id'];
 
                 if ($prevKey && $prevKey != $productKey) {
                     $stopFlags = [];
@@ -499,9 +468,6 @@ class IndexBuilder
                         $dayPrices = [];
                     }
                 }
-
-//                $ruleData['from_time'] = $this->roundTime($ruleData['from_time']);
-//                $ruleData['to_time'] = $this->roundTime($ruleData['to_time']);
 
                 /**
                  * Build prices for each day
@@ -516,7 +482,6 @@ class IndexBuilder
                         if (isset($stopFlags[$priceKey])) {
                             continue;
                         }
-
                         if (!isset($dayPrices[$priceKey])) {
                             $dayPrices[$priceKey] = [
                                 'rule_date' => $time,
@@ -550,6 +515,7 @@ class IndexBuilder
                 }
 
                 $prevKey = $productKey;
+                endforeach;
             }
             $this->saveRuleProductPrices($dayPrices);
         }
@@ -564,11 +530,12 @@ class IndexBuilder
      */
     protected function updateCatalogRuleGroupWebsiteData()
     {
-        $this->connection->delete($this->getTable('mw_freegift_rule_group_website'), []);
+        $write = $this->getWriteAdapter();
+        $write->delete($this->getTable('mw_freegift_rule_group_website'), []);
 
         $timestamp = $this->dateTime->gmtTimestamp();
 
-        $select = $this->connection->select()->distinct(
+        $select = $write->select()->distinct(
             true
         )->from(
             $this->getTable('mw_freegift_rule_product'),
@@ -581,7 +548,7 @@ class IndexBuilder
             $this->_catalogRuleGroupWebsiteColumnsList
         );
 
-        $this->connection->query($query);
+        $write->query($query);
 
         return $this;
     }
@@ -593,7 +560,7 @@ class IndexBuilder
      */
     protected function deleteOldData()
     {
-        $this->connection->delete($this->getTable('mw_freegift_rule_product_price'));
+        $this->getWriteAdapter()->delete($this->getTable('mw_freegift_rule_product_price'));
         return $this;
     }
 
@@ -607,7 +574,6 @@ class IndexBuilder
         if($ruleData['rule_gift_ids']){
             return $ruleData['rule_gift_ids'];
         }
-        return '';
     }
 
     /**
@@ -617,12 +583,12 @@ class IndexBuilder
      */
     protected function calcRuleProductPrice($ruleData, $productData = null)
     {
+
         if($ruleData['rule_id']){
             return $ruleData['rule_id'];
         }else{
             return 0;
         }
-
 //        if ($productData !== null && isset($productData['rule_price'])) {
 //            $productPrice = $productData['rule_price'];
 //        } else {
@@ -651,12 +617,13 @@ class IndexBuilder
 
     /**
      * @param int $websiteId
-     * @param Product|null $product
+     * @param int|null $productId
      * @return \Zend_Db_Statement_Interface
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    protected function getRuleProductsStmt($websiteId, Product $product = null)
+    protected function getRuleProductsStmt($websiteId, $productId = null)
     {
+        $read = $this->getReadAdapter();
         /**
          * Sort order is important
          * It used for check stop price rule condition.
@@ -673,9 +640,21 @@ class IndexBuilder
             ['rp.website_id', 'rp.customer_group_id', 'rp.product_id', 'rp.sort_order', 'rp.rule_id']
         );
 
-        if ($product && $product->getEntityId()) {
-            $select->where('rp.product_id=?', $product->getEntityId());
+        if ($productId !== null) {
+            $select->where('rp.product_id=?', $productId);
         }
+
+        /**
+         * Join group price to result
+         */
+//        $groupPriceAttr = $this->eavConfig->getAttribute(Product::ENTITY, 'group_price');
+
+//        $select->joinLeft(
+//            ['gp' => $groupPriceAttr->getBackend()->getResource()->getMainTable()],
+//            'gp.entity_id=rp.product_id AND gp.customer_group_id=rp.customer_group_id AND '
+//            . $this->getReadAdapter()->getCheckSql('gp.website_id=0', 'TRUE', 'gp.website_id=rp.website_id'),
+//            'value'
+//        );
 
         /**
          * Join default price and websites prices to result
@@ -684,13 +663,7 @@ class IndexBuilder
 //        $priceTable = $priceAttr->getBackend()->getTable();
 //        $attributeId = $priceAttr->getId();
 //
-//        $linkField = $this->getMetadataPool()->getMetadata(ProductInterface::class)->getLinkField();
-//        $select->join(
-//            ['e' => $this->getTable('catalog_product_entity')],
-//            sprintf('e.entity_id = rp.product_id'),
-//            []
-//        );
-//        $joinCondition = '%1$s.' . $linkField . '=e.' . $linkField . ' AND (%1$s.attribute_id='
+//        $joinCondition = '%1$s.entity_id=rp.product_id AND (%1$s.attribute_id='
 //            . $attributeId
 //            . ') and %1$s.store_id=%2$s';
 //
@@ -724,7 +697,10 @@ class IndexBuilder
 //            []
 //        );
 //        $select->columns([
-//            'default_price' =>$this->connection->getIfNullSql($tableAlias . '.value', 'pp_default.value'),
+//            'default_price' => $this->getReadAdapter()->getIfNullSql(
+//                'gp.value',
+//                $this->getReadAdapter()->getIfNullSql($tableAlias . '.value', 'pp_default.value')
+//            ),
 //        ]);
 
         return $this->connection->query($select);
@@ -737,10 +713,13 @@ class IndexBuilder
      */
     protected function saveRuleProductPrices($arrData)
     {
+
+
         if (empty($arrData)) {
             return $this;
         }
 
+//        $adapter = $this->getWriteAdapter();
         $productIds = [];
 
         try {
@@ -749,25 +728,21 @@ class IndexBuilder
                 $arrData[$key]['rule_date'] = $this->dateFormat->formatDate($data['rule_date'], false);
                 $arrData[$key]['latest_start_date'] = $this->dateFormat->formatDate($data['latest_start_date'], false);
                 $arrData[$key]['earliest_end_date'] = $this->dateFormat->formatDate($data['earliest_end_date'], false);
+//                $dataInsert = $arrData[$key];
+//                $query = '';
+//                if(!) {
+//                    $adapter->insertOnDuplicate($this->getTable('mw_freegift_rule_product_price'), $dataInsert);
+//                }
+//                unset($dataInsert);
             }
+
+            //$this->xlog(serialize($arrData));
             $this->connection->insertOnDuplicate($this->getTable('mw_freegift_rule_product_price'), $arrData);
         } catch (\Exception $e) {
             throw $e;
         }
 
         return $this;
-    }
-
-
-    /**
-     * Get active rule by rule_id
-     *
-     * @return array
-     */
-    protected function getRuleById($ruleId)
-    {
-        return $this->ruleCollectionFactory->create()
-            ->addFieldToFilter('rule_id', $ruleId);
     }
 
     /**
@@ -812,28 +787,10 @@ class IndexBuilder
         $this->logger->critical($e);
     }
 
-    /**
-     * @param int $timeStamp
-     * @return int
-     */
-    private function roundTime($timeStamp)
-    {
-        if (is_numeric($timeStamp) && $timeStamp != 0) {
-            $timeStamp = $this->dateTime->timestamp($this->dateTime->date('Y-m-d 00:00:00', $timeStamp));
-        }
-
-        return $timeStamp;
+    function xlog($message = 'null'){
+        \Magento\Framework\App\ObjectManager::getInstance()
+            ->get('Psr\Log\LoggerInterface')
+            ->debug($message)
+        ;
     }
-
-    /**
-     * @return MetadataPool
-     */
-//    private function getMetadataPool()
-//    {
-//        if (null === $this->metadataPool) {
-//            $this->metadataPool = \Magento\Framework\App\ObjectManager::getInstance()
-//                ->get('Magento\Framework\EntityManager\MetadataPool');
-//        }
-//        return $this->metadataPool;
-//    }
 }
