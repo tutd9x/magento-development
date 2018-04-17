@@ -58,15 +58,4 @@ class Job extends \Magento\Framework\DataObject
         }
         return $this;
     }
-
-    public function applyById($id)
-    {
-        try {
-            $this->ruleProcessor->reindexRow($id);
-            $this->setSuccess(__('Updated rules applied.'));
-        } catch (\Magento\Framework\Exception\LocalizedException $e) {
-            $this->setError($e->getMessage());
-        }
-        return $this;
-    }
 }

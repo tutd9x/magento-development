@@ -143,40 +143,6 @@ class IndexBuilder
     }
 
     /**
-     * Reindex by ids
-     *
-     * @param int $id
-     * @throws \Magento\Framework\Exception\LocalizedException
-     * @return void
-     * @api
-     */
-    public function reindexByRuleId($id)
-    {
-        try {
-            $this->doReindexByRuleId($id);
-        } catch (\Exception $e) {
-            $this->critical($e);
-            throw new \Magento\Framework\Exception\LocalizedException(
-                __("Catalog rule indexing failed. See details in exception log.")
-            );
-        }
-    }
-
-    /**
-     * Reindex by ids. Template method
-     *
-     * @param array $ids
-     * @return void
-     */
-    protected function doReindexByRuleId($id)
-    {
-        foreach ($this->getRuleById($id) as $rule) {
-            $this->updateRuleProductData($rule);
-            $this->updateCatalogRuleGroupWebsiteData();
-        }
-    }
-
-    /**
      * Reindex by id
      *
      * @param int $id

@@ -42,7 +42,7 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
         \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null
     ) {
         parent::__construct($entityFactory, $logger, $fetchStrategy, $eventManager, $connection, $resource);
-        $this->_associatedEntitiesMap = $this->getAssociatedEntitiesMap();
+//        $this->_associatedEntitiesMap = $this->getAssociatedEntitiesMap();
     }
 
     /**
@@ -77,45 +77,45 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
      * @throws \Magento\Framework\Exception\LocalizedException
      * @return void
      */
-    protected function mapAssociatedEntities($entityType, $objectField)
-    {
-        if (!$this->_items) {
-            return;
-        }
-
-        $entityInfo = $this->_getAssociatedEntityInfo($entityType);
-        $ruleIdField = $entityInfo['rule_id_field'];
-        $entityIds = $this->getColumnValues($ruleIdField);
-
-        $select = $this->getConnection()->select()->from(
-            $this->getTable($entityInfo['associations_table'])
-        )->where(
-            $ruleIdField . ' IN (?)',
-            $entityIds
-        );
-
-        $associatedEntities = $this->getConnection()->fetchAll($select);
-
-        array_map(function ($associatedEntity) use ($entityInfo, $ruleIdField, $objectField) {
-            $item = $this->getItemByColumnValue($ruleIdField, $associatedEntity[$ruleIdField]);
-            $itemAssociatedValue = $item->getData($objectField) === null ? [] : $item->getData($objectField);
-            $itemAssociatedValue[] = $associatedEntity[$entityInfo['entity_id_field']];
-            $item->setData($objectField, $itemAssociatedValue);
-        }, $associatedEntities);
-    }
+//    protected function mapAssociatedEntities($entityType, $objectField)
+//    {
+//        if (!$this->_items) {
+//            return;
+//        }
+//
+//        $entityInfo = $this->_getAssociatedEntityInfo($entityType);
+//        $ruleIdField = $entityInfo['rule_id_field'];
+//        $entityIds = $this->getColumnValues($ruleIdField);
+//
+//        $select = $this->getConnection()->select()->from(
+//            $this->getTable($entityInfo['associations_table'])
+//        )->where(
+//            $ruleIdField . ' IN (?)',
+//            $entityIds
+//        );
+//
+//        $associatedEntities = $this->getConnection()->fetchAll($select);
+//
+//        array_map(function ($associatedEntity) use ($entityInfo, $ruleIdField, $objectField) {
+//            $item = $this->getItemByColumnValue($ruleIdField, $associatedEntity[$ruleIdField]);
+//            $itemAssociatedValue = $item->getData($objectField) === null ? [] : $item->getData($objectField);
+//            $itemAssociatedValue[] = $associatedEntity[$entityInfo['entity_id_field']];
+//            $item->setData($objectField, $itemAssociatedValue);
+//        }, $associatedEntities);
+//    }
 
     /**
      * @return $this
      * @throws \Exception
      */
-    protected function _afterLoad()
-    {
-        $this->mapAssociatedEntities('website', 'website_ids');
-        $this->mapAssociatedEntities('customer_group', 'customer_group_ids');
-
-        $this->setFlag('add_websites_to_result', false);
-        return parent::_afterLoad();
-    }
+//    protected function _afterLoad()
+//    {
+//        $this->mapAssociatedEntities('website', 'website_ids');
+//        $this->mapAssociatedEntities('customer_group', 'customer_group_ids');
+//
+//        $this->setFlag('add_websites_to_result', false);
+//        return parent::_afterLoad();
+//    }
 
     /**
      * Limit rules collection by specific customer group
@@ -146,11 +146,11 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
      */
     private function getAssociatedEntitiesMap()
     {
-        if (!$this->_associatedEntitiesMap) {
-            $this->_associatedEntitiesMap = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get('Magento\CatalogRule\Model\ResourceModel\Rule\AssociatedEntityMap')
-                ->getData();
-        }
+//        if (!$this->_associatedEntitiesMap) {
+//            $this->_associatedEntitiesMap = \Magento\Framework\App\ObjectManager::getInstance()
+//                ->get('Magento\CatalogRule\Model\ResourceModel\Rule\AssociatedEntityMap')
+//                ->getData();
+//        }
         return $this->_associatedEntitiesMap;
     }
 }

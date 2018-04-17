@@ -97,7 +97,12 @@ class Save extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
                     unset($data['rule']);
                 }
                 if(isset($data['product_ids'])){
-                    $data['gift_product_ids'] = rtrim(str_replace("&",",",$data['product_ids']),",");
+
+                    $selected_product_ids = str_replace("&on","",$data['product_ids']);
+                    $selected_product_ids = str_replace("&",",",$selected_product_ids);
+                    $selected_product_ids = rtrim($selected_product_ids,",");
+
+                    $data['gift_product_ids'] = $selected_product_ids;
                     unset($data['product_ids']);
                 }
 

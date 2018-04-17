@@ -160,7 +160,7 @@ interface RuleInterface
      * Set is buy_x
      *
      * @param int|string $buy_x
-     * @return \MW\FreeGift\Api\Data\RuleInterface
+     * @return $this
      */
 //    public function setBuyX($buyX);
 
@@ -168,7 +168,7 @@ interface RuleInterface
      * Set is get_y
      *
      * @param int|string $get_y
-     * @return \MW\FreeGift\Api\Data\RuleInterface
+     * @return $this
      */
 //    public function setGetY($getY);
 }

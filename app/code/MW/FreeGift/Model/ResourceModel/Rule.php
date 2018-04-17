@@ -124,7 +124,7 @@ class Rule extends \Magento\Rule\Model\ResourceModel\AbstractResource
         $this->_logger = $logger;
         $this->dateTime = $dateTime;
         $this->priceCurrency = $priceCurrency;
-        $this->_associatedEntitiesMap = $this->getAssociatedEntitiesMap();
+//        $this->_associatedEntitiesMap = $this->getAssociatedEntitiesMap();
         parent::__construct($context, $connectionName);
     }
 
@@ -147,11 +147,11 @@ class Rule extends \Magento\Rule\Model\ResourceModel\AbstractResource
     {
         $connection = $this->getConnection();
         $connection->delete(
-            $this->getTable('catalogrule_product'),
+            $this->getTable('mw_freegift_rule_product'),
             ['rule_id=?' => $rule->getId()]
         );
         $connection->delete(
-            $this->getTable('catalogrule_group_website'),
+            $this->getTable('mw_freegift_rule_group_website'),
             ['rule_id=?' => $rule->getId()]
         );
         return parent::_afterDelete($rule);
@@ -277,22 +277,22 @@ class Rule extends \Magento\Rule\Model\ResourceModel\AbstractResource
      * @return $this
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function load(\Magento\Framework\Model\AbstractModel $object, $value, $field = null)
-    {
-        $this->getEntityManager()->load($object, $value);
-        return $this;
-    }
+//    public function load(\Magento\Framework\Model\AbstractModel $object, $value, $field = null)
+//    {
+//        $this->getEntityManager()->load($object, $value);
+//        return $this;
+//    }
 
     /**
      * @param AbstractModel $object
      * @return $this
      * @throws \Exception
      */
-    public function save(\Magento\Framework\Model\AbstractModel $object)
-    {
-        $this->getEntityManager()->save($object);
-        return $this;
-    }
+//    public function save(\Magento\Framework\Model\AbstractModel $object)
+//    {
+//        $this->getEntityManager()->save($object);
+//        return $this;
+//    }
 
     /**
      * Delete the object
@@ -301,38 +301,38 @@ class Rule extends \Magento\Rule\Model\ResourceModel\AbstractResource
      * @return $this
      * @throws \Exception
      */
-    public function delete(AbstractModel $object)
-    {
-        $this->getEntityManager()->delete($object);
-        return $this;
-    }
+//    public function delete(AbstractModel $object)
+//    {
+//        $this->getEntityManager()->delete($object);
+//        return $this;
+//    }
 
     /**
      * @return array
      * @deprecated
      */
-    private function getAssociatedEntitiesMap()
-    {
-        if (!$this->_associatedEntitiesMap) {
-            $this->_associatedEntitiesMap = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get('Magento\CatalogRule\Model\ResourceModel\Rule\AssociatedEntityMap')
-                ->getData();
-        }
-        return $this->_associatedEntitiesMap;
-    }
+//    private function getAssociatedEntitiesMap()
+//    {
+//        if (!$this->_associatedEntitiesMap) {
+//            $this->_associatedEntitiesMap = \Magento\Framework\App\ObjectManager::getInstance()
+//                ->get('Magento\CatalogRule\Model\ResourceModel\Rule\AssociatedEntityMap')
+//                ->getData();
+//        }
+//        return $this->_associatedEntitiesMap;
+//    }
 
     /**
      * @return \Magento\Framework\EntityManager\EntityManager
      * @deprecated
      */
-    private function getEntityManager()
-    {
-        if (null === $this->entityManager) {
-            $this->entityManager = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\EntityManager\EntityManager::class);
-        }
-        return $this->entityManager;
-    }
+//    private function getEntityManager()
+//    {
+//        if (null === $this->entityManager) {
+//            $this->entityManager = \Magento\Framework\App\ObjectManager::getInstance()
+//                ->get(\Magento\Framework\EntityManager\EntityManager::class);
+//        }
+//        return $this->entityManager;
+//    }
 
     /**
      * Get active rule data based on few filters

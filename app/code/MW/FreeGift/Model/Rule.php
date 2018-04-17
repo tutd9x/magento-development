@@ -368,13 +368,13 @@ class Rule extends \Magento\Rule\Model\AbstractModel implements \MW\FreeGift\Api
     public function validateData(\Magento\Framework\DataObject $dataObject)
     {
         $result = parent::validateData($dataObject);
-        if ($result === true) {
-            $result = [];
-        }
-
-        $action = $dataObject->getData('simple_action');
-        $discount = $dataObject->getData('discount_amount');
-        $result = array_merge($result, $this->validateDiscount($action, $discount));
+//        if ($result === true) {
+//            $result = [];
+//        }
+//
+//        $action = $dataObject->getData('simple_action');
+//        $discount = $dataObject->getData('discount_amount');
+//        $result = array_merge($result, $this->validateDiscount($action, $discount));
 
         return !empty($result) ? $result : true;
     }
@@ -387,27 +387,27 @@ class Rule extends \Magento\Rule\Model\AbstractModel implements \MW\FreeGift\Api
      *
      * @return array Validation errors
      */
-    protected function validateDiscount($action, $discount)
-    {
-        $result = [];
-        switch ($action) {
-            case 'by_percent':
-            case 'to_percent':
-                if ($discount < 0 || $discount > 100) {
-                    $result[] = __('Percentage discount should be between 0 and 100.');
-                };
-                break;
-            case 'by_fixed':
-            case 'to_fixed':
-                if ($discount < 0) {
-                    $result[] = __('Discount value should be 0 or greater.');
-                };
-                break;
-            default:
-                $result[] = __('Unknown action.');
-        }
-        return $result;
-    }
+//    protected function validateDiscount($action, $discount)
+//    {
+//        $result = [];
+//        switch ($action) {
+//            case 'by_percent':
+//            case 'to_percent':
+//                if ($discount < 0 || $discount > 100) {
+//                    $result[] = __('Percentage discount should be between 0 and 100.');
+//                };
+//                break;
+//            case 'by_fixed':
+//            case 'to_fixed':
+//                if ($discount < 0) {
+//                    $result[] = __('Discount value should be 0 or greater.');
+//                };
+//                break;
+//            default:
+//                $result[] = __('Unknown action.');
+//        }
+//        return $result;
+//    }
 
     /**
      * Calculate price using catalog price rule of product
