@@ -86,6 +86,24 @@
                             <argument name="options" xsi:type="options" model="Magento\Config\Model\Config\Source\Website\OptionHash"/>
                         </arguments>
                     </block>
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" as="action">
+                        <arguments>
+                            <argument name="type" xsi:type="string">action</argument>
+                            <argument name="header" xsi:type="string" translate="true">Action</argument>
+                            <argument name="filter" xsi:type="string">0</argument>
+                            <argument name="sortable" xsi:type="string">0</argument>
+                            <argument name="index" xsi:type="string">rule_id</argument>
+                            <argument name="actions" xsi:type="array">
+                                <item name="edit" xsi:type="array">
+                                    <item name="caption" xsi:type="string" translate="true">Edit</item>
+                                    <item name="url" xsi:type="array">
+                                        <item name="base" xsi:type="string">*/*/edit</item>
+                                    </item>
+                                    <item name="field" xsi:type="string">id</item>
+                                </item>
+                            </argument>
+                        </arguments>
+                    </block>
                 </block>
             </block>
         </referenceBlock>

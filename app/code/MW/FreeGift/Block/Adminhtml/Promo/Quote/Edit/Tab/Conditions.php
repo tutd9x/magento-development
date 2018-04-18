@@ -3,7 +3,8 @@ namespace MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab;
 
 use Magento\Framework\App\ObjectManager;
 
-class Conditions extends \Magento\Backend\Block\Widget\Form\Generic implements \Magento\Ui\Component\Layout\Tabs\TabInterface
+class Conditions extends \Magento\Backend\Block\Widget\Form\Generic implements
+    \Magento\Ui\Component\Layout\Tabs\TabInterface
 {
     /**
      * Core registry
@@ -151,7 +152,7 @@ class Conditions extends \Magento\Backend\Block\Widget\Form\Generic implements \
      * @return \Magento\Framework\Data\Form
      * @throws \Magento\Framework\Exception\LocalizedException
      */
-    protected function addTabToForm($model, $fieldsetId = 'conditions_fieldset', $formName = 'sales_rule_form')
+    protected function addTabToForm($model, $fieldsetId = 'conditions_fieldset', $formName = 'mw_freegift_sales_rule_form')
     {
         if (!$model) {
             $id = $this->getRequest()->getParam('id');

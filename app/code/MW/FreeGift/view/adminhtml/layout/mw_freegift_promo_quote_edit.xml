@@ -3,7 +3,7 @@
     <body>
         <referenceContainer name="content">
             <referenceBlock name="mw_freegift_sales_rule_form">
-                <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Conditions" name="promo_quote_edit_tab_conditions">
+                <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Conditions" name="promo_sales_edit_tab_conditions">
                     <arguments>
                         <argument name="config" xsi:type="array">
                             <item name="label" xsi:type="string" translate="true">Conditions</item>
@@ -15,23 +15,21 @@
                         </argument>
                     </arguments>
                 </block>
-
-                <block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\GiftTab" name="promo_catalog_rule_edit_tab_gifttab" template="tab/view.phtml">
-                    <block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\GiftForm" name="promo_catalog_rule_edit_tab_giftform"/>
-                    <block class="MW\FreeGift\Block\Adminhtml\Promo\Catalog\Edit\Tab\GiftGrid" name="promo_catalog_rule_edit_tab_giftgrid"/>
-                    <block class="Magento\Backend\Block\Widget\Grid\Serializer" name="promo_catalog_rule_edit_tab_giftgrid_serializer" template="MW_FreeGift::tab/grid/serializer.phtml">
+                <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\GiftTab" name="promo_sales_rule_edit_tab_gifttab" template="MW_FreeGift::tab/view.phtml">
+                    <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\GiftForm" name="promo_sales_rule_edit_tab_giftform"/>
+                    <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\GiftGrid" name="promo_sales_rule_edit_tab_giftgrid"/>
+                    <block class="Magento\Backend\Block\Widget\Grid\Serializer" name="promo_sales_rule_edit_tab_giftgrid_serializer" template="MW_FreeGift::tab/grid/serializer.phtml">
                         <arguments>
                             <!--<argument name="input_names" xsi:type="string">position</argument>-->
-                            <argument name="grid_block" xsi:type="string">promo_catalog_rule_edit_tab_giftgrid</argument>
+                            <argument name="grid_block" xsi:type="string">promo_sales_rule_edit_tab_giftgrid</argument>
                             <argument name="callback" xsi:type="string">getSelectedGiftProducts</argument>
                             <argument name="input_element_name" xsi:type="string">product_ids</argument>
                             <argument name="reload_param_name" xsi:type="string">gift_product_ids</argument>
-                            <argument name="form_name" xsi:type="string">mw_freegift_catalog_rule_form</argument>
+                            <argument name="form_name" xsi:type="string">mw_freegift_sales_rule_form</argument>
                         </arguments>
                     </block>
                 </block>
-
-                <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Coupons" name="promo_sales_rule_edit_tab_coupons" as="promo_sales_rule_edit_tab_coupons" template="Magento_SalesRule::tab/coupons.phtml">
+                <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Coupons" name="promo_sales_rule_edit_tab_coupons" template="MW_FreeGift::tab/coupons.phtml">
                     <arguments>
                         <argument name="config" xsi:type="array">
                             <item name="label" xsi:type="string" translate="true">Manage Coupon Codes</item>
@@ -40,14 +38,12 @@
                             <item name="sortOrder" xsi:type="string">50</item>
                             <item name="canShow" xsi:type="boolean">false</item>
                             <item name="componentType" xsi:type="string">fieldset</item>
-                            <item name="component" xsi:type="string">Magento_SalesRule/js/form/element/manage-coupon-codes</item>
+                            <item name="component" xsi:type="string">MW_FreeGift/js/form/element/manage-coupon-codes</item>
                         </argument>
                     </arguments>
-                    <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Coupons\Form" name="promo_quote_edit_tab_coupons_form"/>
-                    <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Coupons\Grid" name="promo_quote_edit_tab_coupons_grid"/>
+                    <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Coupons\Form" name="promo_sales_edit_tab_coupons_form"/>
+                    <block class="MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab\Coupons\Grid" name="promo_sales_edit_tab_coupons_grid"/>
                 </block>
-
-
             </referenceBlock>
 
             <uiComponent name="mw_freegift_sales_rule_form"/>
@@ -55,7 +51,7 @@
         </referenceContainer>
 
         <referenceBlock name="head.components">
-            <block class="Magento\Framework\View\Element\Js\Components" name="sales_rule_form_page_head_components" template="Magento_SalesRule::promo/salesrulejs.phtml"/>
+            <block class="Magento\Framework\View\Element\Js\Components" name="mw_sales_rule_form_page_head_components" template="MW_FreeGift::promo/salesrulejs.phtml"/>
         </referenceBlock>
     </body>
 </page>

@@ -28,4 +28,10 @@
         </arguments>
     </type>
 
+    <preference for="MW\FreeGift\Model\Spi\CouponResourceInterface"
+                type="MW\FreeGift\Model\ResourceModel\Coupon" />
+    <preference for="MW\FreeGift\Api\Data\CouponGenerationSpecInterface"
+                type="MW\FreeGift\Model\Data\CouponGenerationSpec" />
+
+
 </config>

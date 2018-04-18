@@ -7,7 +7,8 @@ namespace MW\FreeGift\Model;
  * @method \MW\FreeGift\Model\ResourceModel\Coupon _getResource()
  * @method \MW\FreeGift\Model\ResourceModel\Coupon getResource()
  */
-class Coupon extends \Magento\Framework\Model\AbstractExtensibleModel implements \Magento\SalesRule\Api\Data\CouponInterface
+class Coupon extends \Magento\Framework\Model\AbstractExtensibleModel implements
+    \MW\FreeGift\Api\Data\CouponInterface
 {
     const KEY_COUPON_ID = 'coupon_id';
     const KEY_RULE_ID = 'rule_id';
@@ -34,10 +35,10 @@ class Coupon extends \Magento\Framework\Model\AbstractExtensibleModel implements
     /**
      * Set rule instance
      *
-     * @param \Magento\SalesRule\Model\Rule $rule
+     * @param \MW\FreeGift\Model\SalesRule $rule
      * @return $this
      */
-    public function setRule(\Magento\SalesRule\Model\Rule $rule)
+    public function setRule(\MW\FreeGift\Model\SalesRule $rule)
     {
         $this->setRuleId($rule->getId());
         return $this;

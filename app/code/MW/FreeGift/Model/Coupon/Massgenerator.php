@@ -8,7 +8,7 @@ namespace MW\FreeGift\Model\Coupon;
  *
  * @author      Magento Core Team <core@magentocommerce.com>
  */
-class Massgenerator extends \Magento\Framework\Model\AbstractModel implements \Magento\SalesRule\Model\Coupon\CodegeneratorInterface
+class Massgenerator extends \Magento\Framework\Model\AbstractModel implements \MW\FreeGift\Model\Coupon\CodegeneratorInterface
 {
     /**
      * Maximum probability of guessing the coupon on the first attempt
@@ -34,7 +34,7 @@ class Massgenerator extends \Magento\Framework\Model\AbstractModel implements \M
     /**
      * Sales rule coupon
      *
-     * @var \Magento\SalesRule\Helper\Coupon
+     * @var \MW\FreeGift\Helper\Coupon
      */
     protected $salesRuleCoupon;
 
@@ -44,7 +44,7 @@ class Massgenerator extends \Magento\Framework\Model\AbstractModel implements \M
     protected $date;
 
     /**
-     * @var \Magento\SalesRule\Model\CouponFactory
+     * @var \MW\FreeGift\Model\CouponFactory
      */
     protected $couponFactory;
 
@@ -56,8 +56,8 @@ class Massgenerator extends \Magento\Framework\Model\AbstractModel implements \M
     /**
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
-     * @param \Magento\SalesRule\Helper\Coupon $salesRuleCoupon
-     * @param \Magento\SalesRule\Model\CouponFactory $couponFactory
+     * @param \MW\FreeGift\Helper\Coupon $salesRuleCoupon
+     * @param \MW\FreeGift\Model\CouponFactory $couponFactory
      * @param \Magento\Framework\Stdlib\DateTime\DateTime $date
      * @param \Magento\Framework\Stdlib\DateTime $dateTime
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
@@ -67,8 +67,8 @@ class Massgenerator extends \Magento\Framework\Model\AbstractModel implements \M
     public function __construct(
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
-        \Magento\SalesRule\Helper\Coupon $salesRuleCoupon,
-        \Magento\SalesRule\Model\CouponFactory $couponFactory,
+        \MW\FreeGift\Helper\Coupon $salesRuleCoupon,
+        \MW\FreeGift\Model\CouponFactory $couponFactory,
         \Magento\Framework\Stdlib\DateTime\DateTime $date,
         \Magento\Framework\Stdlib\DateTime $dateTime,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
@@ -89,7 +89,7 @@ class Massgenerator extends \Magento\Framework\Model\AbstractModel implements \M
      */
     protected function _construct()
     {
-        $this->_init('Magento\SalesRule\Model\ResourceModel\Coupon');
+        $this->_init('MW\FreeGift\Model\ResourceModel\Coupon');
     }
 
     /**
@@ -101,7 +101,7 @@ class Massgenerator extends \Magento\Framework\Model\AbstractModel implements \M
     {
         $format = $this->getFormat();
         if (empty($format)) {
-            $format = \Magento\SalesRule\Helper\Coupon::COUPON_FORMAT_ALPHANUMERIC;
+            $format = \MW\FreeGift\Helper\Coupon::COUPON_FORMAT_ALPHANUMERIC;
         }
 
         $splitChar = $this->getDelimiter();
@@ -149,7 +149,7 @@ class Massgenerator extends \Magento\Framework\Model\AbstractModel implements \M
         $size = $this->getQty();
         $maxAttempts = $this->getMaxAttempts() ? $this->getMaxAttempts() : self::MAX_GENERATE_ATTEMPTS;
         $this->increaseLength();
-        /** @var $coupon \Magento\SalesRule\Model\Coupon */
+        /** @var $coupon \MW\FreeGift\Model\Coupon */
         $coupon = $this->couponFactory->create();
         $nowTimestamp = $this->dateTime->formatDate($this->date->gmtTimestamp());
 

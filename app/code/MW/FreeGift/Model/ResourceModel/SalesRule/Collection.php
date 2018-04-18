@@ -140,7 +140,7 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
             $connection = $this->getConnection();
             if (strlen($couponCode)) {
                 $select->joinLeft(
-                    ['rule_coupons' => $this->getTable('salesrule_coupon')],
+                    ['rule_coupons' => $this->getTable('mw_freegift_salesrule_coupon')],
                     $connection->quoteInto(
                         'main_table.rule_id = rule_coupons.rule_id AND main_table.coupon_type != ?',
                         \Magento\SalesRule\Model\Rule::COUPON_TYPE_NO_COUPON
@@ -263,7 +263,7 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
     {
         parent::_initSelect();
         $this->getSelect()->joinLeft(
-            ['rule_coupons' => $this->getTable('salesrule_coupon')],
+            ['rule_coupons' => $this->getTable('mw_freegift_salesrule_coupon')],
             'main_table.rule_id = rule_coupons.rule_id AND rule_coupons.is_primary = 1',
             ['code']
         );

@@ -6,6 +6,7 @@ use Magento\Backend\App\Action\Context;
 use Magento\Framework\Registry;
 use Magento\Framework\Stdlib\DateTime\Filter\Date;
 use MW\FreeGift\Model\SalesRuleFactory;
+use Magento\Framework\App\Response\Http\FileFactory;
 
 abstract class Quote extends Action
 {
@@ -15,6 +16,11 @@ abstract class Quote extends Action
      * @var Registry
      */
     protected $_coreRegistry = null;
+
+    /**
+     * @var \Magento\Framework\App\Response\Http\FileFactory
+     */
+    protected $_fileFactory;
 
     /**
      * Date filter instance
@@ -33,11 +39,13 @@ abstract class Quote extends Action
      *
      * @param Context $context
      * @param Registry $coreRegistry
+     * @param FileFactory $fileFactory
      * @param Date $dateFilter
      */
     public function __construct(
         Context $context,
         Registry $coreRegistry,
+        FileFactory $fileFactory,
         Date $dateFilter,
         SalesRuleFactory $salesruleFactory
     ) {
@@ -45,6 +53,7 @@ abstract class Quote extends Action
         $this->_coreRegistry = $coreRegistry;
         $this->_dateFilter = $dateFilter;
         $this->salesruleFactory = $salesruleFactory;
+        $this->_fileFactory = $fileFactory;
     }
 
     /**
@@ -55,7 +64,7 @@ abstract class Quote extends Action
     protected function _initRule()
     {
         $this->_coreRegistry->register(
-            'current_promo_quote_rule',
+            'current_promo_sales_rule',
             $this->salesruleFactory->create()
         );
         $id = (int)$this->getRequest()->getParam('id');
@@ -65,7 +74,7 @@ abstract class Quote extends Action
         }
 
         if ($id) {
-            $this->_coreRegistry->registry('current_promo_quote_rule')->load($id);
+            $this->_coreRegistry->registry('current_promo_sales_rule')->load($id);
         }
     }
 

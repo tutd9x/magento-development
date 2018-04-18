@@ -171,11 +171,11 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\Data\FormFactory $formFactory
      * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate
-     * @param \Magento\SalesRule\Model\CouponFactory $couponFactory
-     * @param \Magento\SalesRule\Model\Coupon\CodegeneratorFactory $codegenFactory
-     * @param \Magento\SalesRule\Model\Rule\Condition\CombineFactory $condCombineFactory
-     * @param \Magento\SalesRule\Model\Rule\Condition\Product\CombineFactory $condProdCombineF
-     * @param \Magento\SalesRule\Model\ResourceModel\Coupon\Collection $couponCollection
+     * @param CouponFactory $couponFactory
+     * @param Coupon\CodegeneratorFactory $codegenFactory
+     * @param SalesRule\Condition\CombineFactory $condCombineFactory
+     * @param SalesRule\Condition\Product\CombineFactory $condProdCombineF
+     * @param ResourceModel\Coupon\Collection $couponCollection
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb|null $resourceCollection
@@ -187,11 +187,11 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
         \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
-        \Magento\SalesRule\Model\CouponFactory $couponFactory,
-        \Magento\SalesRule\Model\Coupon\CodegeneratorFactory $codegenFactory,
-        \Magento\SalesRule\Model\Rule\Condition\CombineFactory $condCombineFactory,
-        \Magento\SalesRule\Model\Rule\Condition\Product\CombineFactory $condProdCombineF,
-        \Magento\SalesRule\Model\ResourceModel\Coupon\Collection $couponCollection,
+        \MW\FreeGift\Model\CouponFactory $couponFactory,
+        \MW\FreeGift\Model\Coupon\CodegeneratorFactory $codegenFactory,
+        \MW\FreeGift\Model\SalesRule\Condition\CombineFactory $condCombineFactory,
+        \MW\FreeGift\Model\SalesRule\Condition\Product\CombineFactory $condProdCombineF,
+        \MW\FreeGift\Model\ResourceModel\Coupon\Collection $couponCollection,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,

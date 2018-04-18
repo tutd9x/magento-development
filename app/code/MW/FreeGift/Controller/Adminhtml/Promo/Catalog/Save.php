@@ -2,36 +2,42 @@
 namespace MW\FreeGift\Controller\Adminhtml\Promo\Catalog;
 
 use Magento\Framework\Exception\LocalizedException;
-
-
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\Registry;
 use Magento\Framework\Stdlib\DateTime\Filter\Date;
-//use MW\FreeGift\Model\RuleFactory;
+use MW\FreeGift\Model\RuleFactory;
+use Magento\Framework\App\Request\DataPersistorInterface;
 
 class Save extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
 {
+    /**
+     * @var DataPersistorInterface
+     */
+    protected $dataPersistor;
 
     /**
-//     * @var RuleFactory
+     * @var RuleFactory
      */
-//    protected $ruleFactory;
+    protected $ruleFactory;
 
     /**
      * @param Context $context
      * @param Registry $coreRegistry
      * @param Date $dateFilter
-//     * @param RuleFactory $ruleFactory
+     * @param RuleFactory $ruleFactory
+     * @param DataPersistorInterface $dataPersistor
      */
-//    public function __construct(
-//        Context $context,
-//        Registry $coreRegistry,
-//        Date $dateFilter,
-//        RuleFactory $ruleFactory
-//    ) {
-//        $this->ruleFactory = $ruleFactory;
-//        parent::__construct($context, $coreRegistry, $dateFilter);
-//    }
+    public function __construct(
+        Context $context,
+        Registry $coreRegistry,
+        Date $dateFilter,
+        RuleFactory $ruleFactory,
+        DataPersistorInterface $dataPersistor
+    ) {
+        $this->ruleFactory = $ruleFactory;
+        $this->dataPersistor = $dataPersistor;
+        parent::__construct($context, $coreRegistry, $dateFilter, $ruleFactory);
+    }
 
     /**
      * @return void
@@ -40,7 +46,7 @@ class Save extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
     public function execute()
     {
         if ($this->getRequest()->getPostValue()) {
-
+            /** @var \MW\FreeGift\Model\Rule $model */
             $model = $this->ruleFactory->create(); //$this->_objectManager->create('MW\FreeGift\Model\Rule');
             try {
 //                $this->_eventManager->dispatch(
@@ -78,6 +84,7 @@ class Save extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
                         $this->messageManager->addError($errorMessage);
                     }
                     $this->_getSession()->setPageData($data);
+                    $this->dataPersistor->set('catalog_rule', $data);
                     $this->_redirect('mw_freegift/*/edit', ['id' => $model->getId()]);
                     return;
                 }
@@ -109,16 +116,26 @@ class Save extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
                 $model->loadPost($data);
                 //$model->setData('condition_customized', $custom_cdn);
                 $this->_objectManager->get('Magento\Backend\Model\Session')->setPageData($model->getData());
+                $this->dataPersistor->set('catalog_rule', $data);
 
                 $model->save();
 
                 $this->messageManager->addSuccess(__('You saved the rule.'));
                 $this->_objectManager->get('Magento\Backend\Model\Session')->setPageData(false);
+                $this->dataPersistor->clear('catalog_rule');
+
                 if ($this->getRequest()->getParam('auto_apply')) {
                     $this->getRequest()->setParam('rule_id', $model->getId());
                     $this->_forward('applyRules');
                 } else {
-                    $this->_objectManager->create('MW\FreeGift\Model\Flag')->loadSelf()->setState(1)->save();
+                    if ($model->isRuleBehaviorChanged()) {
+                        $this->_objectManager
+                            ->create('MW\FreeGift\Model\Flag')
+                            ->loadSelf()
+                            ->setState(1)
+                            ->save();
+                    }
+
                     if ($this->getRequest()->getParam('back')) {
                         $this->_redirect('mw_freegift/*/edit', ['id' => $model->getId()]);
                         return;
@@ -136,6 +153,7 @@ class Save extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
                 $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
                 $this->_objectManager->get('Magento\Backend\Model\Session')->setPageData($data);
                 $this->_objectManager->get('Psr\Log\LoggerInterface')->debug($e->getMessage());
+                $this->dataPersistor->set('catalog_rule', $data);
                 $this->_redirect('mw_freegift/*/edit', ['id' => $this->getRequest()->getParam('rule_id')]);
                 return;
             }

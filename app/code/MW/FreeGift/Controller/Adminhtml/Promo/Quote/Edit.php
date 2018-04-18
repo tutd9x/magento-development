@@ -16,21 +16,22 @@ class Edit extends Quote
      * @param \Magento\Framework\Registry $coreRegistry
      * @param \Magento\Framework\App\Response\Http\FileFactory $fileFactory
      * @param \Magento\Framework\Stdlib\DateTime\Filter\Date $dateFilter
+     * @param SalesRuleFactory $salesruleFactory,
      * @param \Magento\Framework\View\Result\PageFactory $resultPageFactory
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\Registry $coreRegistry,
+        \Magento\Framework\App\Response\Http\FileFactory $fileFactory,
         \Magento\Framework\Stdlib\DateTime\Filter\Date $dateFilter,
         SalesRuleFactory $salesruleFactory,
-        \Magento\Framework\App\Response\Http\FileFactory $fileFactory,
         \Magento\Framework\View\Result\PageFactory $resultPageFactory
     ) {
-        parent::__construct($context, $coreRegistry, $dateFilter, $salesruleFactory);
+        parent::__construct($context, $coreRegistry, $fileFactory, $dateFilter, $salesruleFactory);
         $this->_coreRegistry = $coreRegistry;
+        $this->_fileFactory = $fileFactory;
         $this->_dateFilter = $dateFilter;
         $this->salesruleFactory = $salesruleFactory;
-        $this->_fileFactory = $fileFactory;
         $this->resultPageFactory = $resultPageFactory;
     }
 

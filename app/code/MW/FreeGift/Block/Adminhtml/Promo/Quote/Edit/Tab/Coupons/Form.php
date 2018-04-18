@@ -38,7 +38,6 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
     {
         /** @var \Magento\Framework\Data\Form $form */
         $form = $this->_formFactory->create();
-
         /**
          * @var \Magento\SalesRule\Helper\Coupon $couponHelper
          */
@@ -49,7 +48,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
 
         $form->setHtmlIdPrefix('coupons_');
 
-        $gridBlock = $this->getLayout()->getBlock('promo_quote_edit_tab_coupons_grid');
+        $gridBlock = $this->getLayout()->getBlock('promo_sales_edit_tab_coupons_grid');
         $gridBlockJsObject = '';
         if ($gridBlock) {
             $gridBlockJsObject = $gridBlock->getJsObjectName();
@@ -68,7 +67,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
                 'label' => __('Coupon Qty'),
                 'title' => __('Coupon Qty'),
                 'required' => true,
-                'class' => 'validate-digits validate-greater-than-zero'
+                'class' => 'validate-digits validate-greater-than-zero',
             ]
         );
 
@@ -82,7 +81,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
                 'required' => true,
                 'note' => __('Excluding prefix, suffix and separators.'),
                 'value' => $couponHelper->getDefaultLength(),
-                'class' => 'validate-digits validate-greater-than-zero'
+                'class' => 'validate-digits validate-greater-than-zero',
             ]
         );
 
@@ -94,7 +93,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
                 'name' => 'format',
                 'options' => $couponHelper->getFormatsList(),
                 'required' => true,
-                'value' => $couponHelper->getDefaultFormat()
+                'value' => $couponHelper->getDefaultFormat(),
             ]
         );
 
@@ -105,7 +104,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
                 'name' => 'prefix',
                 'label' => __('Code Prefix'),
                 'title' => __('Code Prefix'),
-                'value' => $couponHelper->getDefaultPrefix()
+                'value' => $couponHelper->getDefaultPrefix(),
             ]
         );
 
@@ -116,7 +115,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
                 'name' => 'suffix',
                 'label' => __('Code Suffix'),
                 'title' => __('Code Suffix'),
-                'value' => $couponHelper->getDefaultSuffix()
+                'value' => $couponHelper->getDefaultSuffix(),
             ]
         );
 
@@ -129,7 +128,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
                 'title' => __('Dash Every X Characters'),
                 'note' => __('If empty no separation.'),
                 'value' => $couponHelper->getDefaultDashInterval(),
-                'class' => 'validate-digits'
+                'class' => 'validate-digits',
             ]
         );
 
@@ -144,16 +143,16 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
                     __('Generate'),
                     "generateCouponCodes('{$idPrefix}' ,'{$generateUrl}', '{$gridBlockJsObject}')",
                     'generate'
-                )
+                ),
             ]
         );
 
         $this->setForm($form);
 
-        $this->_eventManager->dispatch(
-            'adminhtml_promo_quote_edit_tab_coupons_form_prepare_form',
-            ['form' => $form]
-        );
+//        $this->_eventManager->dispatch(
+//            'adminhtml_promo_quote_edit_tab_coupons_form_prepare_form',
+//            ['form' => $form]
+//        );
 
         return parent::_prepareForm();
     }

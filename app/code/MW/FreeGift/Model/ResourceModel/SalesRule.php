@@ -17,7 +17,18 @@ class SalesRule extends AbstractResource
      *
      * @var array
      */
-    protected $_associatedEntitiesMap = [];
+    protected $_associatedEntitiesMap = [
+        'website' => [
+            'associations_table' => 'mw_freegift_salesrule_website',
+            'rule_id_field' => 'rule_id',
+            'entity_id_field' => 'website_id',
+        ],
+        'customer_group' => [
+            'associations_table' => 'mw_freegift_salesrule_customer_group',
+            'rule_id_field' => 'rule_id',
+            'entity_id_field' => 'customer_group_id',
+        ],
+    ];
 
     /**
      * @var array
@@ -60,7 +71,7 @@ class SalesRule extends AbstractResource
     ) {
         $this->string = $string;
         $this->_resourceCoupon = $resourceCoupon;
-        $this->_associatedEntitiesMap = $this->getAssociatedEntitiesMap();
+//        $this->_associatedEntitiesMap = $this->getAssociatedEntitiesMap();
         parent::__construct($context, $connectionName);
     }
 
@@ -118,19 +129,20 @@ class SalesRule extends AbstractResource
     }
 
     /**
-     * Load an object
+     * Add customer group ids and website ids to rule data after load
      *
-     * @param \Magento\SalesRule\Model\Rule|AbstractModel $object
-     * @param mixed $value
-     * @param string $field field to load by (defaults to model id)
+     * @param AbstractModel $object
      * @return $this
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-//    public function load(AbstractModel $object, $value, $field = null)
-//    {
-//        $this->getEntityManager()->load($object, $value);
-//        return $this;
-//    }
+    protected function _afterLoad(AbstractModel $object)
+    {
+        $object->setData('customer_group_ids', (array)$this->getCustomerGroupIds($object->getId()));
+        $object->setData('website_ids', (array)$this->getWebsiteIds($object->getId()));
+
+        parent::_afterLoad($object);
+        return $this;
+    }
+
 
     /**
      * Bind sales rule to customer group(s) and website(s).
@@ -144,6 +156,22 @@ class SalesRule extends AbstractResource
     {
         if ($object->hasStoreLabels()) {
             $this->saveStoreLabels($object->getId(), $object->getStoreLabels());
+        }
+
+        if ($object->hasWebsiteIds()) {
+            $websiteIds = $object->getWebsiteIds();
+            if (!is_array($websiteIds)) {
+                $websiteIds = explode(',', (string)$websiteIds);
+            }
+            $this->bindRuleToEntity($object->getId(), $websiteIds, 'website');
+        }
+
+        if ($object->hasCustomerGroupIds()) {
+            $customerGroupIds = $object->getCustomerGroupIds();
+            if (!is_array($customerGroupIds)) {
+                $customerGroupIds = explode(',', (string)$customerGroupIds);
+            }
+            $this->bindRuleToEntity($object->getId(), $customerGroupIds, 'customer_group');
         }
 
         // Save product attributes used in rule
@@ -194,7 +222,7 @@ class SalesRule extends AbstractResource
     public function saveStoreLabels($ruleId, $labels)
     {
         $deleteByStoreIds = [];
-        $table = $this->getTable('salesrule_label');
+        $table = $this->getTable('mw_freegift_salesrule_label');
         $connection = $this->getConnection();
 
         $data = [];
@@ -233,7 +261,7 @@ class SalesRule extends AbstractResource
     public function getStoreLabels($ruleId)
     {
         $select = $this->getConnection()->select()->from(
-            $this->getTable('salesrule_label'),
+            $this->getTable('mw_freegift_salesrule_label'),
             ['store_id', 'label']
         )->where(
             'rule_id = :rule_id'
@@ -251,7 +279,7 @@ class SalesRule extends AbstractResource
     public function getStoreLabel($ruleId, $storeId)
     {
         $select = $this->getConnection()->select()->from(
-            $this->getTable('salesrule_label'),
+            $this->getTable('mw_freegift_salesrule_label'),
             'label'
         )->where(
             'rule_id = :rule_id'
@@ -272,7 +300,7 @@ class SalesRule extends AbstractResource
     {
         $connection = $this->getConnection();
         $select = $connection->select()->from(
-            ['a' => $this->getTable('salesrule_product_attribute')],
+            ['a' => $this->getTable('mw_freegift_salesrule_product_attribute')],
             new \Zend_Db_Expr('DISTINCT ea.attribute_code')
         )->joinInner(
             ['ea' => $this->getTable('eav_attribute')],
@@ -292,7 +320,7 @@ class SalesRule extends AbstractResource
     public function setActualProductAttributes($rule, $attributes)
     {
         $connection = $this->getConnection();
-        $connection->delete($this->getTable('salesrule_product_attribute'), ['rule_id=?' => $rule->getId()]);
+        $connection->delete($this->getTable('mw_freegift_salesrule_product_attribute'), ['rule_id=?' => $rule->getId()]);
 
         //Getting attribute IDs for attribute codes
         $attributeIds = [];
@@ -322,7 +350,7 @@ class SalesRule extends AbstractResource
                     }
                 }
             }
-            $connection->insertMultiple($this->getTable('salesrule_product_attribute'), $data);
+            $connection->insertMultiple($this->getTable('mw_freegift_salesrule_product_attribute'), $data);
         }
 
         return $this;
@@ -352,15 +380,30 @@ class SalesRule extends AbstractResource
     }
 
     /**
+     * Load an object
+     *
+     * @param \Magento\SalesRule\Model\Rule|AbstractModel $object
+     * @param mixed $value
+     * @param string $field field to load by (defaults to model id)
+     * @return $this
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+//    public function load(AbstractModel $object, $value, $field = null)
+//    {
+//        $this->getEntityManager()->load($object, $value);
+//        return $this;
+//    }
+
+    /**
      * @param \Magento\Framework\Model\AbstractModel $object
      * @return $this
      * @throws \Exception
      */
-    public function save(\Magento\Framework\Model\AbstractModel $object)
-    {
-        $this->getEntityManager()->save($object);
-        return $this;
-    }
+//    public function save(\Magento\Framework\Model\AbstractModel $object)
+//    {
+//        $this->getEntityManager()->save($object);
+//        return $this;
+//    }
 
     /**
      * Delete the object
@@ -369,36 +412,36 @@ class SalesRule extends AbstractResource
      * @return $this
      * @throws \Exception
      */
-    public function delete(AbstractModel $object)
-    {
-        $this->getEntityManager()->delete($object);
-        return $this;
-    }
+//    public function delete(AbstractModel $object)
+//    {
+//        $this->getEntityManager()->delete($object);
+//        return $this;
+//    }
 
     /**
      * @return array
      * @deprecated
      */
-    private function getAssociatedEntitiesMap()
-    {
-        if (!$this->_associatedEntitiesMap) {
-            $this->_associatedEntitiesMap = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get('Magento\SalesRule\Model\ResourceModel\Rule\AssociatedEntityMap')
-                ->getData();
-        }
-        return $this->_associatedEntitiesMap;
-    }
+//    private function getAssociatedEntitiesMap()
+//    {
+//        if (!$this->_associatedEntitiesMap) {
+//            $this->_associatedEntitiesMap = \Magento\Framework\App\ObjectManager::getInstance()
+//                ->get('Magento\SalesRule\Model\ResourceModel\Rule\AssociatedEntityMap')
+//                ->getData();
+//        }
+//        return $this->_associatedEntitiesMap;
+//    }
 
     /**
      * @return \Magento\Framework\EntityManager\EntityManager
      * @deprecated
      */
-    private function getEntityManager()
-    {
-        if (null === $this->entityManager) {
-            $this->entityManager = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get(\Magento\Framework\EntityManager\EntityManager::class);
-        }
-        return $this->entityManager;
-    }
+//    private function getEntityManager()
+//    {
+//        if (null === $this->entityManager) {
+//            $this->entityManager = \Magento\Framework\App\ObjectManager::getInstance()
+//                ->get(\Magento\Framework\EntityManager\EntityManager::class);
+//        }
+//        return $this->entityManager;
+//    }
 }

@@ -1,8 +1,4 @@
 <?php
-/**
- * Copyright © Magento, Inc. All rights reserved.
- * See COPYING.txt for license details.
- */
 namespace MW\FreeGift\Model\SalesRule\Condition\Product;
 
 use Magento\Catalog\Model\ResourceModel\Product\Collection;
