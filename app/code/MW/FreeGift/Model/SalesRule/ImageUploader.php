@@ -78,9 +78,9 @@ class ImageUploader
         \Magento\MediaStorage\Model\File\UploaderFactory $uploaderFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Psr\Log\LoggerInterface $logger,
-        $baseTmpPath,
-        $basePath,
-        $allowedExtensions
+        $baseTmpPath = 'mw_freegift/tmp/salesrule',
+        $basePath = 'mw_freegift/salesrule',
+        $allowedExtensions = ['jpg', 'jpeg', 'gif', 'png']
     ) {
         $this->coreFileStorageDatabase = $coreFileStorageDatabase;
         $this->mediaDirectory = $filesystem->getDirectoryWrite(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA);

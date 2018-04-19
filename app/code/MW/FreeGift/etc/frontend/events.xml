@@ -1,13 +1,9 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-
-    <!--&lt;!&ndash; catalog rule &ndash;&gt;-->
     <event name="catalog_product_load_after">
         <observer name="freegift" instance="MW\FreeGift\Observer\CatalogProductLoadAfter" />
     </event>
-
     <event name="catalog_product_collection_load_after">
-        <!--<event name="catalog_block_product_list_collection">-->
         <observer name="freegift" instance="MW\FreeGift\Observer\CatalogCategoryProductLoadBefore" />
     </event>
 </config>
