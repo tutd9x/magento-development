@@ -309,7 +309,8 @@
     position: relative;
 }
 .label-freegift{
-    position: absolute;
+    /*position: absolute;*/
+    float: right;
     top: 0;
     right: 0;
 }

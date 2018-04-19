@@ -40,12 +40,19 @@ $_helper = $this->helper('Magento\Catalog\Helper\Output');
      * Position for actions regarding image size changing in vde if needed
      */
     $pos = $block->getPositioned();
+
     ?>
     <div class="products wrapper <?= /* @escapeNotVerified */ $viewMode ?> products-<?= /* @escapeNotVerified */ $viewMode ?>">
         <?php $iterator = 1; ?>
         <ol class="products list items product-items">
             <?php /** @var $_product \Magento\Catalog\Model\Product */ ?>
             <?php foreach ($_productCollection as $_product): ?>
+                <!--                        freegift-->
+                <?php
+                    $blockFreeGift= $block->getLayout()->createBlock('MW\FreeGift\Block\Category\Freeproduct');
+                    $ProductGiftData = $blockFreeGift->getFreeGiftCatalog($_product);
+                ?>
+                <!--                        freegift-->
                 <?= /* @escapeNotVerified */ ($iterator++ == 1) ? '<li class="item product product-item">' : '</li><li class="item product product-item">' ?>
                 <div class="product-item-info" data-container="product-grid">
                     <?php
@@ -57,6 +64,11 @@ $_helper = $this->helper('Magento\Catalog\Helper\Output');
                     ?>
                     <?php // Product Image ?>
                     <a href="<?= /* @escapeNotVerified */ $_product->getProductUrl() ?>" class="product photo product-item-photo" tabindex="-1">
+<!--                        freegift-->
+                        <?php if(count($ProductGiftData) > 0): ?>
+                        <img src="http://demo.mage-world.com/190s5/skin/frontend/rwd/default/mw_freegift/images/freegift_50.png" alt="" class="label-freegift">
+                        <?php endif; ?>
+<!--                        freegift-->
                         <?= $productImage->toHtml() ?>
                     </a>
                     <div class="product details product-item-details">
@@ -112,8 +124,8 @@ $_helper = $this->helper('Magento\Catalog\Helper\Output');
 
                             <!--Free gift-->
                             <?php
-                            $blockFreeGift= $block->getLayout()->createBlock('MW\FreeGift\Block\Category\Freeproduct');
-                            $ProductGiftData = $blockFreeGift->getFreeGiftCatalog($_product);
+//                            $blockFreeGift= $block->getLayout()->createBlock('MW\FreeGift\Block\Category\Freeproduct');
+//                            $ProductGiftData = $blockFreeGift->getFreeGiftCatalog($_product);
                             if(count($ProductGiftData) > 0):
                             ?>
 

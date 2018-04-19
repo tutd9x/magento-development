@@ -10,45 +10,4 @@
         <!--<event name="catalog_block_product_list_collection">-->
         <observer name="freegift" instance="MW\FreeGift\Observer\CatalogCategoryProductLoadBefore" />
     </event>
-
-    <!--&lt;!&ndash; shopping cart rule &ndash;&gt;-->
-
-    <event name="checkout_cart_product_add_after">
-        <observer name="freegift" instance="MW\FreeGift\Observer\ApplyDiscount" />
-    </event>
-
-    <event name="sales_quote_collect_totals_after">
-        <observer name="freegift" instance="MW\FreeGift\Observer\ApplyDiscountSalesrule" />
-    </event>
-
-    <event name="freegift_coupon_code_validate_success">
-        <observer name="freegift" instance="MW\FreeGift\Observer\ApplyFreegiftCode" />
-    </event>
-
-    <event name="freegift_coupon_code_validate_canceled">
-        <observer name="freegift" instance="MW\FreeGift\Observer\ApplyFreegiftCodeCanceled" />
-    </event>
-
-    <!--<event name="sales_quote_item_collection_products_after_load">-->
-    <event name="prepare_catalog_product_collection_prices">
-        <observer name="freegift" instance="MW\FreeGift\Observer\PrepareCatalogProductCollectionPrices" />
-    </event>
-
-    <event name="freegift_quote_address_freegift_item">
-        <observer name="freegift" instance="MW\FreeGift\Observer\ProcessQuoteDiscount" />
-    </event>
-
-    <!--&lt;!&ndash; quote remove item after &ndash;&gt;-->
-    <event name="sales_quote_remove_item">
-        <observer name="freegift" instance="MW\FreeGift\Observer\AfterRemoveItem" />
-    </event>
-
-    <event name="sales_order_place_after">
-        <observer name="freegift" instance="MW\FreeGift\Observer\SalesOrderAfterPlace" />
-    </event>
-
-    <!--<event name="checkout_cart_save_after">-->
-    <event name="checkout_cart_update_items_after">
-        <observer name="freegift" instance="MW\FreeGift\Observer\CartUpdateItemsAfter" />
-    </event>
 </config>
