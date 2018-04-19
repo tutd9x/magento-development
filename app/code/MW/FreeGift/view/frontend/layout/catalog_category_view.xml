@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="MW_FreeGift::css/skin.css"/>
+        <!--<link src="MW_FreeGift::js/page/catalog_product_view.js"/>-->
+        <!--<link src="MW_FreeGift::js/mw_freegift_js.js"/>-->
+    </head>
+    <body>
+        <referenceBlock name="head.additional">
+            <block class="MW\FreeGift\Block\Checkout\Top" name="onestepcheckout.head" template="MW_FreeGift::top.phtml" ifconfig="mw_freegift/group_general/active"  />
+        </referenceBlock>
+        <referenceBlock name="category.products.list">
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">MW_FreeGift::product/list.phtml</argument>
+            </action>
+            <!--<block class="Magento\Framework\View\Element\Template" template="MW_FreeGift::main.phtml" before="addto"/>-->
+        </referenceBlock>
+    </body>
+</page>
+
+

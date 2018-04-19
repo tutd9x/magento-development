@@ -266,7 +266,6 @@ class Rule extends \Magento\Rule\Model\ResourceModel\AbstractResource
             ->where('product_id = ?', $productId)
             ->where('from_time = 0 or from_time < ?', $date)
             ->where('to_time = 0 or to_time > ?', $date);
-
         return $connection->fetchAll($select);
     }
 

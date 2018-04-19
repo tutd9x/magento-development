@@ -171,7 +171,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             $priority = $priorityAT = null;
             $websiteId = $this->_storeManager->getStore()->getWebsiteId();
             $customerGroupId = $this->_customerSession->getCustomerGroupId();
-
             foreach($ruleData as $data) {
                 if (isset($data['rule_id'])) {
                     if(!isset($data['rule_gift_ids']) && isset($data['gift_product_ids']) && isset($data['coupon_type'])) {
@@ -199,7 +198,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                                 $giftData = $this->processArrayGiftData($giftData, $data);
                             }else if($data['sort_order'] < $priority){
                                 $priority = $data['sort_order'];
-                                unset($giftData); $giftData = [];
+//                                unset($giftData); $giftData = []; //leric comment
+                                $giftData = $this->processArrayGiftData($giftData, $data);
+
+                            }else{
                                 $giftData = $this->processArrayGiftData($giftData, $data);
                             }
                         }
@@ -210,7 +212,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             if(count($giftDataAT) > 0) {
                 $giftData = $giftDataAT;
             }
-
             if(count($giftData)) {
                 if ($getOnlyGiftId === TRUE) {
                     return $giftData = $this->_prepareFreeGiftIds($giftData);

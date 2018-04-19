@@ -1,0 +1,69 @@
+/*
+Project: bCarousel
+Author: Brian DiChiara
+Version: 1.1
+Usage: with bCarousel js
+*/
+#mw-fg-slider-cart{	/*display: none;*/}
+#the-carousel {
+	/*width:9000px !important;*/
+	height:100%; /* carousel height */
+	background:none;
+	/*overflow:hidden;*/
+}
+#the-carousel img {
+	border-right:1px solid #FFF;
+}
+
+.listing-type-grid{margin-top:9px; border-bottom:1px solid #dcdcdd;}
+
+.bCarousel-wrapper {
+	overflow:hidden;
+	position:relative;
+	/*width:847px !important;*/
+	background: #fff;
+	border: 1px solid #C5C4C4 ;
+	border-top: 0px none;
+	padding: 17px 0 22px 0px;
+	text-align: center;
+	margin-bottom: 15px;
+	/*height: 191px;*/
+}
+.bCarousel-wrapper ul {
+	padding:0; /* width of back/forward */
+	list-style:none;
+}
+.bCarousel-wrapper li {
+	display:block;
+	float:left;
+	list-style:none;
+	height:auto; /* carousel height */
+	margin-right:35px;
+	width: 140px;
+}
+.bCarousel-wrapper li a{display:block;}
+.bCarousel-wrapper .forward,
+.bCarousel-wrapper .back {
+	right:0;
+	top:0;
+	position:absolute;
+	float:right;
+	display:none;
+	width:25px;
+	z-index: 9999;
+	background:#333;
+	color:#FFF;
+	text-decoration:none;
+	text-align:center;
+	line-height:150px; /* carousel height */
+	text-indent: -9999px;
+}
+.bCarousel-wrapper .forward:hover{background:url(../images/next.png) right center no-repeat;}
+.bCarousel-wrapper .forward{background:url(../images/next1.png) -1px -1px no-repeat; width:43px; height:40px; top:77px;}
+.bCarousel-wrapper .back { left:0; top:77px; background:url(../images/back.png) 1px -1px no-repeat; width:43px; height:40px;}
+.bCarousel-wrapper .back:hover{background:url(../images/prev.png) left center no-repeat;}
+.bCarousel-wrapper .show_arrow{
+display:block;
+
+}
+.bCarousel-wrapper .mw-fg-item{left: 100%; width: 175px; top: 10%;}
