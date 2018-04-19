@@ -1,5 +1,6 @@
 <?php
 namespace MW\FreeGift\Controller\Adminhtml\Promo\Quote;
+
 use \MW\FreeGift\Controller\Adminhtml\Promo\Quote;
 
 class Delete extends Quote

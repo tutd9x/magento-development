@@ -2,9 +2,10 @@
 namespace MW\FreeGift\Block\Adminhtml\Promo\Quote\Edit\Tab;
 
 use Magento\Framework\App\ObjectManager;
+use Magento\Backend\Block\Widget\Form\Generic;
+use Magento\Ui\Component\Layout\Tabs\TabInterface;
 
-class Conditions extends \Magento\Backend\Block\Widget\Form\Generic implements
-    \Magento\Ui\Component\Layout\Tabs\TabInterface
+class Conditions extends Generic implements TabInterface
 {
     /**
      * Core registry
@@ -24,7 +25,7 @@ class Conditions extends \Magento\Backend\Block\Widget\Form\Generic implements
 //    protected $_nameInLayout = 'conditions_apply_to';
 
     /**
-     * @var \Magento\SalesRule\Model\RuleFactory
+     * @var \MW\FreeGift\Model\SalesRuleFactory
      */
     private $ruleFactory;
 
@@ -54,7 +55,7 @@ class Conditions extends \Magento\Backend\Block\Widget\Form\Generic implements
     /**
      * The getter function to get the new RuleFactory dependency
      *
-     * @return \Magento\SalesRule\Model\RuleFactory
+     * @return \MW\FreeGift\Model\SalesRuleFactory
      *
      * @deprecated
      */
@@ -137,6 +138,8 @@ class Conditions extends \Magento\Backend\Block\Widget\Form\Generic implements
     protected function _prepareForm()
     {
         $model = $this->_coreRegistry->registry('current_promo_sales_rule');
+
+        /** @var \Magento\Framework\Data\Form $form */
         $form = $this->addTabToForm($model);
         $this->setForm($form);
 

@@ -4,6 +4,7 @@ namespace MW\FreeGift\Model\SalesRule;
 use MW\FreeGift\Model\ResourceModel\SalesRule\Collection;
 use MW\FreeGift\Model\ResourceModel\SalesRule\CollectionFactory;
 use MW\FreeGift\Model\SalesRule;
+use Magento\Framework\App\Request\DataPersistorInterface;
 
 /**
  * Class DataProvider
@@ -33,6 +34,16 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
     protected $metadataValueProvider;
 
     /**
+     * @var DataPersistorInterface
+     */
+    protected $dataPersistor;
+
+    /**
+     * @var array
+     */
+    public $_storeManager;
+
+    /**
      * Initialize dependencies.
      *
      * @param string $name
@@ -51,6 +62,8 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
         CollectionFactory $collectionFactory,
         \Magento\Framework\Registry $registry,
         \MW\FreeGift\Model\SalesRule\Metadata\ValueProvider $metadataValueProvider,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
+        DataPersistorInterface $dataPersistor,
         array $meta = [],
         array $data = []
     ) {
@@ -58,6 +71,8 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
         $this->coreRegistry = $registry;
         $this->metadataValueProvider = $metadataValueProvider;
         $meta = array_replace_recursive($this->getMetadataValues(), $meta);
+        $this->dataPersistor = $dataPersistor;
+        $this->_storeManager=$storeManager;
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
     }
 
@@ -81,11 +96,20 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
             return $this->loadedData;
         }
         $items = $this->collection->getItems();
+        $baseurl = $this->_storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA);
         /** @var SalesRule $rule */
         foreach ($items as $rule) {
             $rule->load($rule->getId());
 //            $rule->setDiscountAmount($rule->getDiscountAmount() * 1);
 //            $rule->setDiscountQty($rule->getDiscountQty() * 1);
+
+            if ($rule['promotion_banner']):
+                $img = [];
+                $img[0]['tmp_name'] = $rule['promotion_banner'];
+                $img[0]['name'] = $rule['promotion_banner'];
+                $img[0]['url'] = $baseurl . 'mw_freegift/salesrule/' . $rule['promotion_banner'];
+                $rule['promotion_banner'] = $img;
+            endif;
 
             $this->loadedData[$rule->getId()]['rule_information'] = $rule->getData();
         }

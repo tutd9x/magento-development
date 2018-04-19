@@ -119,6 +119,12 @@ class GiftForm extends Generic implements TabInterface
             $stopRulesProcessing = $model->getStopRulesProcessing();
         }
 
+        if(isset($model) && $model->getNumberOfFreeGift()){
+            $numberOfFreeGift = $model->getNumberOfFreeGift();
+        }else{
+            $numberOfFreeGift = 1;
+        }
+
         $fieldset->addField(
             'stop_rules_processing',
             'select',
@@ -128,6 +134,18 @@ class GiftForm extends Generic implements TabInterface
                 'name' => 'stop_rules_processing',
                 'values' => ['1' => __('Yes'), '0' => __('No')],
                 'value' => $stopRulesProcessing,
+                'data-form-part' => $formName
+            ]
+        );
+
+        $fieldset->addField(
+            'number_of_free_gift',
+            'text',
+            [
+                'name' => 'number_of_free_gift',
+                'label' => __('Number of Free Gifts'),
+                'title' => __('Number of Free Gifts'),
+                'value' => $numberOfFreeGift,
                 'data-form-part' => $formName
             ]
         );

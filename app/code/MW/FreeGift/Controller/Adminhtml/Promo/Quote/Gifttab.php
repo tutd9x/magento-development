@@ -14,11 +14,5 @@ class Gifttab extends Quote
         $this->_initRule();
         $this->_view->loadLayout();
         $this->_view->renderLayout();
-//        return $this;
-        /** @var \Magento\Framework\View\Result\Layout $resultLayout */
-//        $resultLayout = $this->resultFactory->create(ResultFactory::TYPE_LAYOUT);
-//        return $resultLayout;
-
-//        return $this->resultPageFactory->create();
     }
 }

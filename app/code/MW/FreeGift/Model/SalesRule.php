@@ -167,6 +167,13 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
     protected $_storeManager;
 
     /**
+     * Image uploader
+     *
+     * @var \MW\FreeGift\Model\SalesRule\ImageUploader
+     */
+    private $_imageUploader;
+
+    /**
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\Data\FormFactory $formFactory
@@ -177,6 +184,7 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
      * @param SalesRule\Condition\Product\CombineFactory $condProdCombineF
      * @param ResourceModel\Coupon\Collection $couponCollection
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \MW\FreeGift\Model\SalesRule\ImageUploader $imageUploader,
      * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
      * @param \Magento\Framework\Data\Collection\AbstractDb|null $resourceCollection
      * @param array $data
@@ -193,6 +201,7 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
         \MW\FreeGift\Model\SalesRule\Condition\Product\CombineFactory $condProdCombineF,
         \MW\FreeGift\Model\ResourceModel\Coupon\Collection $couponCollection,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \MW\FreeGift\Model\SalesRule\ImageUploader $imageUploader,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
@@ -203,6 +212,7 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
         $this->_condProdCombineF = $condProdCombineF;
         $this->_couponCollection = $couponCollection;
         $this->_storeManager = $storeManager;
+        $this->_imageUploader = $imageUploader;
         parent::__construct(
             $context,
             $registry,
@@ -267,6 +277,15 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
      */
     public function afterSave()
     {
+        $imageName = $this->getData('promotion_banner', null);
+        if ($imageName) {
+            try {
+                $this->_imageUploader->moveFileFromTmp($imageName);
+            } catch (\Exception $e) {
+                $this->_logger->critical($e);
+            }
+        }
+
         $couponCode = trim($this->getCouponCode());
         if (strlen(
             $couponCode
@@ -288,6 +307,7 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
         parent::afterSave();
         return $this;
     }
+
 
     /**
      * Initialize rule model data from array.

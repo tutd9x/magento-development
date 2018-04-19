@@ -103,7 +103,7 @@ class Save extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
                     $data['conditions'] = ( isset($data['rule']['conditions']) ? $data['rule']['conditions'] : []);
                     unset($data['rule']);
                 }
-                if(isset($data['product_ids'])){
+                if(isset($data['product_ids']) && $data['product_ids'] != ""){
 
                     $selected_product_ids = str_replace("&on","",$data['product_ids']);
                     $selected_product_ids = str_replace("&",",",$selected_product_ids);

@@ -33,5 +33,27 @@
     <preference for="MW\FreeGift\Api\Data\CouponGenerationSpecInterface"
                 type="MW\FreeGift\Model\Data\CouponGenerationSpec" />
 
+    <virtualType name="MW\FreeGift\CategoryImageUpload" type="MW\FreeGift\Model\SalesRule\ImageUploader">
+        <arguments>
+            <argument name="baseTmpPath" xsi:type="string">mw_freegift/tmp/salesrule</argument>
+            <argument name="basePath" xsi:type="string">mw_freegift/salesrule</argument>
+            <argument name="allowedExtensions" xsi:type="array">
+                <item name="jpg" xsi:type="string">jpg</item>
+                <item name="jpeg" xsi:type="string">jpeg</item>
+                <item name="gif" xsi:type="string">gif</item>
+                <item name="png" xsi:type="string">png</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <type name="MW\FreeGift\Controller\Adminhtml\Promo\Quote\Upload">
+        <arguments>
+            <argument name="imageUploader" xsi:type="object">MW\FreeGift\CategoryImageUpload</argument>
+        </arguments>
+    </type>
+    <type name="MW\FreeGift\Model\SalesRule">
+        <arguments>
+            <argument name="imageUploader" xsi:type="object">MW\FreeGift\CategoryImageUpload</argument>
+        </arguments>
+    </type>
 
 </config>

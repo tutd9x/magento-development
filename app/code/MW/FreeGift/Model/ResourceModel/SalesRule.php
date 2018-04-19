@@ -60,13 +60,13 @@ class SalesRule extends AbstractResource
     /**
      * @param \Magento\Framework\Model\ResourceModel\Db\Context $context
      * @param \Magento\Framework\Stdlib\StringUtils $string
-     * @param \Magento\SalesRule\Model\ResourceModel\Coupon $resourceCoupon
+     * @param \MW\FreeGift\Model\ResourceModel\Coupon $resourceCoupon
      * @param string $connectionName
      */
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         \Magento\Framework\Stdlib\StringUtils $string,
-        \Magento\SalesRule\Model\ResourceModel\Coupon $resourceCoupon,
+        \MW\FreeGift\Model\ResourceModel\Coupon $resourceCoupon,
         $connectionName = null
     ) {
         $this->string = $string;

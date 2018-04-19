@@ -2,6 +2,9 @@
 namespace MW\FreeGift\Controller\Adminhtml\Promo\Quote;
 
 use MW\FreeGift\Controller\Adminhtml\Promo\Quote;
+use MW\FreeGift\Model\SalesRuleFactory;
+
+
 
 class Save extends Quote
 {
@@ -71,7 +74,7 @@ class Save extends Quote
                 }
                 unset($data['rule']);
 
-                if(isset($data['product_ids'])){
+                if(isset($data['product_ids']) && $data['product_ids'] != ""){
 
                     $selected_product_ids = str_replace("&on","",$data['product_ids']);
                     $selected_product_ids = str_replace("&",",",$selected_product_ids);
@@ -80,34 +83,20 @@ class Save extends Quote
                     $data['gift_product_ids'] = $selected_product_ids;
                     unset($data['product_ids']);
                 }
-
-                //Upload image
-//                if ((isset($_FILES['promotion_banner']['name'])) and (file_exists($_FILES['promotion_banner']['tmp_name']))) {
-//                    try {
-//                        $uploader = new \Magento\Framework\File\Uploader($_FILES['promotion_banner']);
-//                        $uploader->setAllowedExtensions(['jpg','jpeg','gif','png']);
-//                        $uploader->setFilesDispersion(false);
-//                        $uploader->setAllowRenameFiles(false);
-//                        $uploader->save($this->_directory->getAbsolutePath('promotionbanner'),  md5($_FILES['promotion_banner']['name']).'.'.$uploader->getFileExtension());
-//                        $fileName = 'promotionbanner/'.$uploader->getUploadedFileName();
-//                        $data['promotion_banner'] = $fileName;
-//
-//                    }catch (\Exception $e) {
-//                        $this->_logger->critical($e);
-//                    }
-//
-//                } else {
-//                    if (isset($data['promotion_banner']['delete']) && $data['promotion_banner']['delete'] == 1) {
-//                        $data['promotion_banner'] = '';
-//                    } else {
-//                        unset($data['promotion_banner']);
-//                    }
-//                }
-//
-//                if (!isset($data['number_of_free_gift'])) {
-//                    $data['number_of_free_gift'] = 1 ;
-//                }
-
+                
+                if (isset($data['promotion_banner']) && is_array($data['promotion_banner'])) {
+                    if (!empty($data['promotion_banner']['delete'])) {
+                        $data['promotion_banner'] = null;
+                    } else {
+                        if (isset($data['promotion_banner'][0]['name']) && isset($data['promotion_banner'][0]['tmp_name'])) {
+                            $data['promotion_banner'] = $data['promotion_banner'][0]['name'];
+                        } else {
+                            unset($data['promotion_banner']);
+                        }
+                    }
+                } else {
+                    $data['promotion_banner'] = null;
+                }
 
                 $model->loadPost($data);
 
@@ -145,4 +134,5 @@ class Save extends Quote
         }
         $this->_redirect('*/*/');
     }
+
 }
