@@ -6,4 +6,19 @@
     <event name="catalog_product_collection_load_after">
         <observer name="freegift" instance="MW\FreeGift\Observer\CatalogCategoryProductLoadBefore" />
     </event>
+
+
+
+
+
+
+    <event name="sales_quote_collect_totals_after">
+        <observer name="freegift" instance="MW\FreeGift\Observer\Frontend\Quote\ApplySalesrule" />
+    </event>
+
+    <!-- This position is processes for apply shopping cart rule -->
+    <event name="freegift_quote_address_freegift_item">
+        <observer name="freegift" instance="MW\FreeGift\Observer\Frontend\Quote\ProcessApply" />
+    </event>
+
 </config>
