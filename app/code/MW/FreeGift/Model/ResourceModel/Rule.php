@@ -234,7 +234,7 @@ class Rule extends \Magento\Rule\Model\ResourceModel\AbstractResource
     {
         $connection = $this->getConnection();
         $select = $connection->select()
-            ->from($this->getTable('mw_freegift_rule_product_price'), ['product_id', 'rule_price', 'rule_gift_ids'])
+            ->from($this->getTable('mw_freegift_rule_product_price'), ['product_id', 'rule_price'])
             ->where('rule_date = ?', $date->format('Y-m-d'))
             ->where('website_id = ?', $websiteId)
             ->where('customer_group_id = ?', $customerGroupId)

@@ -10,8 +10,6 @@
 
 
 
-
-
     <event name="sales_quote_collect_totals_after">
         <observer name="freegift" instance="MW\FreeGift\Observer\Frontend\Quote\ApplySalesrule" />
     </event>
@@ -20,5 +18,18 @@
     <event name="freegift_quote_address_freegift_item">
         <observer name="freegift" instance="MW\FreeGift\Observer\Frontend\Quote\ProcessApply" />
     </event>
+
+
+    <!-- This position is processes for add gift to cart catalog_product_get_final_price checkout_cart_save_before checkout_cart_product_add_after -->
+    <event name="checkout_cart_product_add_after">
+        <observer name="freegift" instance="MW\FreeGift\Observer\Frontend\Cart\ProcessApply" />
+    </event>
+
+    <event name="sales_quote_remove_item">
+        <observer name="freegift" instance="MW\FreeGift\Observer\Frontend\Cart\AfterRemoveItem" />
+    </event>
+    <!--<event name="sales_quote_product_add_after">-->
+        <!--<observer name="freegift" instance="MW\FreeGift\Observer\Frontend\Quote\AddParentKey" />-->
+    <!--</event>-->
 
 </config>
