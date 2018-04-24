@@ -128,8 +128,7 @@ class ProcessApply implements ObserverInterface
 
         $key = "{$date->format('Y-m-d H:i:s')}|{$wId}|{$gId}|{$pId}";
 
-        $this->_processShoppingCartRule($observer, $key);
-
+        $this->_updateListGift($observer);
 
         $this->_processCatalogRule($observer, $key, $date, $wId, $gId);
 
@@ -151,6 +150,7 @@ class ProcessApply implements ObserverInterface
         $randKey = md5(rand(1111, 9999));
         $giftData = [];
         $ruleData = null;
+        $buy_x = 1;
 
         if (!$this->rulePricesStorage->hasRulePrice($key)) {
             $rulePrice = $this->resourceRuleFactory->create()->getRulePrice($date, $wId, $gId, $pId);
@@ -170,26 +170,33 @@ class ProcessApply implements ObserverInterface
                     return $this;
                 }
 
-                /* Process for gift if exist */
-                $current_qty = $item->getQty();
-                $current_qty_gift = $this->_countGiftInCart();
+
                 $info_buyRequest = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
 
                 if(isset($info_buyRequest['freegift_key'])) {
                     $randKey = $info_buyRequest['freegift_key'];
                 } else {
                     $info_buyRequest['freegift_key'] = $randKey;
+                    $applied_rule_ids = $this->helper->_prepareRuleIds($giftData);
+                    $info_buyRequest['mw_applied_sales_rule'] = serialize($applied_rule_ids);
                     $item->getOptionByCode('info_buyRequest')->setValue(serialize($info_buyRequest));
                 }
+
+                /* Process for gift if exist */
+                $current_qty = $item->getQty();
+                $current_qty_gift = $this->_countGiftInCart($randKey);
 
                 foreach ($giftData as $key => $val) {
                     // process for buy x get y
                     if (!empty($val) && $current_qty >= $val['buy_x']) {
-//                        $val['buy_x'];
 
-                        $qty_for_gift = (int)($current_qty / $val['buy_x']) - $current_qty_gift;
+                        if($val['buy_x'] > 0){
+                            $buy_x = $val['buy_x'];
+                        }
+
+                        $qty_for_gift = (int)($current_qty / $buy_x) - $current_qty_gift;
                         if($qty_for_gift <= 0){
-                            return $this;
+                            continue;
                         }
 
                         $params['product'] = $val['rule_gift_ids'];
@@ -239,6 +246,12 @@ class ProcessApply implements ObserverInterface
         return $this;
     }
 
+    /**
+     * Process price for free product.
+     *
+     * @param \Magento\Framework\Event\Observer $observer
+     * @return $this
+     */
     public function _processRulePrice(\Magento\Framework\Event\Observer $observer, $randKey, $giftData)
     {
         /* @var $item \Magento\Quote\Model\Quote\Item */
@@ -255,30 +268,6 @@ class ProcessApply implements ObserverInterface
             $item->getProduct()->setIsSuperMode(true);
         }
 
-        if(!empty($ruleData) && count($giftData) > 0) {
-            $infoRequest = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
-
-            $applied_rule_ids = $this->helper->_prepareRuleIds($giftData);
-            if (!isset($infoRequest['freegift_key'])) {
-                $infoRequest['freegift_key'] = $randKey;
-            } else {
-                $randKey = $infoRequest['freegift_key'];
-            }
-            $infoRequest['mw_applied_catalog_rule'] = serialize($applied_rule_ids);
-
-            $item->getOptionByCode('info_buyRequest')->setValue(serialize($infoRequest))->save();
-        }
-        return $this;
-    }
-
-    /**
-     * Apply cart rules to product on frontend
-     *
-     * @param \Magento\Framework\Event\Observer $observer
-     * @return $this
-     */
-    private function _processShoppingCartRule(\Magento\Framework\Event\Observer $observer, $key)
-    {
         return $this;
     }
 
@@ -287,11 +276,11 @@ class ProcessApply implements ObserverInterface
      *
      * @return $count
      */
-    public function _countGiftInCart()
+    public function _countGiftInCart($parent_key)
     {
         $count = 0;
         foreach ($this->getQuote()->getAllItems() as $item) {
-            if($item->getOptionByCode('freegift_parent_key') && $item->getOptionByCode('freegift_parent_key')->getValue()){
+            if($item->getOptionByCode('freegift_parent_key') && $item->getOptionByCode('freegift_parent_key')->getValue() == $parent_key){
                 $count++;
 //                return $item->getQty();
             }
@@ -312,5 +301,15 @@ class ProcessApply implements ObserverInterface
         return $this->quote;
     }
 
+    /**
+     * Update list gift product in checkout session
+     *
+     * @param \Magento\Framework\Event\Observer $observer
+     * @return $this
+     */
+    private function _updateListGift(\Magento\Framework\Event\Observer $observer)
+    {
+        return $this;
+    }
 
 }
