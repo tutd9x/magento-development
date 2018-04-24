@@ -14,7 +14,6 @@ var config = {
     //baseUrl: 'MW_FreeGift',
     paths: {
         //'jquery': 'vendor/jquery/jquery',
-        'test': 'MW_FreeGift/js/test',
         'bcarousel': 'MW_FreeGift/js/bcarousel',
         'backbone': 'MW_FreeGift/js/newlib/backbone-min',
         'jquery_tooltip': 'MW_FreeGift/js/jquery.ezpz_tooltip',

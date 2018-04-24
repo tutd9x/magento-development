@@ -4,7 +4,7 @@
     <head>
         <css src="MW_FreeGift::css/skin.css"/>
         <!--<link src="MW_FreeGift::js/page/catalog_product_view.js"/>-->
-        <!--<link src="MW_FreeGift::js/mw_freegift_js.js"/>-->
+        <link src="MW_FreeGift::js/mw_freegift_js.js"/>
     </head>
     <body>
         <referenceBlock name="head.additional">
