@@ -143,10 +143,14 @@ class ProcessApply implements ObserverInterface
      */
     private function _processCatalogRule(\Magento\Framework\Event\Observer $observer, $key, $date, $wId, $gId)
     {
+        $item = $observer->getEvent()->getQuoteItem();
+        if($this->_isGift($item)) {
+            return $this->_processRulePrice($observer);
+        }
+        
         $product = $observer->getEvent()->getProduct();
         $pId = $product->getId();
         $storeId = $product->getStoreId();
-        $item = $observer->getEvent()->getQuoteItem();
         $dateTs = $this->localeDate->scopeTimeStamp($storeId);
 
         //$randKey = md5(rand(1111, 9999));
@@ -154,10 +158,8 @@ class ProcessApply implements ObserverInterface
         $ruleData = null;
         $buy_x = 1;
 
-        if($this->_isGift($item)) {
-            return $this->_processRulePrice($observer);
-        }
-        
+
+
         /* @var $resourceModel \MW\FreeGift\Model\ResourceModel\Rule */
         $resourceModel = $this->resourceRuleFactory->create();
         $ruleData = $resourceModel->getRulesFromProduct($dateTs, $wId, $gId, $pId);
