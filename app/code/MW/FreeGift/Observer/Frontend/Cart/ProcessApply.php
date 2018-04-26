@@ -154,12 +154,18 @@ class ProcessApply implements ObserverInterface
         $ruleData = null;
         $buy_x = 1;
 
+        if($this->_isGift($item)) {
+            return $this->_processRulePrice($observer);
+        }
+        
         /* @var $resourceModel \MW\FreeGift\Model\ResourceModel\Rule */
         $resourceModel = $this->resourceRuleFactory->create();
         $ruleData = $resourceModel->getRulesFromProduct($dateTs, $wId, $gId, $pId);
         /* Sort array by column sort_order */
         array_multisort(array_column($ruleData, 'sort_order'), SORT_ASC, $ruleData);
         $ruleData = $this->_filterByActionStop($ruleData);
+
+
 
         if (!empty($ruleData)) {
 
@@ -176,9 +182,7 @@ class ProcessApply implements ObserverInterface
 
             $this->addRuleInfo($item, $ruleData, $giftData, $parentKey);
 
-            if($this->_isGift($item)) {
-                return $this->_processRulePrice($observer);
-            }
+
 
             /* Process for gift if exist */
             $current_qty = $item->getQty();
