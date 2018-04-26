@@ -177,9 +177,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                     $giftData[$num]['name'] = $data['name'];
                     $giftData[$num]['product_id'] = $data['product_id'];
                     $giftData[$num]['rule_product_id'] = $data['rule_product_id'];
+                    /* @TODO remove rule_gift_ids */
                     $giftData[$num]['rule_gift_ids'] = $giftId;
                     $giftData[$num]['gift_id'] = $giftId;
                     $giftData[$num]['buy_x'] = $condition_customized['buy_x_get_y']['bx'];
+                    $giftData[$num]['freegift_parent_key'] = $data['rule_product_id'] . '_' . $data['rule_id'] . '_' . $data['product_id'] . '_' . $giftId;
                     $num++;
                 }
             }

@@ -101,13 +101,14 @@ class AfterRemoveItem implements ObserverInterface
         $parent_key = [];
         $item_removed = $observer->getEvent()->getQuoteItem();
 
+        $qtyRemoved = $item_removed->getQty();
         if ($this->_isGift($item_removed)) {
             return $this;
         }
 
         if ( $item_removed->getOptionByCode('info_buyRequest') && $itemInfo = unserialize($item_removed->getOptionByCode('info_buyRequest')->getValue()) ) {
-            if (isset($itemInfo['freegift_key'])) {
-                $parent_key = $itemInfo['freegift_key'];
+            if (isset($itemInfo['freegift_keys'])) {
+                $parent_key = $itemInfo['freegift_keys'];
                 if (empty($parent_key)) {
                     return $this;
                 }
@@ -116,30 +117,30 @@ class AfterRemoveItem implements ObserverInterface
 
         foreach ($items as $item) {
 
+            if ($item->getParentItem()) {
+                $item = $item->getParentItem();
+            }
+
             if (!$this->_isGift($item)) {
                 continue;
             }
 
             $data = [];
             if ( $item->getOptionByCode('info_buyRequest') && $data = unserialize($item->getOptionByCode('info_buyRequest')->getValue()) ) {
-
                 if ( isset($data['freegift_parent_key']) && $freegift_parent_key = $data['freegift_parent_key'] ) {
-
                     $result = array_intersect($parent_key,$freegift_parent_key);
                     if(empty($result)){
                         continue;
                     }
-
                     $keys = array_keys($result); //array_search($parent_key, $data['freegift_parent_key']);
-                    foreach ($keys as $key){
-                        unset($data['freegift_parent_key'][$key]);
-                    }
-
-                    if (count( $data['freegift_parent_key'] ) <= 1) {
+                    if (count($data['freegift_parent_key']) <= 1) {
                         $quote->removeItem($item->getItemId())->save();
                     } else {
+                        foreach ($keys as $key){
+                            unset($data['freegift_parent_key'][$key]);
+                        }
                         $item->getOptionByCode('info_buyRequest')->setValue(serialize($data));
-                        $item->setQty(count( $data['freegift_parent_key']));
+                        $item->setQty($item->getQty() - $qtyRemoved);
                     }
                 }
             }
