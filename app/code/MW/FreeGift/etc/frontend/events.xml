@@ -19,7 +19,6 @@
         <observer name="freegift" instance="MW\FreeGift\Observer\Frontend\Quote\ProcessApply" />
     </event>
 
-
     <!-- This position is processes for add gift to cart catalog_product_get_final_price checkout_cart_save_before checkout_cart_product_add_after -->
     <event name="checkout_cart_product_add_after">
         <observer name="freegift" instance="MW\FreeGift\Observer\Frontend\Cart\ProcessApply" />
@@ -31,5 +30,6 @@
     <!--<event name="sales_quote_product_add_after">-->
         <!--<observer name="freegift" instance="MW\FreeGift\Observer\Frontend\Quote\AddParentKey" />-->
     <!--</event>-->
+
 
 </config>

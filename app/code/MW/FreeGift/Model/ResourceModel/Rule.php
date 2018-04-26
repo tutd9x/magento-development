@@ -259,13 +259,19 @@ class Rule extends \Magento\Rule\Model\ResourceModel\AbstractResource
             $date = strtotime($date);
         }
         $select = $connection->select()
-            ->from($this->getTable('mw_freegift_rule_product'))
+            ->from(['rp' => $this->getTable('mw_freegift_rule_product')])
             ->where('website_id = ?', $websiteId)
             ->where('customer_group_id = ?', $customerGroupId)
             ->where('rule_gift_ids <> ?', "")
             ->where('product_id = ?', $productId)
             ->where('from_time = 0 or from_time < ?', $date)
             ->where('to_time = 0 or to_time > ?', $date);
+
+        $select->joinLeft(
+            ['r' =>  $this->getTable('mw_freegift_rule')],
+            'rp.rule_id=r.rule_id ',
+            'r.name'
+        );
         return $connection->fetchAll($select);
     }
 

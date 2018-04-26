@@ -119,6 +119,10 @@ class ProcessApply implements ObserverInterface
         $gift_sales_product_ids = [];
         $rule_ids = explode(',', $freegift_applied_rule_ids);
 
+        if($this->_isGift($item)) {
+            return $this->_processRulePrice($observer);
+        }
+
         foreach($rule_ids as $rule_id){
             $salesrule = $this->_salesRuleFactory->create()->load($rule_id);
             $salesRuleData[$rule_id] = $salesrule->getData();
@@ -148,15 +152,9 @@ class ProcessApply implements ObserverInterface
                 }
             }
 
-            /* @TODO xu ly khi tang qty cua parent product len nhung gap doan nay gift product ko tang dc nua */
-            /* if this item is gift then return here */
-            if ($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1) {
-                return $this->_processRulePrice($observer, $randKey, $giftData);
-            }
-
             /* Process for gift if exist */
             $current_qty = $item->getQty();
-            $current_qty_gift = $this->_countGiftInCart($randKey);
+            $current_qty_gift = $this->_countGiftInCart();
 
             foreach ($giftData as $key => $val) {
 
@@ -165,38 +163,34 @@ class ProcessApply implements ObserverInterface
                     continue;
                 }
 
-                $params['product'] = $val['rule_gift_ids'];
-                $params['rule_name'] = $val['name'];
-                $params['qty'] = $qty_for_gift;
-
-                $product_gift = $this->productRepository->getById($val['rule_gift_ids'], false, $storeId);
-                if ($product_gift->getTypeId() == 'simple') {
-                    $product_gift->addCustomOption('free_sales_gift', 1);
-                    $product_gift->addCustomOption('freegift_parent_key', $randKey);
-
-                    $additionalOptions = [[
-                        'label' => __('Free Gift'),
-                        'value' => $val['name'],
-                        'print_value' => $val['name'],
-                        'option_type' => 'text',
-                        'custom_view' => TRUE,
-                        'freegift' => 1,
-                        'freegift_name' => $val['name'],
-                        'mw_freegift_rule_gift' => 1,
-                        'mw_applied_sales_rule' => $val['rule_id'],
-                        'freegift_parent_key' => $randKey
-                    ]];
-
-                    // add the additional options array with the option code additional_options
-                    $product_gift->addCustomOption('additional_options', serialize($additionalOptions));
-                    $this->cart->addProduct($product_gift, $params);
-                }
+                $this->addProduct($val, $qty_for_gift, $storeId, $randKey);
             }
         }
 
-        $this->_processRulePrice($observer, $randKey, $giftData);
-
         return $this;
+    }
+
+    public function addProduct($val, $qty_for_gift, $storeId, $randKey)
+    {
+        $params['product'] = $val['rule_gift_ids'];
+        $params['rule_name'] = $val['name'];
+        $params['qty'] = $qty_for_gift;
+
+        $product_gift = $this->productRepository->getById($val['rule_gift_ids'], false, $storeId);
+
+        if($product_gift->getTypeId() == 'simple') {
+            $additionalOptions = [[
+                'label' => __('Free Gift'),
+                'value' => $val['name'],
+                'print_value' => $val['name'],
+                'option_type' => 'text',
+                'custom_view' => TRUE,
+            ]];
+            // add the additional options array with the option code additional_options
+            $product_gift->addCustomOption('free_sales_gift', 1);
+            $product_gift->addCustomOption('additional_options', serialize($additionalOptions));
+            $this->cart->addProduct($product_gift, $params);
+        }
     }
 
     /**
@@ -205,7 +199,7 @@ class ProcessApply implements ObserverInterface
      * @param \Magento\Framework\Event\Observer $observer
      * @return $this
      */
-    public function _processRulePrice(\Magento\Framework\Event\Observer $observer, $randKey, $giftData)
+    public function _processRulePrice(\Magento\Framework\Event\Observer $observer)
     {
         /* @var $item \Magento\Quote\Model\Quote\Item */
         /* Call again because need use to get new product added */
@@ -214,12 +208,22 @@ class ProcessApply implements ObserverInterface
             $item = $item->getParentItem();
         }
 
-        $gift_options = $item->getOptionByCode('free_sales_gift');
-        if($gift_options && $gift_options->getValue() == 1){
-            $item->setCustomPrice(0);
-            $item->setOriginalCustomPrice(0);
-            $item->getProduct()->setIsSuperMode(true);
-        }
+        $item->setCustomPrice(0);
+        $item->setOriginalCustomPrice(0);
+        $item->getProduct()->setIsSuperMode(true);
+
+//        $infoRequest = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+//
+//        $applied_rule_ids = $this->helper->_prepareRuleIds($giftData);
+//        if (!isset($infoRequest['freegift_key'])) {
+//            $infoRequest['freegift_key'] = $randKey;
+//        } else {
+//            $randKey = $infoRequest['freegift_key'];
+//        }
+//        $infoRequest['mw_applied_catalog_rule'] = serialize($applied_rule_ids);
+//
+//        $item->getOptionByCode('info_buyRequest')->setValue(serialize($infoRequest))->save();
+
         return $this;
     }
 
@@ -228,15 +232,21 @@ class ProcessApply implements ObserverInterface
      *
      * @return $count
      */
-    public function _countGiftInCart($parent_key)
+    public function _countGiftInCart()
     {
         $count = 0;
         foreach ($this->getQuote()->getAllItems() as $item) {
-            if($item->getOptionByCode('freegift_parent_key') && $item->getOptionByCode('freegift_parent_key')->getValue() == $parent_key){
+            /* @var $item \Magento\Quote\Model\Quote\Item */
+            if ($item->getParentItem()) {
+                $item = $item->getParentItem();
+            }
+
+            $is_gift = $item->getOptionByCode('free_sales_gift');
+            if ($is_gift && $is_gift->getValue() == 1) {
                 $count++;
-//                return $item->getQty();
             }
         }
+
         return $count;
     }
 
@@ -252,4 +262,23 @@ class ProcessApply implements ObserverInterface
         }
         return $this->quote;
     }
+
+    private function _isGift($item)
+    {
+        /* @var $item \Magento\Quote\Model\Quote\Item */
+        if ($item->getParentItem()) {
+            $item = $item->getParentItem();
+        }
+
+        if($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1){
+            return true;
+        }
+
+        if($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1){
+            return true;
+        }
+
+        return false;
+    }
+
 }

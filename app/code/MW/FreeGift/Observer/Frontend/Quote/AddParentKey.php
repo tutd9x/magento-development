@@ -41,28 +41,15 @@ class AddParentKey implements ObserverInterface
             return $this;
         }
 
-
-        $randKey = md5(rand(1111, 9999));
-        $items = $observer->getEvent()->getItems();
-
-        $groups = array();
-        foreach ($items as $item) {
-            $infoRequest = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
-            $productId = $infoRequest['product'];
-            $additionalOption = $item->getOptionByCode('mw_free_catalog_gift');
-            if (isset($additionalOption)) {
-                $dataOptions = $additionalOption->getValue();
-//                $applied_rule_ids = $this->helper->_prepareRuleIds($giftData);
-                if ($dataOptions && !isset($infoRequest['freegift_key'])) {
-                    $infoRequest['freegift_key'] = $randKey;
-                    $item->getOptionByCode('info_buyRequest')->setValue(serialize($infoRequest));
-//                    $infoRequest['mw_applied_catalog_rule'] = serialize($applied_rule_ids);
-                }
+        $data = $observer->getEvent()->getInfo();
+        $cart = $observer->getEvent()->getCart();
+        foreach ($data as $itemId => $itemInfo) {
+            $item = $cart->getQuote()->getItemById($itemId);
+            if (!$item) {
+                continue;
             }
         }
-//        $this->_getSession()->getQuote()->setTotalsCollectedFlag(false);
-//        $this->_getSession()->getQuote()->collectTotals();
-//        $this->_getSession()->getQuote()->setTotalsCollectedFlag(false);
+
 
         return $this;
     }

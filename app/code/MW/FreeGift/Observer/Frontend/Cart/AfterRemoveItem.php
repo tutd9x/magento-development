@@ -88,36 +88,64 @@ class AfterRemoveItem implements ObserverInterface
             return $this;
         }
 
-        $info_buyRequest_of_item_removed = [];
-        $parent_key_removed = '';
-        $quote_item_removed = $observer->getEvent()->getQuoteItem();
-        if ($quote_item_removed->getOptionByCode('info_buyRequest')) {
-            $info_buyRequest_of_item_removed = unserialize($quote_item_removed->getOptionByCode('info_buyRequest')->getValue());
+        $this->_processCatalogRule($observer, $items);
+
+        $this->resetSession();
+
+        return $this;
+    }
+
+    private function _processCatalogRule($observer, $items)
+    {
+        $quote = $this->getQuote();
+        $parent_key = [];
+        $item_removed = $observer->getEvent()->getQuoteItem();
+
+        if ($this->_isGift($item_removed)) {
+            return $this;
         }
 
-        if (isset($info_buyRequest_of_item_removed['freegift_key'])) {
-            $parent_key_removed = $info_buyRequest_of_item_removed['freegift_key'];
+        if ( $item_removed->getOptionByCode('info_buyRequest') && $itemInfo = unserialize($item_removed->getOptionByCode('info_buyRequest')->getValue()) ) {
+            if (isset($itemInfo['freegift_key'])) {
+                $parent_key = $itemInfo['freegift_key'];
+                if (empty($parent_key)) {
+                    return $this;
+                }
+            }
         }
 
-        if ($parent_key_removed != '') {
-            foreach ( $items as $item ) {
-                $additional_options = $item->getOptionByCode('additional_options');
-                if (isset($additional_options)) {
-                    $dataOptions = unserialize($additional_options->getValue());
-                    foreach ($dataOptions as $data) {
-                        if (isset($data['freegift_parent_key']) && $data['freegift_parent_key'] == $parent_key_removed) {
-                            // remove out of quote
-                            $quote->removeItem($item->getItemId())->save();
-                        }
+        foreach ($items as $item) {
+
+            if (!$this->_isGift($item)) {
+                continue;
+            }
+
+            $data = [];
+            if ( $item->getOptionByCode('info_buyRequest') && $data = unserialize($item->getOptionByCode('info_buyRequest')->getValue()) ) {
+
+                if ( isset($data['freegift_parent_key']) && $freegift_parent_key = $data['freegift_parent_key'] ) {
+
+                    $result = array_intersect($parent_key,$freegift_parent_key);
+                    if(empty($result)){
+                        continue;
+                    }
+
+                    $keys = array_keys($result); //array_search($parent_key, $data['freegift_parent_key']);
+                    foreach ($keys as $key){
+                        unset($data['freegift_parent_key'][$key]);
+                    }
+
+                    if (count( $data['freegift_parent_key'] ) <= 1) {
+                        $quote->removeItem($item->getItemId())->save();
+                    } else {
+                        $item->getOptionByCode('info_buyRequest')->setValue(serialize($data));
+                        $item->setQty(count( $data['freegift_parent_key']));
                     }
                 }
             }
         }
 
-        // process for salesrule gift
-
         return $this;
-
     }
 
     protected function resetSession()
@@ -145,5 +173,23 @@ class AfterRemoveItem implements ObserverInterface
             $this->quote = $this->checkoutSession->getQuote();
         }
         return $this->quote;
+    }
+
+    private function _isGift($item)
+    {
+        /* @var $item \Magento\Quote\Model\Quote\Item */
+        if ($item->getParentItem()) {
+            $item = $item->getParentItem();
+        }
+
+        /* @var $item \Magento\Quote\Model\Quote\Item */
+        if($item->getOptionByCode('free_catalog_gift') && $item->getOptionByCode('free_catalog_gift')->getValue() == 1){
+            return true;
+        }
+
+//        if($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1){
+//            return true;
+//        }
+        return false;
     }
 }

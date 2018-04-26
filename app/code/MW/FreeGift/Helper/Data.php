@@ -158,19 +158,51 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         if(isset($data['rule_product_id'])){
             $giftData[$data['rule_id']]['rule_product_id'] = $data['rule_product_id'];
         }
+        $giftData[$data['rule_id']]['sort_order'] =  $data['sort_order'];
         return $giftData;
     }
-    /*
-     * return array gift
-     * */
+
+    public function getGiftDataByRule($ruleData)
+    {
+        $giftData = [];
+        $num = 0;
+        foreach ($ruleData as $data) {
+            $condition_customized = unserialize($data['condition_customized']);
+            $giftIds = [];
+            $giftIds = explode(',',$data['rule_gift_ids']);
+
+            if (count($giftIds) >= 1) {
+                foreach ($giftIds as $giftId) {
+                    $giftData[$num]['rule_id'] = $data['rule_id'];
+                    $giftData[$num]['name'] = $data['name'];
+                    $giftData[$num]['product_id'] = $data['product_id'];
+                    $giftData[$num]['rule_product_id'] = $data['rule_product_id'];
+                    $giftData[$num]['rule_gift_ids'] = $giftId;
+                    $giftData[$num]['gift_id'] = $giftId;
+                    $giftData[$num]['buy_x'] = $condition_customized['buy_x_get_y']['bx'];
+                    $num++;
+                }
+            }
+        }
+        return $giftData;
+    }
+
+    /**
+     *
+     * @return array()
+     */
+
+
     public function getFreeGiftCatalogProduct($ruleData = null, $getOnlyGiftId = FALSE)
     {
-        if(is_array($ruleData)){
+        if (is_array($ruleData)) {
             // giftDataAT, priorityAT use for action_stop = 1
             $giftData = $giftDataAT = [];
             $priority = $priorityAT = null;
             $websiteId = $this->_storeManager->getStore()->getWebsiteId();
             $customerGroupId = $this->_customerSession->getCustomerGroupId();
+
+
             foreach($ruleData as $data) {
                 if (isset($data['rule_id'])) {
                     if(!isset($data['rule_gift_ids']) && isset($data['gift_product_ids']) && isset($data['coupon_type'])) {

@@ -150,9 +150,8 @@ class RulesApplier
 
     function removeItemGift($item = null)
     {
-        if($item){
-            $itemOptions = $item->getProduct()->getTypeInstance(true)->getOrderOptions($item->getProduct());
-            if(isset($itemOptions['info_buyRequest']['applied_rule'])){
+        if ($item) {
+            if ($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1) {
                 $quote = $item->getQuote();
                 $quote->removeItem($item->getItemId());
             }
