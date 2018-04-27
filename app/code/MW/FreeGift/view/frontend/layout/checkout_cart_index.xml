@@ -6,8 +6,7 @@
  */
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
-    <!--<update handle="checkout_cart_item_renderers"/>-->
-    <!--<update handle="checkout_shipping_price_renderer"/>-->
+    <update handle="checkout_cart_item_renderers"/>
     <head>
         <css src="MW_FreeGift::css/style.css"/>
         <css src="MW_FreeGift::js/lib/custombox/jquery.custombox.css"/>
@@ -18,15 +17,17 @@
         <css src="MW_FreeGift::css/fancybox/jquery.fancybox.css"/>
         <css src="MW_FreeGift::css/jquery.custombox.css"/>
         <link src="MW_FreeGift::js/mw_freegift_js.js"/>
-        <link src="MW_FreeGift::js/test/jquery.js"/>
-        <!--<link src="MW_FreeGift::js/newlib/backbone-min.js"/>-->
-        <link src="MW_FreeGift::js/test//jcarousel.responsive.js"/>
-        <link src="MW_FreeGift::js/test/jquery.jcarousel.min.js"/>
-        <link src="MW_FreeGift::js/test/jcarousel.responsive.css"/>
+        <!--<link src="MW_FreeGift::js/view.js"/>-->
 
-        <link src="MW_FreeGift::css/bootstrap.min.css"/>
-        <link src="MW_FreeGift::js/bootstrap.min.js"/>
-        <link src="MW_FreeGift::js/view.js"/>
+
+        <!--<link src="MW_FreeGift::js/test/jquery.js"/>-->
+        <!--<link src="MW_FreeGift::js/newlib/backbone-min.js"/>-->
+        <!--<link src="MW_FreeGift::js/test//jcarousel.responsive.js"/>-->
+        <!--<link src="MW_FreeGift::js/test/jquery.jcarousel.min.js"/>-->
+        <!--<link src="MW_FreeGift::js/test/jcarousel.responsive.css"/>-->
+
+        <!--<link src="MW_FreeGift::css/bootstrap.min.css"/>-->
+        <!--<link src="MW_FreeGift::js/bootstrap.min.js"/>-->
     </head>
 
     <body>
@@ -34,21 +35,19 @@
             <block class="MW\FreeGift\Block\Checkout\Top" name="onestepcheckout.head" template="MW_FreeGift::top.phtml" ifconfig="mw_freegift/group_general/active" />
         </referenceBlock>
 
-        <referenceContainer name="checkout.cart.form.before">
-            <!--<block type="freegift/hidden_inject_checkout_cart_init" name="cart.freegift.init" as="cart_freegift_init"-->
-                   <!--template="mw_freegift/hidden/inject/checkout/cart/init.phtml"></block>-->
-            <!--<block type="freegift/hidden_inject_template" template="mw_freegift/hidden/inject/template.phtml"></block>-->
-            <!--<block type="freegift/product" name="cart.freegift" as="freegiftbox"></block>-->
-            <!--<block type="freegift/quote" name="cart.freegift.quote"></block>-->
-            <!--<block type="freegift/promotionbanner" name="cart.freegift.promotion_banner">-->
+        <referenceContainer name="checkout.cart.form.before" ifconfig="mw_freegift/group_general/active">
+            <!--<block class="MW\FreeGift\Block\Hidden\Inject\Checkout\Cart\Init" name="cart.freegift.init" as="cart_freegift_init" template="MW_FreeGift::hidden/inject/checkout/cart/init.phtml" cacheable="false" />-->
+            <!--<block class="MW\FreeGift\Block\Hidden\Inject\Template" template="MW_FreeGift::hidden/inject/template.phtml" cacheable="false" />-->
+            <!--<block class="MW\FreeGift\Block\Product" name="cart.freegift" as="freegiftbox" cacheable="false" />-->
 
-            <!--</block>-->
+            <!--<block class="MW\FreeGift\Block\Category\Freeproduct" name="freegift-slider" template="MW_FreeGift::checkout/cart/free_gift.phtml" before="checkout.cart"/>-->
+            <!--<block class="MW\FreeGift\Block\Quote" name="car    t.freegift.quote" cacheable="false"  after="freegift-slider" />-->
+            <!--<block class="MW\FreeGift\Block\Promotionbanner" name="cart.freegift.promotion_banner" cacheable="false"  after="freegift-slider" />-->
         </referenceContainer>
         <referenceContainer name="content">
-            <block class="MW\FreeGift\Block\Category\Freeproduct" name="freegift-slider" template="MW_FreeGift::checkout/cart/free_gift.phtml" before="checkout.cart"/>
-            <!--<block class="MW\FreeGift\Block\Promotionbanner" name="promotion_banner" after="freegift-slider" cacheable="false"/>-->
-            <block class="MW\FreeGift\Block\Quote" name="cart.freegift.quote" cacheable="false"  after="freegift-slider" />
-            <block class="MW\FreeGift\Block\Promotionbanner" name="cart.freegift.promotion_banner" cacheable="false"  after="freegift-slider" />
+            <block class="MW\FreeGift\Block\Category\FreeGifts" name="freegift-slider" template="MW_FreeGift::checkout/cart/free_gift.phtml" before="checkout.cart"/>
+            <block class="MW\FreeGift\Block\Promotionbanner" name="cart.freegift.promotion_banner" cacheable="false"  before="checkout.cart" />
+            <block class="MW\FreeGift\Block\Quote" name="cart.freegift.quote" cacheable="false"  after="cart.freegift.promotion_banner" />
         </referenceContainer>
 
     </body>

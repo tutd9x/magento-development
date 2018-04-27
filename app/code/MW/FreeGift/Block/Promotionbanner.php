@@ -68,98 +68,102 @@ class Promotionbanner extends \Magento\Framework\View\Element\Template
         parent::__construct($context, $data);
     }
 
-//    public function getAllActiveRules()
-//    {
-//        $quote           = $this->checkoutSession->getQuote();
-//        $store           = $this->_storeManager->getStore($quote->getStoreId());
-//        $websiteId       = $store->getWebsiteId();
-//
-//        $customerGroupId = $quote->getCustomerGroupId() ? $quote->getCustomerGroupId() : 0;
-//        $flagRule            = $this->sessionManager->getFlagRule();
-//
-//        $arrRule = explode(",",$flagRule);
-//        $allowRule = $arrRule;
-//        $collection = $this->_salesruleCollectionFactory->create()->setValidationFilter($websiteId, $customerGroupId);
-//
-//        $aplliedRuleIds = $this->checkoutSession->getQuote()->getFreegiftAppliedRuleIds();
-//        $arrRuleApllieds = ( $aplliedRuleIds != '' ? explode(',',$aplliedRuleIds) : array() );
-//
-//        $collection->getSelect()->where('((discount_qty > times_used) or (discount_qty=0))');
-//        $collectionSaleRule = $this->_salesruleCollectionFactory->create()->setOrder("sort_order", "ASC");
-//        $collectionSaleRule->getSelect()->where('is_active = 1');
-//        $listSaleRule = array();
-//        foreach ($collectionSaleRule as $saleRule) {
-//            if(in_array($saleRule->getId(),$arrRuleApllieds)){
-//                if($saleRule->getStopRulesProcessing()){
-//                    $listSaleRule[] = $saleRule->getId();
-//                    break;
-//                }
-//            }
-//            $listSaleRule[] = $saleRule->getId();
-//        }
-//        $collection->addFieldToFilter('rule_id', array(
-//            'in' => $listSaleRule
-//        ));
-//        if (sizeof($arrRuleApllieds)){
-//            $collection->addFieldToFilter('rule_id', array(
-//                'nin' => $arrRuleApllieds
-//            ));
-//        }
-//        return $collection;
-//    }
-//
-//    public function resizeImg($fileName, $width, $height = '', $folderResized = "resized")
-//    {
-//        $resizedURL = null;
-//        if($this->mediaDirectory->isExist($fileName)){
-//            if ($width != '') {
-//                $image = $this->imageFactory->create($this->mediaDirectory->getAbsolutePath($fileName));
-//                $image->constrainOnly(true);
-//                $image->keepFrame(FALSE);
-//                $image->keepAspectRatio(FALSE);
-//                $image->resize($width, $height);
-//                $image->save($this->mediaDirectory->getAbsolutePath($folderResized.'/'.$fileName));
-//                $resizedURL = $this->getImageUrl($fileName, $folderResized);
-//            }
-//            return $resizedURL;
-//        }
-//        return false;
-//    }
-//
-//    /**
-//     * Retrieve image URL
-//     *
-//     * @return string
-//     */
-//    public function getImageUrl($image, $folder = null)
-//    {
-//        $url = false;
-////        $image = $this->getImage();
-//        if ($image) {
-//            $url = $this->_storeManager->getStore()->getBaseUrl(
-//                    \Magento\Framework\UrlInterface::URL_TYPE_MEDIA
-//                ) . $folder .'/'. $image;
-//        }
-//        return $url;
-//    }
-//
-//    public function _toHtml()
-//    {
-//        if (!$this->_scopeConfig->getValue('mw_freegift/group_general/active',ScopeInterface::SCOPE_STORE))
-//            return '';
-//        if (!sizeof($this->getAllActiveRules()))
-//            return '<div class="freegift_rules_banner_container"></div>';
-//        return $this->fetchView($this->getTemplateFile());
-//    }
-//
-//    function xlog($message = 'null'){
-//        if(gettype($message) == 'string'){
-//        }else{
-//            $message = serialize($message);
-//        }
-//        \Magento\Framework\App\ObjectManager::getInstance()
-//            ->get('Psr\Log\LoggerInterface')
-//            ->debug($message)
-//        ;
-//    }
+    public function getAllActiveRules()
+    {
+        $quote           = $this->checkoutSession->getQuote();
+        $store           = $this->_storeManager->getStore($quote->getStoreId());
+        $websiteId       = $store->getWebsiteId();
+
+        $customerGroupId = $quote->getCustomerGroupId() ? $quote->getCustomerGroupId() : 0;
+        $flagRule            = $this->sessionManager->getFlagRule();
+
+        $arrRule = explode(",",$flagRule);
+        $allowRule = $arrRule;
+        $collection = $this->_salesruleCollectionFactory->create()->setValidationFilter($websiteId, $customerGroupId);
+
+        $aplliedRuleIds = $this->checkoutSession->getQuote()->getFreegiftAppliedRuleIds();
+//        \Zend_Debug::dump($aplliedRuleIds);
+//        die("KKs");
+        $arrRuleApllieds = ( $aplliedRuleIds != '' ? explode(',',$aplliedRuleIds) : array() );
+
+//        $collection->getSelect()->where('((discount_qty > times_used) or (discount_qty=0))'); //leric comment ? discount_qty
+        $collectionSaleRule = $this->_salesruleCollectionFactory->create()->setOrder("sort_order", "ASC");
+        $collectionSaleRule->getSelect()->where('is_active = 1');
+        $listSaleRule = array();
+        foreach ($collectionSaleRule as $saleRule) {
+            if(in_array($saleRule->getId(),$arrRuleApllieds)){
+                if($saleRule->getStopRulesProcessing()){
+                    $listSaleRule[] = $saleRule->getId();
+                    break;
+                }
+            }
+            $listSaleRule[] = $saleRule->getId();
+        }
+        $collection->addFieldToFilter('rule_id', array(
+            'in' => $listSaleRule
+        ));
+
+        if (sizeof($arrRuleApllieds)){
+            $collection->addFieldToFilter('rule_id', array(
+                'nin' => $arrRuleApllieds
+            ));
+        }
+        return $collection;
+    }
+
+    public function resizeImg($fileName, $width, $height = '', $folderResized = "resized")
+    {
+        $resizedURL = null;
+        $fileName = "mw_freegift/salesrule/".$fileName;
+        if($this->mediaDirectory->isExist($fileName)){
+            if ($width != '') {
+                $image = $this->imageFactory->create($this->mediaDirectory->getAbsolutePath($fileName));
+                $image->constrainOnly(true);
+                $image->keepFrame(FALSE);
+                $image->keepAspectRatio(FALSE);
+                $image->resize($width, $height);
+                $image->save($this->mediaDirectory->getAbsolutePath($folderResized.'/salerule/'.$fileName));
+                $resizedURL = $this->getImageUrl($fileName, $folderResized);
+            }
+            return $resizedURL;
+        }
+        return false;
+    }
+
+    /**
+     * Retrieve image URL
+     *
+     * @return string
+     */
+    public function getImageUrl($image, $folder = null)
+    {
+        $url = false;
+//        $image = $this->getImage();
+        if ($image) {
+            $url = $this->_storeManager->getStore()->getBaseUrl(
+                    \Magento\Framework\UrlInterface::URL_TYPE_MEDIA
+                ) . $folder .'/'. $image;
+        }
+        return $url;
+    }
+
+    public function _toHtml()
+    {
+        if (!$this->_scopeConfig->getValue('mw_freegift/group_general/active',ScopeInterface::SCOPE_STORE))
+            return '';
+        if (!sizeof($this->getAllActiveRules()))
+            return '<div class="freegift_rules_banner_container"></div>';
+        return $this->fetchView($this->getTemplateFile());
+    }
+
+    function xlog($message = 'null'){
+        if(gettype($message) == 'string'){
+        }else{
+            $message = serialize($message);
+        }
+        \Magento\Framework\App\ObjectManager::getInstance()
+            ->get('Psr\Log\LoggerInterface')
+            ->debug($message)
+        ;
+    }
 }
