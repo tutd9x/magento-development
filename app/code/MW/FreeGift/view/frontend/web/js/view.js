@@ -936,11 +936,11 @@ define(['jquery', 'mage/apply/main'], function($, mage) {
             el: window.FreeGift.$(window.tableSelectorCart),
             events: {
                 //"click a.sc-edit"           : "hdlEdit",
-                "click a.action-edit"       : "hdlEdit",
+                //"click a.action-edit"       : "hdlEdit",
                 //"click a.btn-remove"        : "hdlRemove",
-                "click a.action-delete"     : "hdlRemove",
+                //"click a.action-delete"     : "hdlRemove",
                 //"click .btn-update"         : "hdlUpdate",
-                "click button.update"       : "hdlUpdate"
+                //"click button.update"       : "hdlUpdate"
             },
             initialize: function(){
                 setTimeout(function(){

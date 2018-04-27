@@ -162,7 +162,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $giftData;
     }
 
-    public function getGiftDataByRule($ruleData)
+    public function getGiftDataByRule($ruleData, $getOnlyGiftId = FALSE)
     {
         $giftData = [];
         $num = 0;
@@ -177,8 +177,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                     $giftData[$num]['name'] = $data['name'];
                     $giftData[$num]['product_id'] = $data['product_id'];
                     $giftData[$num]['rule_product_id'] = $data['rule_product_id'];
-                    /* @TODO remove rule_gift_ids */
-                    $giftData[$num]['rule_gift_ids'] = $giftId;
                     $giftData[$num]['gift_id'] = $giftId;
                     $giftData[$num]['buy_x'] = $condition_customized['buy_x_get_y']['bx'];
                     $giftData[$num]['freegift_parent_key'] = $data['rule_product_id'] . '_' . $data['rule_id'] . '_' . $data['product_id'] . '_' . $giftId;
@@ -186,7 +184,51 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 }
             }
         }
+
+        if ($getOnlyGiftId === TRUE) {
+            return $giftData = $this->_prepareFreeGiftIds($giftData);
+        }
+
         return $giftData;
+    }
+
+    public function getGiftDataBySalesRule($ruleData, $getOnlyGiftId = FALSE)
+    {
+        $giftData = [];
+        $num = 0;
+        foreach ($ruleData as $data) {
+            $giftIds = [];
+            $giftIds = explode(',',$data['gift_product_ids']);
+
+            if (count($giftIds) >= 1) {
+                foreach ($giftIds as $giftId) {
+                    $giftData[$num]['rule_id'] = $data['rule_id'];
+                    $giftData[$num]['name'] = $data['name'];
+                    $giftData[$num]['gift_id'] = $giftId;
+                    $giftData[$num]['number_of_free_gift'] = $data['number_of_free_gift'];
+                    $num++;
+                }
+            }
+        }
+        return $giftData;
+    }
+
+    /**
+     * var $arrayGift string
+     * return array
+     */
+    function _prepareFreeGiftIds($arrayGift)
+    {
+        $rule_gift_ids = array();
+        foreach ($arrayGift as $item) {
+            $rule_gift_ids[] = $item['rule_gift_ids'];
+        }
+
+        $ids = implode(",",$rule_gift_ids); // gộp mảng thành chuỗi nối nhau bởi dấu ,
+        $ids = explode(",",$ids); // tách chuỗi thành mảng qua dấu ,
+        $ids = array_unique($ids); // xóa trùng
+
+        return $ids;
     }
 
     /**
@@ -319,23 +361,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->checkoutSession->getGiftProductIds() ? $this->checkoutSession->getGiftProductIds() : [];
     }
 
-    /**
-     * var $arrayGift string
-     * return array
-     */
-    function _prepareFreeGiftIds($arrayGift)
-    {
-        $rule_gift_ids = array();
-        foreach ($arrayGift as $item) {
-            $rule_gift_ids[] = $item['rule_gift_ids'];
-        }
 
-        $ids = implode(",",$rule_gift_ids); // gộp mảng thành chuỗi nối nhau bởi dấu ,
-        $ids = explode(",",$ids); // tách chuỗi thành mảng qua dấu ,
-        $ids = array_unique($ids); // xóa trùng
-//        $ids = array(20);
-        return $ids;
-    }
     /*
      * use when save applied_rule_ids to quote option
      * return @array rule id*/

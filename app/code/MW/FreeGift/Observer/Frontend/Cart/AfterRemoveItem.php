@@ -184,7 +184,7 @@ class AfterRemoveItem implements ObserverInterface
         }
 
         /* @var $item \Magento\Quote\Model\Quote\Item */
-        if($item->getOptionByCode('free_catalog_gift') && $item->getOptionByCode('free_catalog_gift')->getValue() == 1){
+        if ($item->getOptionByCode('free_catalog_gift') && $item->getOptionByCode('free_catalog_gift')->getValue() == 1) {
             return true;
         }
 

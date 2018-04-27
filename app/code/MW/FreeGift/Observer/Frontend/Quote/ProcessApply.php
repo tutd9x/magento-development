@@ -101,96 +101,89 @@ class ProcessApply implements ObserverInterface
      */
     private function _processShoppingCartRule(\Magento\Framework\Event\Observer $observer)
     {
-        $quote = $this->getQuote();
         $item = $observer->getEvent()->getItem();
-        $randKey = md5(rand(1111, 9999));
-
-        $freegift_ids = $quote->getData('freegift_ids');
-        $freegift_applied_rule_ids = $quote->getData('freegift_applied_rule_ids');
-        $freegift_coupon_code = $quote->getData('freegift_coupon_code');
-
-        $freegift_applied_rule_ids = $item->getData('freegift_applied_rule_ids');
-        $storeId = $item->getData('store_id');
-
-        $rulegifts = $this->checkoutSession->getData('rulegifts');
-        $productgiftid = $this->checkoutSession->getData('productgiftid');
-
-        $salesRuleData = [];
-        $gift_sales_product_ids = [];
-        $rule_ids = explode(',', $freegift_applied_rule_ids);
-
         if($this->_isGift($item)) {
             return $this->_processRulePrice($observer);
         }
 
+        $freegift_applied_rule_ids = $item->getData('freegift_applied_rule_ids');
+        $storeId = $item->getData('store_id');
+
+        $rule_ids = explode(',', $freegift_applied_rule_ids);
+        $ruleData = null;
+
         foreach($rule_ids as $rule_id){
+            /* @var $salesrule \MW\FreeGift\Model\SalesRuleFactory */
             $salesrule = $this->_salesRuleFactory->create()->load($rule_id);
-            $salesRuleData[$rule_id] = $salesrule->getData();
+            $ruleData[$rule_id] = $salesrule->getData();
         }
 
-        if(!empty($salesRuleData)) {
+        if(!empty($ruleData)) {
 
-            $giftData = $this->helper->getFreeGiftCatalogProduct($salesRuleData, 'getGiftOfSalesRule');
+            /* Sort array by column sort_order */
+            array_multisort(array_column($ruleData, 'sort_order'), SORT_ASC, $ruleData);
+            $ruleData = $this->_filterByActionStop($ruleData);
+
+            $giftData = $this->helper->getGiftDataBySalesRule($ruleData);
 
             if (count($giftData) <= 0) {
                 return $this;
             }
 
-            $this->checkoutSession->setGiftSalesProductIds($giftData);
-
-            $info_buyRequest = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
-
-            if (isset($info_buyRequest['freegift_key'])) {
-                $randKey = $info_buyRequest['freegift_key'];
-            } else {
-                $info_buyRequest['freegift_key'] = $randKey;
-                $applied_rule_ids = $this->helper->_prepareRuleIds($giftData);
-                $info_buyRequest['mw_applied_sales_rule'] = serialize($applied_rule_ids);
-                /* if this item is gift then skip */
-                if (!$item->getOptionByCode('free_sales_gift')){
-                    $item->getOptionByCode('info_buyRequest')->setValue(serialize($info_buyRequest));
+            foreach ($giftData as $gift) {
+                $current_qty_gift = $this->_countGiftInCart();
+                if ($gift['number_of_free_gift'] > $current_qty_gift) {
+                    $this->addProduct($gift, $storeId);
+                }else{
+                    break;
                 }
             }
 
-            /* Process for gift if exist */
-            $current_qty = $item->getQty();
-            $current_qty_gift = $this->_countGiftInCart();
-
-            foreach ($giftData as $key => $val) {
-
-                $qty_for_gift = (int)($current_qty - $current_qty_gift);
-                if ($qty_for_gift <= 0) {
-                    continue;
-                }
-
-                $this->addProduct($val, $qty_for_gift, $storeId, $randKey);
-            }
+            $this->getQuote()->save();
         }
 
         return $this;
     }
 
-    public function addProduct($val, $qty_for_gift, $storeId, $randKey)
+    private function _filterByActionStop($ruleData)
     {
-        $params['product'] = $val['rule_gift_ids'];
-        $params['rule_name'] = $val['name'];
-        $params['qty'] = $qty_for_gift;
+        $result = [];
+        foreach($ruleData as $data) {
+            $result[$data['rule_id']] = $data;
+            if (isset($data['stop_rules_processing']) && $data['stop_rules_processing'] == '1') {
+                break;
+            }
+        }
+        return $result;
+    }
 
-        $product_gift = $this->productRepository->getById($val['rule_gift_ids'], false, $storeId);
+    public function addProduct($rule, $storeId)
+    {
+        $params['product'] = $rule['gift_id'];
+        $params['rule_name'] = $rule['name'];
+        $params['qty'] = 1;
 
-        if($product_gift->getTypeId() == 'simple') {
+        $product = $this->productRepository->getById($rule['gift_id'], false, $storeId);
+
+        if($product->getTypeId() == 'simple') {
             $additionalOptions = [[
                 'label' => __('Free Gift'),
-                'value' => $val['name'],
-                'print_value' => $val['name'],
+                'value' => $rule['name'],
+                'print_value' => $rule['name'],
                 'option_type' => 'text',
                 'custom_view' => TRUE,
             ]];
             // add the additional options array with the option code additional_options
-            $product_gift->addCustomOption('free_sales_gift', 1);
-            $product_gift->addCustomOption('additional_options', serialize($additionalOptions));
-            $this->cart->addProduct($product_gift, $params);
+            $product->addCustomOption('free_sales_gift', 1);
+            $product->addCustomOption('additional_options', serialize($additionalOptions));
+            $product->setFinalPrice(0);
+//            $product->setCustomPrice(0);
+//            $product->setOriginalCustomPrice(0);
+
+            $this->cart->addProduct($product, $params);
         }
+
+        return $this;
     }
 
     /**
@@ -208,21 +201,18 @@ class ProcessApply implements ObserverInterface
             $item = $item->getParentItem();
         }
 
+        $item->setPrice(0);
+        $item->setBasePrice(0);
+
         $item->setCustomPrice(0);
         $item->setOriginalCustomPrice(0);
-        $item->getProduct()->setIsSuperMode(true);
+        $item->setCalculationPrice(0);
+        $item->setCalculationPriceOriginal(0);
+//        $item->setBaseCalculationPriceOriginal(0);
 
-//        $infoRequest = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
-//
-//        $applied_rule_ids = $this->helper->_prepareRuleIds($giftData);
-//        if (!isset($infoRequest['freegift_key'])) {
-//            $infoRequest['freegift_key'] = $randKey;
-//        } else {
-//            $randKey = $infoRequest['freegift_key'];
-//        }
-//        $infoRequest['mw_applied_catalog_rule'] = serialize($applied_rule_ids);
-//
-//        $item->getOptionByCode('info_buyRequest')->setValue(serialize($infoRequest))->save();
+        $item->getProduct()->setIsSuperMode(true);
+//        $item->calcRowTotal();
+        $item->save();
 
         return $this;
     }
@@ -241,8 +231,7 @@ class ProcessApply implements ObserverInterface
                 $item = $item->getParentItem();
             }
 
-            $is_gift = $item->getOptionByCode('free_sales_gift');
-            if ($is_gift && $is_gift->getValue() == 1) {
+            if ($this->_isGift($item)) {
                 $count++;
             }
         }
@@ -263,15 +252,22 @@ class ProcessApply implements ObserverInterface
         return $this->quote;
     }
 
+    /**
+     * Update list gift product in checkout session
+     *
+     * @param \Magento\Framework\Event\Observer $observer
+     * @return $this
+     */
+    private function _updateListGift(\Magento\Framework\Event\Observer $observer)
+    {
+        return $this;
+    }
+
     private function _isGift($item)
     {
         /* @var $item \Magento\Quote\Model\Quote\Item */
         if ($item->getParentItem()) {
             $item = $item->getParentItem();
-        }
-
-        if($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1){
-            return true;
         }
 
         if($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1){

@@ -30,10 +30,7 @@ class ProcessApply implements ObserverInterface
      * @var \MW\FreeGift\Model\ResourceModel\RuleFactory
      */
     protected $resourceRuleFactory;
-    /**
-     * @var RulePricesStorage
-     */
-    protected $rulePricesStorage;
+
     /**
      * @var \MW\FreeGift\Model\Config
      */
@@ -60,14 +57,12 @@ class ProcessApply implements ObserverInterface
     protected $productRepository;
 
     /**
-     * @param RulePricesStorage $rulePricesStorage
      * @param \MW\FreeGift\Model\ResourceModel\RuleFactory $resourceRuleFactory
      * @param StoreManagerInterface $storeManager
      * @param TimezoneInterface $localeDate
      * @param CustomerModelSession $customerSession
      */
     public function __construct(
-        RulePricesStorage $rulePricesStorage,
         \MW\FreeGift\Model\ResourceModel\RuleFactory $resourceRuleFactory,
         StoreManagerInterface $storeManager,
         TimezoneInterface $localeDate,
@@ -78,7 +73,6 @@ class ProcessApply implements ObserverInterface
         CustomerCart $cart,
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepository
     ) {
-        $this->rulePricesStorage = $rulePricesStorage;
         $this->resourceRuleFactory = $resourceRuleFactory;
         $this->storeManager = $storeManager;
         $this->localeDate = $localeDate;
@@ -106,12 +100,6 @@ class ProcessApply implements ObserverInterface
         $pId = $product->getId();
         $storeId = $product->getStoreId();
 
-        if ($observer->hasDate()) {
-            $date = new \DateTime($observer->getEvent()->getDate());
-        } else {
-            $date = $this->localeDate->scopeDate($storeId);
-        }
-
         if ($observer->hasWebsiteId()) {
             $wId = $observer->getEvent()->getWebsiteId();
         } else {
@@ -126,11 +114,9 @@ class ProcessApply implements ObserverInterface
             $gId = $this->customerSession->getCustomerGroupId();
         }
 
-        $key = "{$date->format('Y-m-d H:i:s')}|{$wId}|{$gId}|{$pId}";
-
         $this->_updateListGift($observer);
 
-        $this->_processCatalogRule($observer, $key, $date, $wId, $gId);
+        $this->_processCatalogRule($observer, $wId, $gId, $pId, $storeId);
 
         return $this;
     }
@@ -141,16 +127,13 @@ class ProcessApply implements ObserverInterface
      * @param \Magento\Framework\Event\Observer $observer
      * @return $this
      */
-    private function _processCatalogRule(\Magento\Framework\Event\Observer $observer, $key, $date, $wId, $gId)
+    private function _processCatalogRule(\Magento\Framework\Event\Observer $observer, $wId, $gId, $pId, $storeId)
     {
         $item = $observer->getEvent()->getQuoteItem();
         if($this->_isGift($item)) {
             return $this->_processRulePrice($observer);
         }
 
-        $product = $observer->getEvent()->getProduct();
-        $pId = $product->getId();
-        $storeId = $product->getStoreId();
         $dateTs = $this->localeDate->scopeTimeStamp($storeId);
 
         $ruleData = null;
@@ -159,12 +142,12 @@ class ProcessApply implements ObserverInterface
         /* @var $resourceModel \MW\FreeGift\Model\ResourceModel\Rule */
         $resourceModel = $this->resourceRuleFactory->create();
         $ruleData = $resourceModel->getRulesFromProduct($dateTs, $wId, $gId, $pId);
-        /* Sort array by column sort_order */
-        array_multisort(array_column($ruleData, 'sort_order'), SORT_ASC, $ruleData);
-        $ruleData = $this->_filterByActionStop($ruleData);
 
         if (!empty($ruleData)) {
 
+            /* Sort array by column sort_order */
+            array_multisort(array_column($ruleData, 'sort_order'), SORT_ASC, $ruleData);
+            $ruleData = $this->_filterByActionStop($ruleData);
             $giftData = $this->helper->getGiftDataByRule($ruleData);
 
             if (count($giftData) <= 0) {
@@ -197,8 +180,6 @@ class ProcessApply implements ObserverInterface
             }
         }
 
-        //$this->_processRulePrice($observer);
-
         return $this;
     }
 
@@ -214,7 +195,7 @@ class ProcessApply implements ObserverInterface
         return $result;
     }
 
-    /* Add rule info to item */
+    /* Add rule info to parent of gift item */
     public function addRuleInfo($item, $ruleData, $giftData)
     {
         $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
@@ -226,7 +207,9 @@ class ProcessApply implements ObserverInterface
 
         $info['freegift_keys'] = $parentKeys;
         $info['freegift_rule_data'] = $ruleData;
+
         $item->getOptionByCode('info_buyRequest')->setValue(serialize($info));
+
         return $this;
     }
 
@@ -267,6 +250,7 @@ class ProcessApply implements ObserverInterface
                 }
             }
         }
+
         return $this;
     }
 
@@ -287,20 +271,6 @@ class ProcessApply implements ObserverInterface
         $item->setCustomPrice(0);
         $item->setOriginalCustomPrice(0);
         $item->getProduct()->setIsSuperMode(true);
-
-//        if(!empty($ruleData) && count($gift_product_ids) > 0) {
-//            $infoRequest = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
-//
-//            $applied_rule_ids = $this->helperFreeGift->_prepareRuleIds($gift_product_ids);
-//            if (!isset($infoRequest['freegift_key'])) {
-//                $infoRequest['freegift_key'] = $randKey;
-//                $infoRequest['mw_applied_catalog_rule'] = serialize($applied_rule_ids);
-//            } else {
-//                $randKey = $infoRequest['freegift_key'];
-//            }
-//
-//            $item->getOptionByCode('info_buyRequest')->setValue(serialize($infoRequest))->save();
-//        }
 
         return $this;
     }
@@ -328,7 +298,6 @@ class ProcessApply implements ObserverInterface
                     continue;
                 }
 
-                $keys = array_keys($result);
                 if ($item->getProductId() == $gift['gift_id']) {
                     $count = count($result);
                     break;
@@ -362,11 +331,6 @@ class ProcessApply implements ObserverInterface
     }
 
     /**
-     * @var \Magento\Checkout\Model\Cart\RequestInfoFilterInterface
-     */
-    private $requestInfoFilter;
-
-    /**
      * Update list gift product in checkout session
      *
      * @param \Magento\Framework\Event\Observer $observer
@@ -388,10 +352,6 @@ class ProcessApply implements ObserverInterface
         if($item->getOptionByCode('free_catalog_gift') && $item->getOptionByCode('free_catalog_gift')->getValue() == 1){
             return true;
         }
-
-//        if($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1){
-//            return true;
-//        }
 
         return false;
     }

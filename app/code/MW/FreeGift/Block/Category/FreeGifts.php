@@ -60,7 +60,7 @@ class FreeGifts extends \Magento\Framework\View\Element\Template
 //            if($additionalOption->getValue() == 1){
                 $ruleGift = $this->_resourceRule->getRulesFromProduct($dateTs, $websiteId, $customerGroupId, $current_product->getProductId());
                 if(count($ruleGift)>0){
-                    $freeGiftCatalogData = $this->helperFreeGift->getFreeGiftCatalogProduct($ruleGift);
+                    $freeGiftCatalogData = $this->helperFreeGift->getGiftDataByRule($ruleGift);
                 }
 //            }
 //        }
