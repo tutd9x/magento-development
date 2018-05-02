@@ -115,6 +115,8 @@ class AfterRemoveItem implements ObserverInterface
             }
         }
 
+        $current_qty = $this->_countCurrentItemInCart($item_removed, $parent_key);
+
         foreach ($items as $item) {
 
             if ($item->getParentItem()) {
@@ -132,15 +134,25 @@ class AfterRemoveItem implements ObserverInterface
                     if (empty($result)) {
                         continue;
                     }
-                    $keys = array_keys($result); //array_search($parent_key, $data['freegift_parent_key']);
-                    if (count($data['freegift_parent_key']) <= 1) {
-                        $quote->removeItem($item->getItemId())->save();
-                    } else {
-                        foreach ($keys as $key) {
+
+                    if ($current_qty < 1) {
+                        foreach ($result as $key) {
                             unset($data['freegift_parent_key'][$key]);
                         }
+                    }
+
+                    $qtyToUpdate = $item->getQty() - $qtyRemoved;
+                    if ($qtyToUpdate <= 0) {
+                        $quote->removeItem($item->getItemId())->save();
+                    } else {
+                        if ( isset($data['freegift_qty_info']) ) {
+                            foreach ($result as $key) {
+                                $data['freegift_qty_info'][$key] = $data['freegift_qty_info'][$key] - $qtyRemoved;
+                            }
+                        }
+
                         $item->getOptionByCode('info_buyRequest')->setValue(serialize($data));
-                        $item->setQty($item->getQty() - $qtyRemoved);
+                        $item->setQty($qtyToUpdate);
                     }
                 }
             }
@@ -193,4 +205,35 @@ class AfterRemoveItem implements ObserverInterface
         }
         return false;
     }
+
+    /**
+     * Counting current item in cart
+     *
+     * @return $count
+     */
+    public function _countCurrentItemInCart($item, $parent_keys)
+    {
+        $count = 0;
+
+        foreach ($this->getQuote()->getAllItems() as $item) {
+
+            /* @var $item \Magento\Quote\Model\Quote\Item */
+            if ($item->getParentItem()) {
+                continue;
+            }
+
+            if (!$this->_isGift($item)) {
+                $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+                $freegift_parent_key = $info['freegift_keys'];
+                $result = array_intersect($parent_keys,$freegift_parent_key);
+                if (empty($result)) {
+                    continue;
+                } else {
+                    $count += $item->getQty();
+                }
+            }
+        }
+        return $count;
+    }
+
 }

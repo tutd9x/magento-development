@@ -129,6 +129,7 @@ class ProcessApply implements ObserverInterface
      */
     private function _processCatalogRule(\Magento\Framework\Event\Observer $observer, $wId, $gId, $pId, $storeId)
     {
+        /* @var $item \Magento\Quote\Model\Quote\Item */
         $item = $observer->getEvent()->getQuoteItem();
         if($this->_isGift($item)) {
             return $this->_processRulePrice($observer);
@@ -157,9 +158,9 @@ class ProcessApply implements ObserverInterface
             $this->addRuleInfo($item, $ruleData, $giftData);
 
             /* Process for gift if exist */
-            $current_qty = $item->getQty();
             $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
             $freegift_keys = $info['freegift_keys'];
+            $current_qty = $this->_countCurrentItemInCart($item, $freegift_keys);
 
             foreach ($giftData as $gift) {
                 // process for buy x get y
@@ -219,6 +220,7 @@ class ProcessApply implements ObserverInterface
         $params['rule_name'] = $rule['name'];
         $params['qty'] = $qty_for_gift;
         $params['freegift_parent_key'][$parentKey] = $parentKey;
+        $params['freegift_qty_info'][$parentKey] = $qty_for_gift;
 
         $product = $this->productRepository->getById($rule['gift_id'], false, $storeId);
 
@@ -239,12 +241,22 @@ class ProcessApply implements ObserverInterface
             if ($itemInCart == false) {
                 $this->cart->addProduct($product, $params);
             } else {
-                $itemInCart->setQty($itemInCart->getQty() + $qty_for_gift);
+                $qtyToUpdate = $itemInCart->getQty() + $qty_for_gift;
+                $itemInCart->setQty($qtyToUpdate);
 
                 if ( $itemInCart->getOptionByCode('info_buyRequest') && $data = unserialize($itemInCart->getOptionByCode('info_buyRequest')->getValue()) ) {
                     if (isset($data['freegift_parent_key']) && $freegift_parent_key = $data['freegift_parent_key']) {
                         $data['freegift_parent_key'][$parentKey] = $parentKey;
-                        $data['qty'] = $itemInCart->getQty() + $qty_for_gift;
+                        $data['qty'] = $qtyToUpdate;
+
+                        /* update quantity infomation for free gift */
+                        if (array_key_exists($parentKey, $data['freegift_qty_info'])) {
+                            $current_qty_info = $data['freegift_qty_info'][$parentKey];
+                        } else {
+                            $current_qty_info = 0;
+                        }
+
+                        $data['freegift_qty_info'][$parentKey] = $current_qty_info + $qty_for_gift;
                     }
                     $itemInCart->getOptionByCode('info_buyRequest')->setValue(serialize($data))->save();
                 }
@@ -276,6 +288,36 @@ class ProcessApply implements ObserverInterface
     }
 
     /**
+     * Counting current item in cart
+     *
+     * @return $count
+     */
+    public function _countCurrentItemInCart($item, $parent_keys)
+    {
+        $count = 0;
+
+        foreach ($this->getQuote()->getAllItems() as $item) {
+
+            /* @var $item \Magento\Quote\Model\Quote\Item */
+            if ($item->getParentItem()) {
+                continue;
+            }
+
+            if (!$this->_isGift($item)) {
+                $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+                $freegift_parent_key = $info['freegift_keys'];
+                $result = array_intersect($parent_keys,$freegift_parent_key);
+                if (empty($result)) {
+                    continue;
+                } else {
+                    $count += $item->getQty();
+                }
+            }
+        }
+        return $count;
+    }
+
+    /**
      * Counting gift item in cart
      *
      * @return $count
@@ -289,17 +331,23 @@ class ProcessApply implements ObserverInterface
                 $item = $item->getParentItem();
             }
 
-            if ($this->_isGift($item)) {
+            $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
 
-                $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+            if ($this->_isGift($item)) {
                 $freegift_parent_key = $info['freegift_parent_key'];
+                $freegift_qty_info = $info['freegift_qty_info'];
                 $result = array_intersect($parent_keys,$freegift_parent_key);
-                if(empty($result)){
+                if (empty($result)) {
                     continue;
                 }
 
+                foreach ($result as $key) {
+                    $freegift_qty = $freegift_qty_info[$key];
+                }
+
                 if ($item->getProductId() == $gift['gift_id']) {
-                    $count = count($result);
+                    // @TODO test voi multi rule cho 1 product
+                    $count = $freegift_qty;
                     break;
                 }
             }
