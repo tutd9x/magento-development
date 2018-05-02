@@ -111,7 +111,7 @@ class FreeGifts extends \Magento\Framework\View\Element\Template
     }
 
     public function getProductGiftsDeleted(){
-        $productGiftsDeleted = $this->_checkoutSession->getProductGiftDeleted();
+        $productGiftsDeleted = $this->helperFreeGift->getProductGiftAvailable();
         return $productGiftsDeleted;
     }
 }

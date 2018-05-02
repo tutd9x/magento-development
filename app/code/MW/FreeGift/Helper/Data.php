@@ -508,5 +508,78 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $data;
     }
 
+    public function getProductGiftAvailable(){
+        /** @var \Magento\Quote\Model\Quote  */
+        $quote = $this->checkoutSession->getQuote();
+        $items = $quote->getAllVisibleItems();
+
+        $parentData = array();
+        $giftData = array();
+        foreach($items as $item){
+            /* Lay product chua Gift*/
+            if($item->getOptionByCode('mw_free_catalog_gift') && $item->getOptionByCode('mw_free_catalog_gift')->getValue() == 1){
+                array_push($parentData,unserialize($item->getOptionByCode('info_buyRequest')->getValue())['freegift_keys']);
+
+            }
+
+            /* Lay product Gift*/
+            if($item->getOptionByCode('free_catalog_gift') && $item->getOptionByCode('free_catalog_gift')->getValue() == 1){
+                array_push($giftData,unserialize($item->getOptionByCode('info_buyRequest')->getValue())['freegift_parent_key']);
+
+            }
+
+        }
+        $results = $this->checkDiffGifts($parentData,$giftData);
+        if(count($results) == 0) return array();
+        $listGiftProductId = array();
+        foreach($results as $result){
+            $keyData = $this->splitKey($result);
+            $listGiftProductId[] = $keyData['product_gift_id'];
+        }
+        return $listGiftProductId;
+//        \Zend_Debug::dump($parentData);
+//        \Zend_Debug::dump($giftData);
+//        die("giftData");
+    }
+    public function checkDiffGifts($parentData,$giftData){
+//        \Zend_Debug::dump($parentData);
+//        \Zend_Debug::dump($giftData);
+
+        $parent = array();
+        $gift = array();
+
+        foreach($parentData as $keyp){
+            foreach($keyp as $key){
+                $parent[] = $key;
+            }
+        }
+
+        foreach($giftData as $keyg){
+            foreach($keyg as $key){
+                $gift[] = $key;
+            }
+        }
+
+        $diffData = array_diff($parent,$gift);
+//        \Zend_Debug::dump($parent);
+//        \Zend_Debug::dump($diffData);
+//        \Zend_Debug::dump($this->splitKey($diffData[1]));
+//        die("gfg");
+        return $diffData;
+//        array(1) {
+//            [1] => string(16) "2009_1_1225_2043"
+//        }
+    }
+
+    public function splitKey($key){
+        $data = explode( '_', $key );
+        $result = array(
+            'key_id' => $data[0],
+            'rule_id' => $data[1],
+            'product_parent_id' => $data[2],
+            'product_gift_id' => $data[3]
+        );
+        return $result;
+    }
 }
 

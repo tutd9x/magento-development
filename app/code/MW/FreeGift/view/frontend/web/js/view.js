@@ -935,11 +935,11 @@ define(['jquery', 'mage/apply/main'], function($, mage) {
         FreeGift.Views.CheckoutCart     = Backbone.View.extend({
             el: window.FreeGift.$(window.tableSelectorCart),
             events: {
-                //"click a.sc-edit"           : "hdlEdit",
+                ////"click a.sc-edit"           : "hdlEdit",
                 //"click a.action-edit"       : "hdlEdit",
-                //"click a.btn-remove"        : "hdlRemove",
+                ////"click a.btn-remove"        : "hdlRemove",
                 //"click a.action-delete"     : "hdlRemove",
-                //"click .btn-update"         : "hdlUpdate",
+                ////"click .btn-update"         : "hdlUpdate",
                 //"click button.update"       : "hdlUpdate"
             },
             initialize: function(){
