@@ -142,15 +142,15 @@ $_helper = $this->helper('Magento\Catalog\Helper\Output');
                                     <div class="freegift_catalog_container clearer control">
                                         <ul id="freegift">
                                             <?php foreach($ProductGiftData as $giftData):
-                                                if($giftData['rule_gift_ids'] != ""):
-                                                    $product = $blockFreeGift->getProductGiftData($giftData['rule_gift_ids']);
+                                                if($giftData['gift_id'] != ""):
+                                                    $product = $blockFreeGift->getProductGiftData($giftData['gift_id']);
                                                     if($product->isSaleable()) :
                                                         ?>
                                                         <li class="mw-fg-items">
-                                                            <a id="stay-target-<?php echo $giftData['rule_id'].'_'.$_product->getId().'_'.$giftData['rule_gift_ids']; ?>" href="<?php echo $product->getProductUrl(); ?>" title="<?php echo $blockFreeGift->escapeHtml($product->getName()); ?>" class="product-image">
+                                                            <a id="stay-target-<?php echo $giftData['rule_id'].'_'.$_product->getId().'_'.$giftData['gift_id']; ?>" href="<?php echo $product->getProductUrl(); ?>" title="<?php echo $blockFreeGift->escapeHtml($product->getName()); ?>" class="product-image">
                                                                 <img src="<?php echo $this->helper('Magento\Catalog\Helper\Image')->init($product, 'category_page_list')->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(TRUE)->resize(75,75)->getUrl(); ?>" alt="" height="75" width="75">
                                                             </a>
-                                                            <div style="display: none;" id="stay-content-<?php echo $giftData['rule_id'].'_'.$_product->getId().'_'.$giftData['rule_gift_ids']; ?>" class="mw-fg-item">
+                                                            <div style="display: none;" id="stay-content-<?php echo $giftData['rule_id'].'_'.$_product->getId().'_'.$giftData['gift_id']; ?>" class="mw-fg-item">
                                                                 <div class="mw-fg-item-options">
                                                                     <div class="mw-fg-item-option-title"><?php echo $giftData['name'] ?></div>
                                                                     <div class="mw-fg-item-option-ct">

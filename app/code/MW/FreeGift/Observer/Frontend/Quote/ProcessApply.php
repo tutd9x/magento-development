@@ -109,6 +109,9 @@ class ProcessApply implements ObserverInterface
         $freegift_applied_rule_ids = $item->getData('freegift_applied_rule_ids');
         $storeId = $item->getData('store_id');
 
+        if ($freegift_applied_rule_ids == "") {
+            return $this;
+        }
         $rule_ids = explode(',', $freegift_applied_rule_ids);
         $ruleData = null;
 
@@ -118,7 +121,7 @@ class ProcessApply implements ObserverInterface
             $ruleData[$rule_id] = $salesrule->getData();
         }
 
-        if(!empty($ruleData)) {
+        if (!empty($ruleData)) {
 
             /* Sort array by column sort_order */
             array_multisort(array_column($ruleData, 'sort_order'), SORT_ASC, $ruleData);

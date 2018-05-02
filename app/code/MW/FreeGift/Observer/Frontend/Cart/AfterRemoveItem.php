@@ -129,14 +129,14 @@ class AfterRemoveItem implements ObserverInterface
             if ( $item->getOptionByCode('info_buyRequest') && $data = unserialize($item->getOptionByCode('info_buyRequest')->getValue()) ) {
                 if ( isset($data['freegift_parent_key']) && $freegift_parent_key = $data['freegift_parent_key'] ) {
                     $result = array_intersect($parent_key,$freegift_parent_key);
-                    if(empty($result)){
+                    if (empty($result)) {
                         continue;
                     }
                     $keys = array_keys($result); //array_search($parent_key, $data['freegift_parent_key']);
                     if (count($data['freegift_parent_key']) <= 1) {
                         $quote->removeItem($item->getItemId())->save();
                     } else {
-                        foreach ($keys as $key){
+                        foreach ($keys as $key) {
                             unset($data['freegift_parent_key'][$key]);
                         }
                         $item->getOptionByCode('info_buyRequest')->setValue(serialize($data));
@@ -188,9 +188,9 @@ class AfterRemoveItem implements ObserverInterface
             return true;
         }
 
-//        if($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1){
-//            return true;
-//        }
+        if($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1){
+            return true;
+        }
         return false;
     }
 }
