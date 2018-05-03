@@ -1,7 +1,6 @@
 <?php
 namespace MW\FreeGift\Helper;
 
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Customer\Model\Session as CustomerModelSession;
 
@@ -13,7 +12,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     protected $layoutFactory;
     protected $_layout;
     protected $cart;
-    protected $_scopeConfig;
     /**
      * @var CustomerModelSession
      */
@@ -29,7 +27,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Checkout\Model\Session $checkoutSession,
         \MW\FreeGift\Model\RuleFactory $ruleFactory,
-        ScopeConfigInterface $scopeConfig,
         \Magento\Framework\View\LayoutFactory $layoutFactory,
         \Magento\Framework\View\LayoutInterface $layout,
         \Magento\Checkout\Model\Cart $cart,
@@ -38,7 +35,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         ) {
         $this->checkoutSession = $checkoutSession;
         $this->_ruleFactory = $ruleFactory;
-        $this->_scopeConfig = $scopeConfig;
         $this->layoutFactory = $layoutFactory;
         $this->_layout = $layout;
         $this->cart = $cart;
@@ -50,7 +46,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function getStoreConfig($xmlPath)
     {
-        return $this->_scopeConfig->getValue(
+        return $this->scopeConfig->getValue(
             $xmlPath,
             ScopeInterface::SCOPE_STORE
         );
@@ -85,7 +81,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
     public function renderFreeGiftLabel($product)
     {
-        if (!$this->_scopeConfig->getValue('mw_freegift/group_general/active',ScopeInterface::SCOPE_STORE))
+        if (!$this->scopeConfig->getValue('mw_freegift/group_general/active',ScopeInterface::SCOPE_STORE))
             return '';
 
         $url_image = '';
@@ -108,9 +104,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
     public function renderFreeGiftCatalogList($product)
     {
-        if (!$this->_scopeConfig->getValue('mw_freegift/group_general/active',ScopeInterface::SCOPE_STORE))
+        if (!$this->scopeConfig->getValue('mw_freegift/group_general/active',ScopeInterface::SCOPE_STORE))
             return '';
-        if (!$this->_scopeConfig->getValue('mw_freegift/group_general/showfreegiftoncategory',ScopeInterface::SCOPE_STORE))
+        if (!$this->scopeConfig->getValue('mw_freegift/group_general/showfreegiftoncategory',ScopeInterface::SCOPE_STORE))
             return '';
 
         $block_freegift = $this->_layout->createBlock('MW\FreeGift\Block\Category\Freeproduct');
@@ -132,7 +128,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * */
     public function renderFreegitCodeForm()
     {
-        if (!$this->_scopeConfig->getValue('mw_freegift/group_general/active',ScopeInterface::SCOPE_STORE))
+        if (!$this->scopeConfig->getValue('mw_freegift/group_general/active',ScopeInterface::SCOPE_STORE))
             return '';
 
         $block_html = '';
@@ -518,7 +514,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         foreach($items as $item){
             /* Lay product chua Gift*/
             if($item->getOptionByCode('mw_free_catalog_gift') && $item->getOptionByCode('mw_free_catalog_gift')->getValue() == 1){
-                array_push($parentData,unserialize($item->getOptionByCode('info_buyRequest')->getValue())['freegift_keys']);
+                $key = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+                $freegift_keys = $key['freegift_keys'];
+                array_push($parentData,$freegift_keys);
 
             }
 
@@ -532,19 +530,19 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $results = $this->checkDiffGifts($parentData,$giftData);
         if(count($results) == 0) return array();
         $listGiftProductId = array();
+        $i = 0;
         foreach($results as $result){
             $keyData = $this->splitKey($result);
-            $listGiftProductId[] = $keyData['product_gift_id'];
+            $listGiftProductId[] = $keyData;
+            $listGiftProductId[$i]['freegift_parent_key'] = $result;
+            $listGiftProductId[$i]['rule_id'] = $keyData['rule_id'];
+            $ruleData = $this->_ruleFactory->create()->load($keyData['rule_id']);
+            $listGiftProductId[$i]['rule_name'] = $ruleData->getName();
+            $i++;
         }
         return $listGiftProductId;
-//        \Zend_Debug::dump($parentData);
-//        \Zend_Debug::dump($giftData);
-//        die("giftData");
     }
     public function checkDiffGifts($parentData,$giftData){
-//        \Zend_Debug::dump($parentData);
-//        \Zend_Debug::dump($giftData);
-
         $parent = array();
         $gift = array();
 
@@ -561,14 +559,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         $diffData = array_diff($parent,$gift);
-//        \Zend_Debug::dump($parent);
-//        \Zend_Debug::dump($diffData);
-//        \Zend_Debug::dump($this->splitKey($diffData[1]));
-//        die("gfg");
         return $diffData;
-//        array(1) {
-//            [1] => string(16) "2009_1_1225_2043"
-//        }
     }
 
     public function splitKey($key){

@@ -3,7 +3,7 @@
  * Copyright © 2015 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace MW\FreeGift\Model\ResourceModel\SalesrRule\Customer;
+namespace MW\FreeGift\Model\ResourceModel\SalesRule\Customer;
 
 /**
  * SalesRule Model Resource Rule Customer_Collection
@@ -20,6 +20,6 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     protected function _construct()
     {
         parent::_construct();
-        $this->_init('MW\FreeGift\Model\SalesrRule\Customer', 'MW\FreeGift\Model\ResourceModel\SalesrRule\Customer');
+        $this->_init('MW\FreeGift\Model\SalesRule\Customer', 'MW\FreeGift\Model\ResourceModel\SalesRule\Customer');
     }
 }

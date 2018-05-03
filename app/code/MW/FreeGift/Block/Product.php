@@ -1,13 +1,11 @@
 <?php
 namespace MW\FreeGift\Block;
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 class Product extends \Magento\Framework\View\Element\Template
 {
     protected $checkoutSession;
     protected $checkoutCart;
     protected $_coreRegistry;
-    protected $_scopeConfig;
     protected $helperFreeGift;
     protected $helperCart;
     protected $_resourceRule;
@@ -39,7 +37,6 @@ class Product extends \Magento\Framework\View\Element\Template
 //        \Magento\Customer\Helper\Session\CurrentCustomer $currentCustomer,
 //        \Magento\Newsletter\Model\SubscriberFactory $subscriberFactory,
 //        \Magento\Customer\Helper\View $helperView,
-        ScopeConfigInterface $scopeConfig,
         array $data = []
     ) {
 //        $this->currentCustomer = $currentCustomer;
@@ -53,7 +50,6 @@ class Product extends \Magento\Framework\View\Element\Template
         $this->_resourceRule = $resourceRule;
         $this->productRepository = $productRepository;
         $this->salesruleModel = $salesruleModel;
-        $this->_scopeConfig = $scopeConfig;
         parent::__construct($context, $data);
     }
     /* begin move */

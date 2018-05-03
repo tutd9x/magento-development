@@ -53,9 +53,12 @@ class Freeproduct extends \Magento\Framework\View\Element\Template
         if ($additionalOption = $current_product->getCustomOption('mw_free_catalog_gift'))
         {
             if($additionalOption->getValue() == 1){
-                $ruleGift = $this->_resourceRule->getRulesFromProduct($dateTs, $websiteId, $customerGroupId, $current_product->getId());
-                if(count($ruleGift)>0){
-                    $freeGiftCatalogData = $this->helperFreeGift->getGiftDataByRule($ruleGift);
+                $ruleData = $this->_resourceRule->getRulesFromProduct($dateTs, $websiteId, $customerGroupId, $current_product->getId());
+                /* Sort array by column sort_order */
+                array_multisort(array_column($ruleData, 'sort_order'), SORT_ASC, $ruleData);
+                $ruleData = $this->_filterByActionStop($ruleData);
+                if(count($ruleData)>0){
+                    $freeGiftCatalogData = $this->helperFreeGift->getGiftDataByRule($ruleData);
                 }
             }
         }
@@ -76,18 +79,15 @@ class Freeproduct extends \Magento\Framework\View\Element\Template
         return $this->_coreRegistry->registry('current_product');
     }
 
-    /**
-     * Generate content to log file debug.log By Hattetek.Com
-     *
-     * @param  $message string|array
-     * @return void
-     */
-    function xlog($message = 'null')
+    private function _filterByActionStop($ruleData)
     {
-        $log = print_r($message, true);
-        \Magento\Framework\App\ObjectManager::getInstance()
-            ->get('Psr\Log\LoggerInterface')
-            ->debug($log)
-        ;
+        $result = [];
+        foreach($ruleData as $data) {
+            $result[$data['rule_id']] = $data;
+            if (isset($data['action_stop']) && $data['action_stop'] == '1') {
+                break;
+            }
+        }
+        return $result;
     }
 }

@@ -9,10 +9,6 @@ class Top extends \Magento\Framework\View\Element\Template
      */
     protected $_coreRegistry;
 
-    /**
-     * @var \Magento\Framework\Session\SessionManagerInterface
-     */
-    protected $_sessionManager;
 
     /**
      * @var \Magento\Customer\Model\Session
@@ -31,12 +27,10 @@ class Top extends \Magento\Framework\View\Element\Template
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Framework\Registry $coreRegistry,
-        \Magento\Framework\Session\SessionManagerInterface $sessionManager,
         \Magento\Customer\Model\Session $customerSession,
         array $data = []
     ) {
         $this->_coreRegistry = $coreRegistry;
-        $this->_sessionManager = $sessionManager;
         $this->_customerSession = $customerSession;
         parent::__construct($context, $data);
         $this->_storeManager = $context->getStoreManager();
@@ -49,7 +43,7 @@ class Top extends \Magento\Framework\View\Element\Template
 
     public function getSessionManager()
     {
-        return $this->_sessionManager;
+        return $this->_session;
     }
 
     public function getCustomerSession()

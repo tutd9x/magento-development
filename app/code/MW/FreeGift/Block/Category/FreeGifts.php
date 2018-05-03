@@ -32,6 +32,7 @@ class FreeGifts extends \Magento\Framework\View\Element\Template
         \MW\FreeGift\Model\ResourceModel\Rule $resourceRule,
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
         \Magento\Customer\Model\Session $customerSession,
+        \Magento\Catalog\Block\Product\ListProduct $listProduct,
         \Magento\Checkout\Model\Session $checkoutSession,
         array $data = []
     ) {
@@ -40,6 +41,7 @@ class FreeGifts extends \Magento\Framework\View\Element\Template
         $this->_resourceRule = $resourceRule;
         $this->productRepository = $productRepository;
         $this->_customerSession = $customerSession;
+        $this->_listProduct = $listProduct;
         $this->_checkoutSession = $checkoutSession;
         parent::__construct($context, $data);
     }
@@ -113,5 +115,9 @@ class FreeGifts extends \Magento\Framework\View\Element\Template
     public function getProductGiftsDeleted(){
         $productGiftsDeleted = $this->helperFreeGift->getProductGiftAvailable();
         return $productGiftsDeleted;
+    }
+
+    public function getAddToCartUrl($product){
+        return $this->_listProduct->getAddToCartUrl($product);
     }
 }

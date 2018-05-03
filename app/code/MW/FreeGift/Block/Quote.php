@@ -1,8 +1,6 @@
 <?php
 namespace MW\FreeGift\Block;
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
-use Magento\Framework\Session\SessionManagerInterface;
 class Quote extends \Magento\Framework\View\Element\Template
 {
     protected $checkoutSession;
@@ -25,17 +23,13 @@ class Quote extends \Magento\Framework\View\Element\Template
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Checkout\Model\Session $checkoutSession,
-        SessionManagerInterface $sessionManager,
         \MW\FreeGift\Model\SalesRule $salesruleModel,
         \MW\FreeGift\Model\ResourceModel\SalesRule\CollectionFactory $salesruleCollectionFactory,
-        ScopeConfigInterface $scopeConfig,
         array $data = []
     ) {
 
         $this->checkoutSession = $checkoutSession;
-        $this->sessionManager = $sessionManager; // core/session
         $this->salesruleModel = $salesruleModel;
-        $this->_scopeConfig = $scopeConfig;
         $this->_salesruleCollectionFactory = $salesruleCollectionFactory;
 
         parent::__construct($context, $data);
@@ -48,7 +42,7 @@ class Quote extends \Magento\Framework\View\Element\Template
         $websiteId       = $store->getWebsiteId();
         //$websiteId       = Mage::app()->getStore($quote->getStoreId())->getWebsiteId();
         $customerGroupId = $quote->getCustomerGroupId() ? $quote->getCustomerGroupId() : 0;
-        $flagRule            = $this->sessionManager->getFlagRule();
+        $flagRule            = $this->_session->getFlagRule();
 
         $arrRule = explode(",",$flagRule);
         $allowRule = $arrRule;

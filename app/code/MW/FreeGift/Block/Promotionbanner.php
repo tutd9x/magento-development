@@ -1,8 +1,6 @@
 <?php
 namespace MW\FreeGift\Block;
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
-use Magento\Framework\Session\SessionManagerInterface;
 use Magento\Framework\App\Filesystem\DirectoryList;
 class Promotionbanner extends \Magento\Framework\View\Element\Template
 {
@@ -36,10 +34,7 @@ class Promotionbanner extends \Magento\Framework\View\Element\Template
      */
     protected $_template = 'MW_FreeGift::checkout/cart/promotion_banner.phtml';
 
-
-    protected $_scopeConfig;
     protected $salesruleModel;
-    protected $sessionManager;
     /**
      * @var \MW\FreeGift\Model\ResourceModel\SalesRule\CollectionFactory
      */
@@ -49,21 +44,16 @@ class Promotionbanner extends \Magento\Framework\View\Element\Template
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Checkout\Model\Session $checkoutSession,
         \MW\FreeGift\Helper\Data $helperFreeGift,
-        SessionManagerInterface $sessionManager,
-        ScopeConfigInterface $scopeConfig,
         \Magento\Framework\Image\Factory $imageFactory,
-        \Magento\Framework\Filesystem $filesystem,
         \MW\FreeGift\Model\SalesRule $salesruleModel,
         \MW\FreeGift\Model\ResourceModel\SalesRule\CollectionFactory $salesruleCollectionFactory,
         array $data = []
     ) {
         $this->checkoutSession = $checkoutSession; // checkout/session
         $this->helperFreeGift = $helperFreeGift;
-        $this->sessionManager = $sessionManager; // core/session
         $this->salesruleModel = $salesruleModel;
-        $this->_scopeConfig = $scopeConfig;
-        $this->_salesruleCollectionFactory = $salesruleCollectionFactory;
-        $this->mediaDirectory = $filesystem->getDirectoryWrite(DirectoryList::MEDIA);
+            $this->_salesruleCollectionFactory = $salesruleCollectionFactory;
+        $this->mediaDirectory = $context->getFilesystem()->getDirectoryWrite(DirectoryList::MEDIA);
         $this->imageFactory = $imageFactory;
         parent::__construct($context, $data);
     }
@@ -75,7 +65,7 @@ class Promotionbanner extends \Magento\Framework\View\Element\Template
         $websiteId       = $store->getWebsiteId();
 
         $customerGroupId = $quote->getCustomerGroupId() ? $quote->getCustomerGroupId() : 0;
-        $flagRule            = $this->sessionManager->getFlagRule();
+        $flagRule            = $this->_session->getFlagRule();
 
         $arrRule = explode(",",$flagRule);
         $allowRule = $arrRule;
