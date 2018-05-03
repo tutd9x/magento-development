@@ -116,6 +116,7 @@ if(count($ProductGiftData) > 0 || count($ProductGiftSalesRuleData) > 0):
                                         <input type="hidden" name="freegift_parent_key" value="<?php echo $giftData['freegift_parent_key']; ?>">
                                         <input type="hidden" name="rule_name" value="<?php echo $giftData['rule_name']; ?>">
                                         <input type="hidden" name="rule_id" value="<?php echo $giftData['rule_id']; ?>">
+                                        <input type="hidden" name="gift_from_slider" value="1">
                                         <?= $block->getBlockHtml('formkey') ?>
                                         <button type="submit"
                                                 title="<?= $block->escapeHtml(__('Add to Cart')) ?>"
