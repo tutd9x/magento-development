@@ -219,6 +219,9 @@ class ProcessApply implements ObserverInterface
         return $this;
     }
 
+    /*
+     * add gift product to cart
+     * */
     public function addProduct($rule, $qty_for_gift, $storeId, $parentKey)
     {
         $params['product'] = $rule['gift_id'];
