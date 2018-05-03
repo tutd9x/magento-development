@@ -103,7 +103,7 @@ class ProcessApply implements ObserverInterface
     {
         $item = $observer->getEvent()->getItem();
         if($this->_isGift($item)) {
-            return $this->_processRulePrice($observer);
+            return $this;
         }
 
         $freegift_applied_rule_ids = $item->getData('freegift_applied_rule_ids');
@@ -141,8 +141,6 @@ class ProcessApply implements ObserverInterface
                     break;
                 }
             }
-
-            $this->getQuote()->save();
         }
 
         return $this;
@@ -179,43 +177,9 @@ class ProcessApply implements ObserverInterface
             // add the additional options array with the option code additional_options
             $product->addCustomOption('free_sales_gift', 1);
             $product->addCustomOption('additional_options', serialize($additionalOptions));
-            $product->setFinalPrice(0);
-//            $product->setCustomPrice(0);
-//            $product->setOriginalCustomPrice(0);
 
             $this->cart->addProduct($product, $params);
         }
-
-        return $this;
-    }
-
-    /**
-     * Process price for free product.
-     *
-     * @param \Magento\Framework\Event\Observer $observer
-     * @return $this
-     */
-    public function _processRulePrice(\Magento\Framework\Event\Observer $observer)
-    {
-        /* @var $item \Magento\Quote\Model\Quote\Item */
-        /* Call again because need use to get new product added */
-        $item = $observer->getEvent()->getItem();
-        if ($item->getParentItem()) {
-            $item = $item->getParentItem();
-        }
-
-        $item->setPrice(0);
-        $item->setBasePrice(0);
-
-        $item->setCustomPrice(0);
-        $item->setOriginalCustomPrice(0);
-        $item->setCalculationPrice(0);
-        $item->setCalculationPriceOriginal(0);
-//        $item->setBaseCalculationPriceOriginal(0);
-
-        $item->getProduct()->setIsSuperMode(true);
-//        $item->calcRowTotal();
-        $item->save();
 
         return $this;
     }

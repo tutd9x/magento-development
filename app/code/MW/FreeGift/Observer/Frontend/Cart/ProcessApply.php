@@ -131,7 +131,8 @@ class ProcessApply implements ObserverInterface
     {
         /* @var $item \Magento\Quote\Model\Quote\Item */
         $item = $observer->getEvent()->getQuoteItem();
-        if($this->_isGift($item)) {
+
+        if($this->_isGift($item) || $this->_isSalesGift($item)) {
             return $this->_processRulePrice($observer);
         }
 
@@ -295,7 +296,6 @@ class ProcessApply implements ObserverInterface
     public function _countCurrentItemInCart($item, $parent_keys)
     {
         $count = 0;
-
         foreach ($this->getQuote()->getAllItems() as $item) {
 
             /* @var $item \Magento\Quote\Model\Quote\Item */
@@ -396,8 +396,22 @@ class ProcessApply implements ObserverInterface
             $item = $item->getParentItem();
         }
 
-        /* @var $item \Magento\Quote\Model\Quote\Item */
         if($item->getOptionByCode('free_catalog_gift') && $item->getOptionByCode('free_catalog_gift')->getValue() == 1){
+            return true;
+        }
+
+        return false;
+    }
+
+
+    private function _isSalesGift($item)
+    {
+        /* @var $item \Magento\Quote\Model\Quote\Item */
+        if ($item->getParentItem()) {
+            $item = $item->getParentItem();
+        }
+
+        if($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1){
             return true;
         }
 

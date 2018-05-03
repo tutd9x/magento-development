@@ -107,7 +107,7 @@ class RulesApplier
             }
         }
 
-        $quote   = $item->getQuote();
+
         $myId = array();
         $quoteid = $this->checkoutSession->getQuote();
         $cartItems = $quoteid->getAllVisibleItems();
@@ -117,6 +117,8 @@ class RulesApplier
             array_push($myId,$productId);
         }
         $this->checkoutSession->setProductgiftid($myId);
+
+        $quote = $item->getQuote();
         $quote->setFreegiftIds($freegiftIds);
         $quote->setFreegiftCouponCode($freegiftCouponCode);
 

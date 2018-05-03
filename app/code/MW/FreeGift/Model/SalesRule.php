@@ -173,6 +173,8 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
      */
     private $_imageUploader;
 
+    protected $updateFile = false;
+
     /**
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
@@ -277,12 +279,14 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
      */
     public function afterSave()
     {
-        $imageName = $this->getData('promotion_banner', null);
-        if ($imageName) {
-            try {
-                $this->_imageUploader->moveFileFromTmp($imageName);
-            } catch (\Exception $e) {
-                $this->_logger->critical($e);
+        if($this->updateFile == true){
+            $imageName = $this->getData('promotion_banner', null);
+            if ($imageName) {
+                try {
+                    $this->_imageUploader->moveFileFromTmp($imageName);
+                } catch (\Exception $e) {
+                    $this->_logger->critical($e);
+                }
             }
         }
 
@@ -319,7 +323,9 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
     public function loadPost(array $data)
     {
         parent::loadPost($data);
-
+        if(isset($data['promotion_banner'])){
+            $this->updateFile = true;
+        }
         if (isset($data['store_labels'])) {
             $this->setStoreLabels($data['store_labels']);
         }
