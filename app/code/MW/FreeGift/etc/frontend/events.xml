@@ -9,7 +9,6 @@
 
 
 
-
     <event name="sales_quote_collect_totals_after">
         <observer name="freegift" instance="MW\FreeGift\Observer\Frontend\Quote\ApplySalesrule" />
     </event>
@@ -27,14 +26,5 @@
     <event name="sales_quote_remove_item">
         <observer name="freegift" instance="MW\FreeGift\Observer\Frontend\Cart\AfterRemoveItem" />
     </event>
-
-    <!--<event name="sales_quote_save_after">-->
-        <!--<observer name="set_checkout_quote_id" instance="MW\FreeGift\Observer\SalesQuoteSaveAfterObserver" />-->
-    <!--</event>-->
-
-    <!--<event name="sales_quote_product_add_after">-->
-        <!--<observer name="freegift" instance="MW\FreeGift\Observer\Frontend\Quote\AddParentKey" />-->
-    <!--</event>-->
-
 
 </config>

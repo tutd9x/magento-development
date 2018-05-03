@@ -134,7 +134,7 @@ class ProcessApply implements ObserverInterface
             }
 
             foreach ($giftData as $gift) {
-                $current_qty_gift = $this->_countGiftInCart();
+                $current_qty_gift = $this->_countGiftInCart($gift);
                 if ($gift['number_of_free_gift'] > $current_qty_gift) {
                     $this->addProduct($gift, $storeId);
                 }else{
@@ -189,7 +189,7 @@ class ProcessApply implements ObserverInterface
      *
      * @return $count
      */
-    public function _countGiftInCart()
+    public function _countGiftInCart($gift)
     {
         $count = 0;
         foreach ($this->getQuote()->getAllItems() as $item) {
@@ -199,7 +199,9 @@ class ProcessApply implements ObserverInterface
             }
 
             if ($this->_isGift($item)) {
-                $count++;
+                if ($item->getProductId() == $gift['gift_id']) {
+                    $count++;
+                }
             }
         }
 

@@ -346,7 +346,6 @@ class ProcessApply implements ObserverInterface
                 }
 
                 if ($item->getProductId() == $gift['gift_id']) {
-                    // @TODO test voi multi rule cho 1 product
                     $count = $freegift_qty;
                     break;
                 }
