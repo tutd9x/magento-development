@@ -103,7 +103,7 @@ class ProcessApply implements ObserverInterface
     {
         $item = $observer->getEvent()->getItem();
         if($this->_isGift($item)) {
-            return $this;
+            return $this->_prepareRuleGift($observer);
         }
 
         $freegift_applied_rule_ids = $item->getData('freegift_applied_rule_ids');
@@ -115,7 +115,7 @@ class ProcessApply implements ObserverInterface
         $rule_ids = explode(',', $freegift_applied_rule_ids);
         $ruleData = null;
 
-        foreach($rule_ids as $rule_id){
+        foreach ($rule_ids as $rule_id) {
             /* @var $salesrule \MW\FreeGift\Model\SalesRuleFactory */
             $salesrule = $this->_salesRuleFactory->create()->load($rule_id);
             $ruleData[$rule_id] = $salesrule->getData();
@@ -134,9 +134,10 @@ class ProcessApply implements ObserverInterface
             }
 
             foreach ($giftData as $gift) {
-                $current_qty_gift = $this->_countGiftInCart($gift);
+                $parentKey = $gift['rule_id'] .'_'. $gift['gift_id'] .'_'. $gift['number_of_free_gift'];
+                $current_qty_gift = $this->_countGiftInCart($gift, $parentKey);
                 if ($gift['number_of_free_gift'] > $current_qty_gift) {
-                    $this->addProduct($gift, $storeId);
+                    $this->addProduct($gift, $storeId, $parentKey);
                 }else{
                     break;
                 }
@@ -158,11 +159,13 @@ class ProcessApply implements ObserverInterface
         return $result;
     }
 
-    public function addProduct($rule, $storeId)
+    public function addProduct($rule, $storeId, $parentKey)
     {
         $params['product'] = $rule['gift_id'];
         $params['rule_name'] = $rule['name'];
         $params['qty'] = 1;
+        $params['free_sales_key'][$parentKey] = $parentKey;
+        $params['freegift_qty_info'][$parentKey] = 1;
 
         $product = $this->productRepository->getById($rule['gift_id'], false, $storeId);
 
@@ -186,10 +189,11 @@ class ProcessApply implements ObserverInterface
 
     /**
      * Counting gift item in cart
-     *
-     * @return $count
+     * @param $gift
+     * @param $parentKey
+     * @return int $count
      */
-    public function _countGiftInCart($gift)
+    public function _countGiftInCart($gift, $parentKey)
     {
         $count = 0;
         foreach ($this->getQuote()->getAllItems() as $item) {
@@ -199,8 +203,25 @@ class ProcessApply implements ObserverInterface
             }
 
             if ($this->_isGift($item)) {
+                $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+
+                $free_sales_key = $info['free_sales_key'];
+                $freegift_qty_info = $info['freegift_qty_info'];
+
+                $data_to_compare[$parentKey] = $parentKey;
+                $result = array_intersect($data_to_compare,$free_sales_key);
+                if (empty($result)) {
+                    continue;
+                }
+
+                $freegift_qty = '';
+                foreach ($result as $key) {
+                    $freegift_qty = $freegift_qty_info[$key];
+                }
+
                 if ($item->getProductId() == $gift['gift_id']) {
-                    $count++;
+                    $count = $freegift_qty;
+                    break;
                 }
             }
         }
@@ -244,6 +265,27 @@ class ProcessApply implements ObserverInterface
         }
 
         return false;
+    }
+
+    /**
+     * Process price for free product.
+     *
+     * @param \Magento\Framework\Event\Observer $observer
+     * @return $this
+     */
+    public function _prepareRuleGift(\Magento\Framework\Event\Observer $observer)
+    {
+        /* @var $item \Magento\Quote\Model\Quote\Item */
+        $item = $observer->getEvent()->getItem();
+        $quote = $item->getQuote();
+        $freeids = $quote->getFreegiftIds();
+        $freeids = explode(",", $freeids);
+
+        /* Remove gift item if it isn't gift */
+        if (!in_array($item->getProductId(), $freeids)) {
+            $quote->removeItem($item->getItemId());
+        }
+        return $this;
     }
 
 }

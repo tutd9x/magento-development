@@ -161,7 +161,7 @@ class ProcessApply implements ObserverInterface
             /* Process for gift if exist */
             $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
             $freegift_keys = $info['freegift_keys'];
-            $current_qty = $this->_countCurrentItemInCart($item, $freegift_keys);
+            $current_qty = $this->_countCurrentItemInCart($freegift_keys);
 
             foreach ($giftData as $gift) {
                 // process for buy x get y
@@ -290,10 +290,10 @@ class ProcessApply implements ObserverInterface
 
     /**
      * Counting current item in cart
-     *
-     * @return $count
+     * @param $parent_keys
+     * @return int $count
      */
-    public function _countCurrentItemInCart($item, $parent_keys)
+    public function _countCurrentItemInCart($parent_keys)
     {
         $count = 0;
         foreach ($this->getQuote()->getAllItems() as $item) {
@@ -319,8 +319,9 @@ class ProcessApply implements ObserverInterface
 
     /**
      * Counting gift item in cart
-     *
-     * @return $count
+     * @param $gift
+     * @param $parent_keys
+     * @return int $count
      */
     public function _countGiftInCart($gift, $parent_keys)
     {
@@ -331,9 +332,9 @@ class ProcessApply implements ObserverInterface
                 $item = $item->getParentItem();
             }
 
-            $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
-
             if ($this->_isGift($item)) {
+                $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+
                 $freegift_parent_key = $info['freegift_parent_key'];
                 $freegift_qty_info = $info['freegift_qty_info'];
                 $result = array_intersect($parent_keys,$freegift_parent_key);
@@ -341,6 +342,7 @@ class ProcessApply implements ObserverInterface
                     continue;
                 }
 
+                $freegift_qty = '';
                 foreach ($result as $key) {
                     $freegift_qty = $freegift_qty_info[$key];
                 }
@@ -370,6 +372,7 @@ class ProcessApply implements ObserverInterface
     public function _getItemByProduct($product)
     {
         foreach ($this->getQuote()->getAllItems() as $item) {
+            /* @var $item \Magento\Quote\Model\Quote\Item */
             if ($item->representProduct($product)) {
                 return $item;
             }
