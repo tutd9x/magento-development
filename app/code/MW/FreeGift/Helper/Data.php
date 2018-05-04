@@ -575,5 +575,86 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         );
         return $result;
     }
+
+    public function getProductGiftSalesRuleAvailable(){
+        $quote = $this->checkoutSession->getQuote();
+        $productGift = $quote->getFreegiftIds();
+        $rules  = $quote->getFreegiftAppliedRuleIds(); //1,2
+        $giftDataByRule = $this->checkoutSession->getGiftSalesProductIds();
+        $allGift = array();
+        if(!$giftDataByRule) return $this;
+//        \Zend_Debug::dump($giftDataByRule); die();
+        foreach($giftDataByRule as $gift){
+            $free_sales_key = $gift['rule_id'].'_'.$gift['rule_gift_ids'].'_'.$gift['number_of_free_gift'];
+            $allGift[] = $free_sales_key;
+        }
+//        \Zend_Debug::dump($allGift);
+        $productList = explode(",",$productGift);
+        $ruleList = explode(",",$rules);
+
+        $items = $quote->getAllVisibleItems();
+
+        $parentData = $productList;
+        $giftData = array();
+        foreach($items as $item){
+            /* Lay product Gift trong cart */
+            if($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1){
+//                array_push($giftData,unserialize($item->getOptionByCode('info_buyRequest')->getValue())['free_sales_key']);
+                $key = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+                $keyVal = $key['free_sales_key'];
+                $giftData[] = $keyVal;
+            }
+        }
+        $diffGifts = $allGift; //$this->checkDiffSalesRuleGifts($allGift,$giftData);
+        if(count($diffGifts) == 0) return array();
+        $listGiftProductId = array();
+        $i = 0;
+        foreach($diffGifts as $result){
+            $keyData = $this->splitSalesRuleKey($result);
+//            $listGiftProductId[] = $keyData;
+//            $listGiftProductId[$i]['freegift_parent_key'] = $result;
+            $listGiftProductId[$i]['rule_id'] = $keyData['rule_id'];
+            $listGiftProductId[$i]['rule_gift_ids'] = $keyData['rule_gift_ids'];
+            $listGiftProductId[$i]['number_of_free_gift'] = $keyData['number_of_free_gift'];
+            $listGiftProductId[$i]['rule_name'] = $keyData['rule_name'];
+//            $ruleData = $this->_salesruleFactory->create()->load($keyData['rule_id']);
+//            $listGiftProductId[$i]['rule_name'] = $ruleData->getName();
+            $i++;
+        }
+        return $listGiftProductId;
+
+//        return $diffGifts;
+    }
+
+    public function splitSalesRuleKey($key){
+        $data = explode( '_', $key );
+        $result = array(
+            'rule_gift_ids' => $data[1],
+            'rule_id' => $data[0],
+            'rule_name' => $data[0],
+            'number_of_free_gift' => $data[2]
+        );
+        return $result;
+    }
+
+    public function checkDiffSalesRuleGifts($parentData,$giftData){
+        $parent = $parentData; //array();
+        $gift = array();
+
+//        foreach($parentData as $keyp){
+//            foreach($keyp as $key){
+//                $parent[] = $key;
+//            }
+//        }
+
+        foreach($giftData as $keyg){
+            foreach($keyg as $key){
+                $gift[] = $key;
+            }
+        }
+
+        $diffData = array_diff($parent,$gift);
+        return $diffData;
+    }
 }
 

@@ -83,20 +83,6 @@ class FreeGifts extends \Magento\Framework\View\Element\Template
         return $this->_coreRegistry->registry('current_product');
     }
 
-    /**
-     * Generate content to log file debug.log By Hattetek.Com
-     *
-     * @param  $message string|array
-     * @return void
-     */
-    function xlog($message = 'null')
-    {
-        $log = print_r($message, true);
-        \Magento\Framework\App\ObjectManager::getInstance()
-            ->get('Psr\Log\LoggerInterface')
-            ->debug($log)
-        ;
-    }
     /* Get product thoa man cac rule*/
     public function getProductGift(){
         // @TODO
@@ -119,5 +105,10 @@ class FreeGifts extends \Magento\Framework\View\Element\Template
 
     public function getAddToCartUrl($product){
         return $this->_listProduct->getAddToCartUrl($product);
+    }
+
+    public function getFreeGiftSalesRuleAvailable(){
+        $productGiftsDeleted = $this->helperFreeGift->getProductGiftSalesRuleAvailable();
+        return $productGiftsDeleted;
     }
 }
