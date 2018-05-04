@@ -293,13 +293,15 @@ class ProcessApply implements ObserverInterface
         $aplliedRuleIds = explode(',',$aplliedRuleIds);
         $giftData = $this->checkoutSession->getGiftSalesProductIds();
 
+
+
+
         $compare_keys = [];
         foreach ($aplliedRuleIds as $ruleId){
-            foreach ($giftData as $gift){
-                if($gift['rule_id'] == $ruleId){
-                    $parentKey = $gift['rule_id'] .'_'. $gift['gift_id'] .'_'. $gift['number_of_free_gift'];
-                    $compare_keys[$parentKey] = $parentKey;
-                }
+            $found_key = array_search($ruleId, array_column($giftData, 'rule_id'));
+            if($found_key !== false){
+                $parentKey = $giftData[$found_key]['rule_id'] .'_'. $giftData[$found_key]['gift_id'] .'_'. $giftData[$found_key]['number_of_free_gift'];
+                $compare_keys[$parentKey] = $parentKey;
             }
         }
 
@@ -311,8 +313,6 @@ class ProcessApply implements ObserverInterface
                 return $this;
             }
         }
-
         return $this;
     }
-
 }
