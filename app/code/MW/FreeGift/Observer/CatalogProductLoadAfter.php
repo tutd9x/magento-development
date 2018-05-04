@@ -69,7 +69,7 @@ class CatalogProductLoadAfter implements ObserverInterface
         if (empty($ruleData)) {
             return;
         }
-        $gift_product_ids = $this->helperFreeGift->getFreeGiftCatalogProduct($ruleData, TRUE);
+        $gift_product_ids = $this->helperFreeGift->getGiftDataByRule($ruleData, TRUE);
         if (count($gift_product_ids) > 0) {
             $product->addCustomOption('mw_free_catalog_gift', 1);
 

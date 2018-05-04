@@ -217,7 +217,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $rule_gift_ids = array();
         foreach ($arrayGift as $item) {
-            $rule_gift_ids[] = $item['rule_gift_ids'];
+            $rule_gift_ids[] = $item['gift_id'];
         }
 
         $ids = implode(",",$rule_gift_ids); // gộp mảng thành chuỗi nối nhau bởi dấu ,
@@ -233,7 +233,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
 
 
-    public function getFreeGiftCatalogProduct($ruleData = null, $getOnlyGiftId = FALSE)
+    public function _removed_getFreeGiftCatalogProduct($ruleData = null, $getOnlyGiftId = FALSE)
     {
         if (is_array($ruleData)) {
             // giftDataAT, priorityAT use for action_stop = 1

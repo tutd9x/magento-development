@@ -183,7 +183,6 @@ class ProcessApply implements ObserverInterface
 
                     $this->addProduct($gift, $qty_for_gift, $storeId, $gift['freegift_parent_key']);
                     unset($freegift_keys[$gift['freegift_parent_key']]);
-                    $test = $freegift_keys;
                 }
             }
         }

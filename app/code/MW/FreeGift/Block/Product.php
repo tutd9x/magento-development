@@ -493,7 +493,7 @@ class Product extends \Magento\Framework\View\Element\Template
     public function getFreeGiftCatalog(){
         $freeGiftCatalogData = []; $product_ids = []; $item_ids = []; $item_product_ids = [];
 //        $this->xlog("Product ".__LINE__);
-        $freeGiftCatalogData = $this->helperFreeGift->getFreeGiftCatalogProduct();
+        $freeGiftCatalogData = $this->helperFreeGift->getGiftDataByRule();
         $items = $this->checkoutSession->getQuote()->getAllVisibleItems();
         if(count($items) > 0) {
             foreach($items as $item) {
@@ -566,7 +566,7 @@ class Product extends \Magento\Framework\View\Element\Template
 
     public function getFreeGiftSalesRule(){
         $freeGiftSalesRuleData = array();
-        $freeGiftSalesRuleData = $this->helperFreeGift->getFreeGiftCatalogProduct(null,'getGiftOfSalesRule');
+        $freeGiftSalesRuleData = $this->helperFreeGift->getGiftDataBySalesRule();
 
 
         $product_ids = []; $item_ids = []; $item_product_ids = [];

@@ -109,7 +109,7 @@ class Addg extends \Magento\Checkout\Controller\Cart
             }
             if (!isset($params['upd'])) {
                 $block_product = $layout->createBlock('MW\FreeGift\Block\Product');
-                $missingGiftProducts = $this->helperFreeGift->getFreeGiftCatalogProduct(); //$block_product->getFreeGiftCatalogProduct();
+                $missingGiftProducts = $this->helperFreeGift->getGiftDataByRule(); //$block_product->getFreeGiftCatalogProduct();
                 $quote_parent_item = false; // = $this->getQuoteItemByGiftItemId($params['free_catalog_gift']);
                 $items = $this->_checkoutSession->getQuote()->getAllItems();
 

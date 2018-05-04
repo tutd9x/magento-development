@@ -66,7 +66,9 @@ class ApplySalesrule implements ObserverInterface
 
         foreach($rule_ids as $rule_id){
             $salesrule = $this->_salesRuleFactory->create()->load($rule_id);
-            $salesruleData[$rule_id] = $salesrule->getData();
+            if($salesrule->getId()){
+                $salesruleData[$rule_id] = $salesrule->getData();
+            }
         }
         $gift_sales_product_ids = $this->helperFreeGift->getGiftDataBySalesRule($salesruleData);
 

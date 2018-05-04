@@ -289,30 +289,29 @@ class ProcessApply implements ObserverInterface
             return $this;
         }
 
-        $aplliedRuleIds = $quote->getFreegiftAppliedRuleIds();
-        $aplliedRuleIds = explode(',',$aplliedRuleIds);
-        $giftData = $this->checkoutSession->getGiftSalesProductIds();
-
-
-
-
-        $compare_keys = [];
-        foreach ($aplliedRuleIds as $ruleId){
-            $found_key = array_search($ruleId, array_column($giftData, 'rule_id'));
-            if($found_key !== false){
-                $parentKey = $giftData[$found_key]['rule_id'] .'_'. $giftData[$found_key]['gift_id'] .'_'. $giftData[$found_key]['number_of_free_gift'];
-                $compare_keys[$parentKey] = $parentKey;
-            }
+        $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+        if (isset($info['free_sales_key'])) {
+            $free_sales_key = $info['free_sales_key'];
         }
 
-        $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
-        if (isset($info['free_sales_key']) && $free_sales_key = $info['free_sales_key']) {
+        $compare_keys = [];
+        $giftData = $this->checkoutSession->getGiftSalesProductIds();
+        if(!empty($giftData)){
+            foreach ($giftData as $gift) {
+                $parentKey = $gift['rule_id'] .'_'. $gift['gift_id'] .'_'. $gift['number_of_free_gift'];
+                $compare_keys[$parentKey] = $parentKey;
+            }
+
             $result = array_intersect($compare_keys,$free_sales_key);
             if (empty($result)) {
                 $quote->removeItem($item->getItemId());
                 return $this;
             }
         }
+
+
+
+
         return $this;
     }
 }
