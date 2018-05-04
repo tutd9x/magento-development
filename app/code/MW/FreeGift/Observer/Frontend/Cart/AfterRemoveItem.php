@@ -89,6 +89,7 @@ class AfterRemoveItem implements ObserverInterface
         }
 
         $this->_processCatalogRule($observer, $items);
+        $this->_processSalesRule($observer, $items);
 
         $this->resetSession();
 
@@ -161,10 +162,28 @@ class AfterRemoveItem implements ObserverInterface
         return $this;
     }
 
+    private function _processSalesRule($observer, $items)
+    {
+        $item_removed = $observer->getEvent()->getQuoteItem();
+        $salesGiftRemoved = $this->checkoutSession->getSalesGiftRemoved();
+
+        if ($this->_isSalesGift($item_removed)) {
+
+            if ( $item_removed->getOptionByCode('info_buyRequest') && $itemInfo = unserialize($item_removed->getOptionByCode('info_buyRequest')->getValue()) ) {
+                $freegift_sales_key = $itemInfo['freegift_rule_data']['freegift_sales_key'];
+                $salesGiftRemoved[$freegift_sales_key] = $freegift_sales_key;
+                $this->checkoutSession->setSalesGiftRemoved($salesGiftRemoved);
+            }
+        }
+
+        return $this;
+    }
+
     protected function resetSession()
     {
         $this->checkoutSession->unsetData('gift_product_ids');
         $this->checkoutSession->unsetData('gift_sales_product_ids');
+        $this->checkoutSession->unsetData('sales_gift_removed');
         $this->checkoutSession->unsRulegifts();
         $this->checkoutSession->unsProductgiftid();
         $this->checkoutSession->unsGooglePlus();
@@ -203,6 +222,21 @@ class AfterRemoveItem implements ObserverInterface
         if($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1){
             return true;
         }
+        return false;
+    }
+
+
+    private function _isSalesGift($item)
+    {
+        /* @var $item \Magento\Quote\Model\Quote\Item */
+        if ($item->getParentItem()) {
+            $item = $item->getParentItem();
+        }
+
+        if($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1){
+            return true;
+        }
+
         return false;
     }
 

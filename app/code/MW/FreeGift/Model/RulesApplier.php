@@ -144,6 +144,7 @@ class RulesApplier
             $quote->setFreegiftCouponCode('');
             $item->setFreegiftAppliedRuleIds('');
             $this->checkoutSession->unsetData('gift_sales_product_ids');
+            $this->checkoutSession->unsetData('sales_gift_removed');
             $this->removeItemGift($item);
         }
 

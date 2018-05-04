@@ -293,6 +293,9 @@ class ProcessApply implements ObserverInterface
         $item->setOriginalCustomPrice(0);
         $item->getProduct()->setIsSuperMode(true);
 
+
+
+
         return $this;
     }
 
@@ -396,6 +399,23 @@ class ProcessApply implements ObserverInterface
      */
     private function _updateListGift(\Magento\Framework\Event\Observer $observer)
     {
+        $item = $observer->getEvent()->getQuoteItem();
+        if ($this->_isSalesGift($item)) {
+            $salesGiftRemoved = $this->checkoutSession->getSalesGiftRemoved();
+            $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+
+            if(!empty($salesGiftRemoved)) {
+                $parentKey = $info['free_sales_key'];
+                $result = array_intersect($parentKey, $salesGiftRemoved);
+                if (empty($result)) {
+                    foreach ($result as $key) {
+                        unset($salesGiftRemoved[$key]);
+                    }
+                    $this->checkoutSession->setSalesGiftRemoved($salesGiftRemoved);
+                }
+            }
+        }
+
         return $this;
     }
 

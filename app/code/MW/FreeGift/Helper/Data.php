@@ -202,6 +202,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                     $giftData[$num]['name'] = $data['name'];
                     $giftData[$num]['gift_id'] = $giftId;
                     $giftData[$num]['number_of_free_gift'] = $data['number_of_free_gift'];
+                    $giftData[$num]['freegift_sales_key'] = $data['rule_id'] .'_'. $giftId .'_'. $data['number_of_free_gift'];
                     $num++;
                 }
             }
@@ -582,10 +583,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $rules  = $quote->getFreegiftAppliedRuleIds(); //1,2
         $giftDataByRule = $this->checkoutSession->getGiftSalesProductIds();
         $allGift = array();
-        if(!$giftDataByRule) return $this;
+        if(!$giftDataByRule) return [];
 //        \Zend_Debug::dump($giftDataByRule); die();
         foreach($giftDataByRule as $gift){
-            $free_sales_key = $gift['rule_id'].'_'.$gift['rule_gift_ids'].'_'.$gift['number_of_free_gift'];
+            $free_sales_key = $gift['rule_id'].'_'.$gift['gift_id'].'_'.$gift['number_of_free_gift'];
             $allGift[] = $free_sales_key;
         }
 //        \Zend_Debug::dump($allGift);
@@ -605,7 +606,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 $giftData[] = $keyVal;
             }
         }
-        $diffGifts = $allGift; //$this->checkDiffSalesRuleGifts($allGift,$giftData);
+        $diffGifts = $this->checkDiffSalesRuleGifts($allGift,$giftData);
         if(count($diffGifts) == 0) return array();
         $listGiftProductId = array();
         $i = 0;
@@ -615,6 +616,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 //            $listGiftProductId[$i]['freegift_parent_key'] = $result;
             $listGiftProductId[$i]['rule_id'] = $keyData['rule_id'];
             $listGiftProductId[$i]['rule_gift_ids'] = $keyData['rule_gift_ids'];
+            $listGiftProductId[$i]['gift_id'] = $keyData['gift_id'];
             $listGiftProductId[$i]['number_of_free_gift'] = $keyData['number_of_free_gift'];
             $listGiftProductId[$i]['rule_name'] = $keyData['rule_name'];
 //            $ruleData = $this->_salesruleFactory->create()->load($keyData['rule_id']);
@@ -630,6 +632,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $data = explode( '_', $key );
         $result = array(
             'rule_gift_ids' => $data[1],
+            'gift_id' => $data[1],
             'rule_id' => $data[0],
             'rule_name' => $data[0],
             'number_of_free_gift' => $data[2]

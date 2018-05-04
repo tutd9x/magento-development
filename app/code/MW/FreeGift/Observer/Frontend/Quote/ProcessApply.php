@@ -133,8 +133,15 @@ class ProcessApply implements ObserverInterface
                 return $this;
             }
 
+            $salesGiftRemoved = $this->checkoutSession->getSalesGiftRemoved();
+
             foreach ($giftData as $gift) {
                 $parentKey = $gift['rule_id'] .'_'. $gift['gift_id'] .'_'. $gift['number_of_free_gift'];
+
+                if (!empty($salesGiftRemoved) && array_key_exists($parentKey, $salesGiftRemoved)) {
+                    continue;
+                }
+
                 $current_qty_gift = $this->_countGiftInCart($gift, $parentKey);
                 if ($gift['number_of_free_gift'] > $current_qty_gift) {
                     $this->addProduct($gift, $storeId, $parentKey);
@@ -166,6 +173,7 @@ class ProcessApply implements ObserverInterface
         $params['qty'] = 1;
         $params['free_sales_key'][$parentKey] = $parentKey;
         $params['freegift_qty_info'][$parentKey] = 1;
+        $params['freegift_rule_data'] = $rule;
 
         $product = $this->productRepository->getById($rule['gift_id'], false, $storeId);
 
