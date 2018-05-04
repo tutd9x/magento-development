@@ -203,23 +203,23 @@ class ProcessApply implements ObserverInterface
             }
 
             if ($this->_isGift($item)) {
-                $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
-
-                $free_sales_key = $info['free_sales_key'];
-                $freegift_qty_info = $info['freegift_qty_info'];
-
-                $data_to_compare[$parentKey] = $parentKey;
-                $result = array_intersect($data_to_compare,$free_sales_key);
-                if (empty($result)) {
-                    continue;
-                }
-
-                $freegift_qty = '';
-                foreach ($result as $key) {
-                    $freegift_qty = $freegift_qty_info[$key];
-                }
-
                 if ($item->getProductId() == $gift['gift_id']) {
+                    $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+
+                    $free_sales_key = $info['free_sales_key'];
+                    $freegift_qty_info = $info['freegift_qty_info'];
+
+                    $data_to_compare[$parentKey] = $parentKey;
+                    $result = array_intersect($data_to_compare,$free_sales_key);
+                    if (empty($result)) {
+                        continue;
+                    }
+
+                    $freegift_qty = '';
+                    foreach ($result as $key) {
+                        $freegift_qty = $freegift_qty_info[$key];
+                    }
+
                     $count = $freegift_qty;
                     break;
                 }
@@ -277,14 +277,41 @@ class ProcessApply implements ObserverInterface
     {
         /* @var $item \Magento\Quote\Model\Quote\Item */
         $item = $observer->getEvent()->getItem();
+        /* @var $quote \Magento\Quote\Model\Quote */
         $quote = $item->getQuote();
+
         $freeids = $quote->getFreegiftIds();
         $freeids = explode(",", $freeids);
 
         /* Remove gift item if it isn't gift */
         if (!in_array($item->getProductId(), $freeids)) {
             $quote->removeItem($item->getItemId());
+            return $this;
         }
+
+        $aplliedRuleIds = $quote->getFreegiftAppliedRuleIds();
+        $aplliedRuleIds = explode(',',$aplliedRuleIds);
+        $giftData = $this->checkoutSession->getGiftSalesProductIds();
+
+        $compare_keys = [];
+        foreach ($aplliedRuleIds as $ruleId){
+            foreach ($giftData as $gift){
+                if($gift['rule_id'] == $ruleId){
+                    $parentKey = $gift['rule_id'] .'_'. $gift['gift_id'] .'_'. $gift['number_of_free_gift'];
+                    $compare_keys[$parentKey] = $parentKey;
+                }
+            }
+        }
+
+        $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+        if (isset($info['free_sales_key']) && $free_sales_key = $info['free_sales_key']) {
+            $result = array_intersect($compare_keys,$free_sales_key);
+            if (empty($result)) {
+                $quote->removeItem($item->getItemId());
+                return $this;
+            }
+        }
+
         return $this;
     }
 
