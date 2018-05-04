@@ -515,7 +515,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             /* Lay product chua Gift*/
             if($item->getOptionByCode('mw_free_catalog_gift') && $item->getOptionByCode('mw_free_catalog_gift')->getValue() == 1){
                 $key = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
-                $freegift_keys = $key['freegift_keys'];
+                $freegift_keys = isset($key['freegift_keys']) ? $key['freegift_keys'] : null;
                 array_push($parentData,$freegift_keys);
 
             }
@@ -547,9 +547,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $gift = array();
 
         foreach($parentData as $keyp){
-            foreach($keyp as $key){
-                $parent[] = $key;
+            if(!empty($keyp)){
+                foreach($keyp as $key){
+                    $parent[] = $key;
+                }
             }
+
         }
 
         foreach($giftData as $keyg){

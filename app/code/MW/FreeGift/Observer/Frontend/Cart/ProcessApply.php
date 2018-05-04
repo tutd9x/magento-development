@@ -182,6 +182,8 @@ class ProcessApply implements ObserverInterface
                     }
 
                     $this->addProduct($gift, $qty_for_gift, $storeId, $gift['freegift_parent_key']);
+                    unset($freegift_keys[$gift['freegift_parent_key']]);
+                    $test = $freegift_keys;
                 }
             }
         }
@@ -266,7 +268,7 @@ class ProcessApply implements ObserverInterface
 
                         $data['freegift_qty_info'][$parentKey] = $current_qty_info + $qty_for_gift;
                     }
-                    $itemInCart->getOptionByCode('info_buyRequest')->setValue(serialize($data))->save();
+                    $itemInCart->getOptionByCode('info_buyRequest')->setValue(serialize($data));
                 }
             }
         }
@@ -340,21 +342,21 @@ class ProcessApply implements ObserverInterface
             }
 
             if ($this->_isGift($item)) {
-                $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
-
-                $freegift_parent_key = $info['freegift_parent_key'];
-                $freegift_qty_info = $info['freegift_qty_info'];
-                $result = array_intersect($parent_keys,$freegift_parent_key);
-                if (empty($result)) {
-                    continue;
-                }
-
-                $freegift_qty = '';
-                foreach ($result as $key) {
-                    $freegift_qty = $freegift_qty_info[$key];
-                }
-
                 if ($item->getProductId() == $gift['gift_id']) {
+                    $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+
+                    $freegift_parent_key = $info['freegift_parent_key'];
+                    $freegift_qty_info = $info['freegift_qty_info'];
+                    $result = array_intersect($parent_keys,$freegift_parent_key);
+                    if (empty($result)) {
+                        continue;
+                    }
+
+                    $freegift_qty = '';
+                    foreach ($result as $key) {
+                        $freegift_qty = $freegift_qty_info[$key];
+                    }
+
                     $count = $freegift_qty;
                     break;
                 }

@@ -141,7 +141,7 @@ class AfterRemoveItem implements ObserverInterface
                         }
                     }
 
-                    $qtyToUpdate = $item->getQty() - $qtyRemoved;
+                    $qtyToUpdate = $item->getQty() - $qtyRemoved * count($result);
                     if ($qtyToUpdate <= 0) {
                         $quote->removeItem($item->getItemId())->save();
                     } else {
