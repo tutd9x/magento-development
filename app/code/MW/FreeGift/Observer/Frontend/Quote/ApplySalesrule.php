@@ -78,7 +78,7 @@ class ApplySalesrule implements ObserverInterface
                 $this->checkoutSession->setGiftSalesProductIds($gift_sales_product_ids);
             }
         }
-
-
     }
+
+
 }

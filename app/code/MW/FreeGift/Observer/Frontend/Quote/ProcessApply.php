@@ -142,7 +142,9 @@ class ProcessApply implements ObserverInterface
                     continue;
                 }
 
-                $current_qty_gift = $this->_countGiftInCart($gift, $parentKey);
+//                $current_gift = $this->_countGiftInCart();
+                $current_qty_gift = $this->_countQtyGiftInCart($gift, $parentKey);
+
                 if ($gift['number_of_free_gift'] > $current_qty_gift) {
                     $this->addProduct($gift, $storeId, $parentKey);
                 }else{
@@ -197,11 +199,10 @@ class ProcessApply implements ObserverInterface
 
     /**
      * Counting gift item in cart
-     * @param $gift
-     * @param $parentKey
-     * @return int $count
+     *
+     * @return $count
      */
-    public function _countGiftInCart($gift, $parentKey)
+    public function _countGiftInCart()
     {
         $count = 0;
         foreach ($this->getQuote()->getAllItems() as $item) {
@@ -209,6 +210,33 @@ class ProcessApply implements ObserverInterface
             if ($item->getParentItem()) {
                 $item = $item->getParentItem();
             }
+
+            if ($this->_isGift($item)) {
+                $count++;
+            }
+        }
+
+        return $count;
+    }
+
+    /**
+     * Counting gift item in cart
+     * @param $gift
+     * @param $parentKey
+     * @return int $count
+     */
+    public function _countQtyGiftInCart($gift, $parentKey)
+    {
+        $count = 0;
+        foreach ($this->getQuote()->getAllItems() as $item) {
+            /* @var $item \Magento\Quote\Model\Quote\Item */
+            if ($item->getParentItem()) {
+                $item = $item->getParentItem();
+            }
+
+//            if ($this->_isGift($item)) {
+//                $count++;
+//            }
 
             if ($this->_isGift($item)) {
                 if ($item->getProductId() == $gift['gift_id']) {

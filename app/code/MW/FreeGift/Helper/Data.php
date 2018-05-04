@@ -43,6 +43,20 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         parent::__construct($context);
     }
 
+    protected function resetSession()
+    {
+        $this->checkoutSession->unsetData('gift_product_ids');
+        $this->checkoutSession->unsetData('gift_sales_product_ids');
+        $this->checkoutSession->unsetData('sales_gift_removed');
+        $this->checkoutSession->unsRulegifts();
+        $this->checkoutSession->unsProductgiftid();
+        $this->checkoutSession->unsGooglePlus();
+        $this->checkoutSession->unsLikeFb();
+        $this->checkoutSession->unsShareFb();
+        $this->checkoutSession->unsTwitter();
+
+        return $this;
+    }
 
     public function getStoreConfig($xmlPath)
     {
@@ -579,6 +593,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function getProductGiftSalesRuleAvailable(){
         $quote = $this->checkoutSession->getQuote();
+        $items = $quote->getAllVisibleItems();
+        if (count($items) >= 0 && $quote->getSubtotal() == 0) {
+            $this->resetSession();
+            return [];
+        }
+
         $productGift = $quote->getFreegiftIds();
         $rules  = $quote->getFreegiftAppliedRuleIds(); //1,2
         $giftDataByRule = $this->checkoutSession->getGiftSalesProductIds();

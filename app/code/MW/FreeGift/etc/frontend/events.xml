@@ -8,7 +8,6 @@
     </event>
 
 
-
     <event name="sales_quote_collect_totals_after">
         <observer name="freegift" instance="MW\FreeGift\Observer\Frontend\Quote\ApplySalesrule" />
     </event>

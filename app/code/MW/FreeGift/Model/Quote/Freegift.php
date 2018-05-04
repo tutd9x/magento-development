@@ -26,33 +26,25 @@ class Freegift extends \Magento\Quote\Model\Quote\Address\Total\AbstractTotal
      * @var \Magento\Framework\Pricing\PriceCurrencyInterface
      */
     protected $priceCurrency;
-    /**
-     * @var \Magento\Checkout\Model\Session
-     */
-    private $checkoutSession;
+
     /**
      * @param \Magento\Framework\Event\ManagerInterface $eventManager
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \MW\FreeGift\Model\Validator $validator
      * @param \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency
-     * @param \Magento\Checkout\Model\Session $checkoutSession
      */
     public function __construct(
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \MW\FreeGift\Model\Validator $validator,
-        \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
-        \Magento\Checkout\Model\Session $checkoutSession
+        \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency
     ) {
         $this->setCode('mw_freegift');
         $this->eventManager = $eventManager;
         $this->calculator = $validator;
         $this->storeManager = $storeManager;
         $this->priceCurrency = $priceCurrency;
-        $this->checkoutSession = $checkoutSession;
     }
-
-
 
     /**
      * Collect address discount amount
@@ -74,7 +66,6 @@ class Freegift extends \Magento\Quote\Model\Quote\Address\Total\AbstractTotal
 
         $items = $shippingAssignment->getItems();
         if (!count($items)) {
-            $this->resetSession();
             return $this;
         }
 
@@ -106,22 +97,6 @@ class Freegift extends \Magento\Quote\Model\Quote\Address\Total\AbstractTotal
                 //$this->calculator->process($item);
             }
         }
-        return $this;
-    }
-
-
-    protected function resetSession()
-    {
-        $this->checkoutSession->unsetData('gift_product_ids');
-        $this->checkoutSession->unsetData('gift_sales_product_ids');
-        $this->checkoutSession->unsetData('sales_gift_removed');
-        $this->checkoutSession->unsRulegifts();
-        $this->checkoutSession->unsProductgiftid();
-        $this->checkoutSession->unsGooglePlus();
-        $this->checkoutSession->unsLikeFb();
-        $this->checkoutSession->unsShareFb();
-        $this->checkoutSession->unsTwitter();
-
         return $this;
     }
 
