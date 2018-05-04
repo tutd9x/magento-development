@@ -91,7 +91,7 @@ class AfterRemoveItem implements ObserverInterface
         $this->_processCatalogRule($observer, $items);
         $this->_processSalesRule($observer, $items);
 
-        $this->resetSession();
+        //$this->resetSession();
 
         return $this;
     }
