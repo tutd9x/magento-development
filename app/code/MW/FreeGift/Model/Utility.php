@@ -22,17 +22,17 @@ class Utility
     protected $_baseRoundingDeltas = [];
 
     /**
-     * @var \Magento\SalesRule\Model\ResourceModel\Coupon\UsageFactory
+     * @var \MW\FreeGift\Model\ResourceModel\Coupon\UsageFactory
      */
     protected $usageFactory;
 
     /**
-     * @var \Magento\SalesRule\Model\CouponFactory
+     * @var \MW\FreeGift\Model\CouponFactory
      */
     protected $couponFactory;
 
     /**
-     * @var \Magento\SalesRule\Model\Rule\CustomerFactory
+     * @var \MW\FreeGift\Model\SalesRule\CustomerFactory
      */
     protected $customerFactory;
 
@@ -48,16 +48,16 @@ class Utility
     protected $checkoutSession;
 
     /**
-     * @param \Magento\SalesRule\Model\ResourceModel\Coupon\UsageFactory $usageFactory
+     * @param \MW\FreeGift\Model\ResourceModel\Coupon\UsageFactory $usageFactory
      * @param CouponFactory $couponFactory
-     * @param Rule\CustomerFactory $customerFactory
+     * @param SalesRule\CustomerFactory $customerFactory
      * @param \Magento\Framework\DataObjectFactory $objectFactory
      * @param PriceCurrencyInterface $priceCurrency
      */
     public function __construct(
-        \Magento\SalesRule\Model\ResourceModel\Coupon\UsageFactory $usageFactory,
-        \Magento\SalesRule\Model\CouponFactory $couponFactory,
-        \Magento\SalesRule\Model\Rule\CustomerFactory $customerFactory,
+        \MW\FreeGift\Model\ResourceModel\Coupon\UsageFactory $usageFactory,
+        \MW\FreeGift\Model\CouponFactory $couponFactory,
+        \MW\FreeGift\Model\SalesRule\CustomerFactory $customerFactory,
         \Magento\Framework\DataObjectFactory $objectFactory,
         PriceCurrencyInterface $priceCurrency,
         \Magento\Checkout\Model\Session $checkoutSession
@@ -91,7 +91,7 @@ class Utility
         if ($rule->getCouponType() != \MW\FreeGift\Model\Salesrule::COUPON_TYPE_NO_COUPON) {
             $couponCode = $address->getQuote()->getCouponCode();
             if (strlen($couponCode)) {
-                /** @var \Magento\SalesRule\Model\Coupon $coupon */
+                /** @var \MW\FreeGift\Model\Coupon $coupon */
                 $coupon = $this->couponFactory->create();
                 $coupon->load($couponCode, 'code');
                 if ($coupon->getId()) {
@@ -126,7 +126,7 @@ class Utility
         $ruleId = $rule->getId();
         if ($ruleId && $rule->getUsesPerCustomer()) {
             $customerId = $address->getQuote()->getCustomerId();
-            /** @var \Magento\SalesRule\Model\Rule\Customer $ruleCustomer */
+            /** @var \MW\FreeGift\Model\SalesRule\Customer $ruleCustomer */
             $ruleCustomer = $this->customerFactory->create();
             $ruleCustomer->loadByCustomerRule($customerId, $ruleId);
             if ($ruleCustomer->getId()) {
@@ -180,13 +180,13 @@ class Utility
     }
 
     /**
-     * @param \Magento\SalesRule\Model\Rule\Action\Discount\Data $discountData
+     * @param \MW\FreeGift\Model\SalesRule\Action\Discount\Data $discountData
      * @param \Magento\Quote\Model\Quote\Item\AbstractItem $item
      * @param float $qty
      * @return void
      */
     public function minFix(
-        \Magento\SalesRule\Model\Rule\Action\Discount\Data $discountData,
+        \MW\FreeGift\Model\SalesRule\Action\Discount\Data $discountData,
         \Magento\Quote\Model\Quote\Item\AbstractItem $item,
         $qty
     ) {
@@ -206,13 +206,13 @@ class Utility
     /**
      * Process "delta" rounding
      *
-     * @param \Magento\SalesRule\Model\Rule\Action\Discount\Data $discountData
+     * @param \MW\FreeGift\Model\SalesRule\Action\Discount\Data $discountData
      * @param \Magento\Quote\Model\Quote\Item\AbstractItem $item
      * @return $this
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
     public function deltaRoundingFix(
-        \Magento\SalesRule\Model\Rule\Action\Discount\Data $discountData,
+        \MW\FreeGift\Model\SalesRule\Action\Discount\Data $discountData,
         \Magento\Quote\Model\Quote\Item\AbstractItem $item
     ) {
         $store = $item->getQuote()->getStore();
@@ -269,7 +269,7 @@ class Utility
      * Return discount item qty
      *
      * @param \Magento\Quote\Model\Quote\Item\AbstractItem $item
-     * @param \Magento\SalesRule\Model\Rule $rule
+     * @param \MW\FreeGift\Model\SalesRule $rule
      * @return int
      */
     public function getItemQty($item, $rule)

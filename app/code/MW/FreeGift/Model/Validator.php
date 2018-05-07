@@ -24,12 +24,12 @@ class Validator extends \Magento\Framework\Model\AbstractModel
     /**
      * Rule source collection
      *
-     * @var \Magento\SalesRule\Model\ResourceModel\Rule\Collection
+     * @var \MW\FreeGift\Model\ResourceModel\SalesRule\Collection
      */
     protected $_rules;
 
     /**
-     * Defines if method \Magento\SalesRule\Model\Validator::reset() wasn't called
+     * Defines if method \\MW\FreeGift\Model\Validator::reset() wasn't called
      * Used for clearing applied rule ids in Quote and in Address
      *
      * @var bool
@@ -63,12 +63,12 @@ class Validator extends \Magento\Framework\Model\AbstractModel
     protected $_collectionFactory;
 
     /**
-     * @var \Magento\SalesRule\Model\Utility
+     * @var \\MW\FreeGift\Model\Utility
      */
     protected $validatorUtility;
 
     /**
-     * @var \Magento\SalesRule\Model\RulesApplier
+     * @var \\MW\FreeGift\Model\RulesApplier
      */
     protected $rulesApplier;
 
@@ -78,7 +78,7 @@ class Validator extends \Magento\Framework\Model\AbstractModel
     protected $priceCurrency;
 
     /**
-     * @var \Magento\SalesRule\Model\Validator\Pool
+     * @var \\MW\FreeGift\Model\Validator\Pool
      */
     protected $validators;
 
@@ -97,7 +97,7 @@ class Validator extends \Magento\Framework\Model\AbstractModel
     /**
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
-     * @param \Magento\SalesRule\Model\ResourceModel\Rule\CollectionFactory $collectionFactory
+     * @param \MW\FreeGift\Model\ResourceModel\SalesRule\CollectionFactory $collectionFactory
      * @param \Magento\Catalog\Helper\Data $catalogData
      * @param Utility $utility
      * @param RulesApplier $rulesApplier
@@ -117,7 +117,7 @@ class Validator extends \Magento\Framework\Model\AbstractModel
         \MW\FreeGift\Model\Utility $utility,
         \MW\FreeGift\Model\RulesApplier $rulesApplier,
         \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
-        \Magento\SalesRule\Model\Validator\Pool $validators,
+        \MW\FreeGift\Model\Validator\Pool $validators,
         \Magento\Framework\Message\ManagerInterface $messageManager,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
@@ -170,7 +170,7 @@ class Validator extends \Magento\Framework\Model\AbstractModel
      * Get rules collection for current object state
      *
      * @param Address|null $address
-     * @return \Magento\SalesRule\Model\ResourceModel\Rule\Collection
+     * @return \MW\FreeGift\Model\ResourceModel\SalesRule\Collection
      */
     protected function _getRules(Address $address = null)
     {
@@ -294,9 +294,9 @@ class Validator extends \Magento\Framework\Model\AbstractModel
             return $this;
         }
 
-        /** @var \Magento\SalesRule\Model\Rule $rule */
+        /** @var \MW\FreeGift\Model\SalesRule $rule */
         foreach ($this->_getRules($address) as $rule) {
-            if (\Magento\SalesRule\Model\Rule::CART_FIXED_ACTION == $rule->getSimpleAction()
+            if (\MW\FreeGift\Model\SalesRule::CART_FIXED_ACTION == $rule->getSimpleAction()
                 && $this->validatorUtility->canProcessRule($rule, $address)
             ) {
                 $ruleTotalItemsPrice = 0;
@@ -413,7 +413,7 @@ class Validator extends \Magento\Framework\Model\AbstractModel
     public function sortItemsByPriority($items, Address $address = null)
     {
         $itemsSorted = [];
-        /** @var $rule \Magento\SalesRule\Model\Rule */
+        /** @var $rule \MW\FreeGift\Model\SalesRule */
         foreach ($this->_getRules($address) as $rule) {
             foreach ($items as $itemKey => $itemValue) {
                 if ($rule->getActions()->validate($itemValue)) {

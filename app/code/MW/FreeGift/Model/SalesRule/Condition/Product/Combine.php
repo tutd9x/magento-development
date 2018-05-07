@@ -26,7 +26,7 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
     ) {
         parent::__construct($context, $data);
         $this->_ruleConditionProd = $ruleConditionProduct;
-        $this->setType(\MW\FreeGift\Model\SalesRule\Condition\Product\Combine::class);
+        $this->setType('MW\FreeGift\Model\SalesRule\Condition\Product\Combine');
     }
 
     /**
@@ -42,12 +42,12 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
         foreach ($productAttributes as $code => $label) {
             if (strpos($code, 'quote_item_') === 0) {
                 $iAttributes[] = [
-                    'value' => \MW\FreeGift\Model\SalesRule\Condition\Product::class . '|' . $code,
+                    'value' => 'MW\FreeGift\Model\SalesRule\Condition\Product|' . $code,
                     'label' => $label,
                 ];
             } else {
                 $pAttributes[] = [
-                    'value' => \MW\FreeGift\Model\SalesRule\Condition\Product::class . '|' . $code,
+                    'value' => 'MW\FreeGift\Model\SalesRule\Condition\Product|' . $code,
                     'label' => $label,
                 ];
             }
@@ -58,7 +58,7 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
             $conditions,
             [
                 [
-                    'value' => \MW\FreeGift\Model\SalesRule\Condition\Product\Combine::class,
+                    'value' => 'MW\FreeGift\Model\SalesRule\Condition\Product\Combine',
                     'label' => __('Conditions Combination'),
                 ],
                 ['label' => __('Cart Item Attribute'), 'value' => $iAttributes],

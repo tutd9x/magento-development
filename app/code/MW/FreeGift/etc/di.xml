@@ -33,5 +33,4 @@
     <preference for="MW\FreeGift\Api\Data\CouponGenerationSpecInterface"
                 type="MW\FreeGift\Model\Data\CouponGenerationSpec" />
 
-
 </config>

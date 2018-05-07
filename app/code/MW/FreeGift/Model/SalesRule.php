@@ -88,7 +88,7 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
     /**
      * Store coupon code generator instance
      *
-     * @var \Magento\SalesRule\Model\Coupon\CodegeneratorInterface
+     * @var \MW\FreeGift\Model\Coupon\CodegeneratorInterface
      */
     protected $_couponCodeGenerator;
 
@@ -111,14 +111,14 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
     /**
      * Rule's primary coupon
      *
-     * @var \Magento\SalesRule\Model\Coupon
+     * @var \MW\FreeGift\Model\Coupon
      */
     protected $_primaryCoupon;
 
     /**
      * Rule's subordinate coupons
      *
-     * @var \Magento\SalesRule\Model\Coupon[]
+     * @var \MW\FreeGift\Model\Coupon[]
      */
     protected $_coupons;
 
@@ -137,12 +137,12 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
     protected $_validatedAddresses = [];
 
     /**
-     * @var \Magento\SalesRule\Model\CouponFactory
+     * @var \MW\FreeGift\Model\CouponFactory
      */
     protected $_couponFactory;
 
     /**
-     * @var \Magento\SalesRule\Model\Coupon\CodegeneratorFactory
+     * @var \MW\FreeGift\Model\Coupon\CodegeneratorFactory
      */
     protected $_codegenFactory;
 
@@ -157,7 +157,7 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
     protected $_condProdCombineF;
 
     /**
-     * @var \Magento\SalesRule\Model\ResourceModel\Coupon\Collection
+     * @var \MW\FreeGift\Model\ResourceModel\Coupon\Collection
      */
     protected $_couponCollection;
 
@@ -356,7 +356,7 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
     /**
      * Returns code generator instance for auto generated coupons
      *
-     * @return \Magento\SalesRule\Model\Coupon\CodegeneratorInterface
+     * @return \MW\FreeGift\Model\Coupon\CodegeneratorInterface
      */
     public function getCouponCodeGenerator()
     {
@@ -369,10 +369,10 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
     /**
      * Set code generator instance for auto generated coupons
      *
-     * @param \Magento\SalesRule\Model\Coupon\CodegeneratorInterface $codeGenerator
+     * @param \MW\FreeGift\Model\Coupon\CodegeneratorInterface $codeGenerator
      * @return void
      */
-    public function setCouponCodeGenerator(\Magento\SalesRule\Model\Coupon\CodegeneratorInterface $codeGenerator)
+    public function setCouponCodeGenerator(\MW\FreeGift\Model\Coupon\CodegeneratorInterface $codeGenerator)
     {
         $this->_couponCodeGenerator = $codeGenerator;
     }
@@ -380,7 +380,7 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
     /**
      * Retrieve rule's primary coupon
      *
-     * @return \Magento\SalesRule\Model\Coupon
+     * @return \MW\FreeGift\Model\Coupon
      */
     public function getPrimaryCoupon()
     {
@@ -444,7 +444,7 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
     /**
      * Retrieve subordinate coupons
      *
-     * @return \Magento\SalesRule\Model\Coupon[]
+     * @return \MW\FreeGift\Model\Coupon[]
      */
     public function getCoupons()
     {
@@ -484,7 +484,7 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
      *
      * @param bool $saveNewlyCreated Whether or not to save newly created coupon
      * @param int $saveAttemptCount Number of attempts to save newly created coupon
-     * @return \Magento\SalesRule\Model\Coupon|null
+     * @return \MW\FreeGift\Model\Coupon|null
      * @throws \Exception|\Magento\Framework\Exception\LocalizedException
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
@@ -497,7 +497,7 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
         if ($this->getCouponType() == self::COUPON_TYPE_SPECIFIC) {
             return $this->getPrimaryCoupon();
         }
-        /** @var \Magento\SalesRule\Model\Coupon $coupon */
+        /** @var \MW\FreeGift\Model\Coupon $coupon */
         $coupon = $this->_couponFactory->create();
         $coupon->setRule(
             $this
