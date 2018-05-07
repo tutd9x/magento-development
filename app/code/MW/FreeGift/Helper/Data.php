@@ -227,6 +227,16 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $giftData;
     }
 
+    public function getSalesKeysByGiftData($giftData)
+    {
+        $result = [];
+        foreach ($giftData as $data) {
+            $key = $data['freegift_sales_key'];
+            $result[$data['rule_id']][$key] = $key;
+        }
+        return $result;
+    }
+
     /**
      * var $arrayGift string
      * return array

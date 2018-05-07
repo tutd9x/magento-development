@@ -133,6 +133,7 @@ class ProcessApply implements ObserverInterface
                 return $this;
             }
 
+            $parentsKey = $this->helper->getSalesKeysByGiftData($giftData);
             $salesGiftRemoved = $this->checkoutSession->getSalesGiftRemoved();
 
             foreach ($giftData as $gift) {
@@ -142,10 +143,10 @@ class ProcessApply implements ObserverInterface
                     continue;
                 }
 
-                $current_qty_gift = $this->_countQtyGiftInCart($gift, $parentKey);
+                $current_qty_gift = $this->_countQtyGiftInCart($gift, $parentsKey);
                 if ($gift['number_of_free_gift'] > $current_qty_gift) {
                     $this->addProduct($gift, $storeId, $parentKey);
-                }else{
+                } else {
                     $salesGiftRemoved[$parentKey] = $parentKey;
                     $this->checkoutSession->setSalesGiftRemoved($salesGiftRemoved);
                 }
@@ -202,7 +203,7 @@ class ProcessApply implements ObserverInterface
      * @param $parentKey
      * @return int $count
      */
-    public function _countQtyGiftInCart($gift, $parentKey)
+    public function _countQtyGiftInCart($gift, $parentsKey)
     {
         $count = 0;
         foreach ($this->getQuote()->getAllItems() as $item) {
@@ -212,24 +213,11 @@ class ProcessApply implements ObserverInterface
             }
 
             if ($this->_isGift($item)) {
-                $count++;
-            }
-
-            if ($this->_isGift($item)) {
-                if ($item->getProductId() == $gift['gift_id']) {
-                    $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
-
-                    $free_sales_key = $info['free_sales_key'];
-                    $freegift_qty_info = $info['freegift_qty_info'];
-
-                    $data_to_compare[$parentKey] = $parentKey;
-                    $result = array_intersect($data_to_compare,$free_sales_key);
-                    if (empty($result)) {
-                        continue;
-                    }
-
-                    foreach ($result as $key) {
-                        if($freegift_qty_info[$key] == $parentKey){
+                $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+                $free_sales_key = $info['free_sales_key'];
+                if(array_key_exists($gift['rule_id'], $parentsKey)) {
+                    foreach ($free_sales_key as $key) {
+                        if (in_array($key, $parentsKey[$gift['rule_id']])) {
                             $count++;
                         }
                     }
