@@ -255,9 +255,10 @@ class Validator extends \Magento\Framework\Model\AbstractModel
      */
     public function process(AbstractItem $item)
     {
-        $item->setDiscountAmount(0);
-        $item->setBaseDiscountAmount(0);
-        $item->setDiscountPercent(0);
+//        $item->setDiscountAmount(0);
+//        $item->setBaseDiscountAmount(0);
+//        $item->setDiscountPercent(0);
+        $item->setFreegiftAppliedRuleIds('');
 
         $itemPrice = $this->getItemPrice($item);
         if ($itemPrice < 0) {

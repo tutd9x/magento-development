@@ -320,9 +320,6 @@ class ProcessApply implements ObserverInterface
             }
         }
 
-
-
-
         return $this;
     }
 }

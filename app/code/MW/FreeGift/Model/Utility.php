@@ -73,7 +73,7 @@ class Utility
     /**
      * Check if rule can be applied for specific address/quote/customer
      *
-     * @param \Magento\SalesRule\Model\Rule $rule
+     * @param \MW\FreeGift\Model\SalesRule $rule
      * @param \Magento\Quote\Model\Quote\Address $address
      * @return bool
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)

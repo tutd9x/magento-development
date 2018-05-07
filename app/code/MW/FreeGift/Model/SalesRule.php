@@ -6,57 +6,57 @@ use Magento\Quote\Model\Quote\Address;
 /**
  * Shopping Cart Rule data model
  *
- * @method \Magento\SalesRule\Model\ResourceModel\Rule _getResource()
- * @method \Magento\SalesRule\Model\ResourceModel\Rule getResource()
+ * @method \MW\FreeGift\Model\ResourceModel\SalesRule _getResource()
+ * @method \MW\FreeGift\Model\ResourceModel\SalesRule getResource()
  * @method string getName()
- * @method \Magento\SalesRule\Model\Rule setName(string $value)
+ * @method \MW\FreeGift\Model\SalesRule setName(string $value)
  * @method string getDescription()
- * @method \Magento\SalesRule\Model\Rule setDescription(string $value)
- * @method \Magento\SalesRule\Model\Rule setFromDate(string $value)
- * @method \Magento\SalesRule\Model\Rule setToDate(string $value)
+ * @method \MW\FreeGift\Model\SalesRule setDescription(string $value)
+ * @method \MW\FreeGift\Model\SalesRule setFromDate(string $value)
+ * @method \MW\FreeGift\Model\SalesRule setToDate(string $value)
  * @method int getUsesPerCustomer()
- * @method \Magento\SalesRule\Model\Rule setUsesPerCustomer(int $value)
+ * @method \MW\FreeGift\Model\SalesRule setUsesPerCustomer(int $value)
  * @method int getUsesPerCoupon()
- * @method \Magento\SalesRule\Model\Rule setUsesPerCoupon(int $value)
- * @method \Magento\SalesRule\Model\Rule setCustomerGroupIds(string $value)
+ * @method \MW\FreeGift\Model\SalesRule setUsesPerCoupon(int $value)
+ * @method \MW\FreeGift\Model\SalesRule setCustomerGroupIds(string $value)
  * @method int getIsActive()
- * @method \Magento\SalesRule\Model\Rule setIsActive(int $value)
+ * @method \MW\FreeGift\Model\SalesRule setIsActive(int $value)
  * @method string getConditionsSerialized()
- * @method \Magento\SalesRule\Model\Rule setConditionsSerialized(string $value)
+ * @method \MW\FreeGift\Model\SalesRule setConditionsSerialized(string $value)
  * @method string getActionsSerialized()
- * @method \Magento\SalesRule\Model\Rule setActionsSerialized(string $value)
+ * @method \MW\FreeGift\Model\SalesRule setActionsSerialized(string $value)
  * @method int getStopRulesProcessing()
- * @method \Magento\SalesRule\Model\Rule setStopRulesProcessing(int $value)
+ * @method \MW\FreeGift\Model\SalesRule setStopRulesProcessing(int $value)
  * @method int getIsAdvanced()
- * @method \Magento\SalesRule\Model\Rule setIsAdvanced(int $value)
+ * @method \MW\FreeGift\Model\SalesRule setIsAdvanced(int $value)
  * @method string getProductIds()
- * @method \Magento\SalesRule\Model\Rule setProductIds(string $value)
+ * @method \MW\FreeGift\Model\SalesRule setProductIds(string $value)
  * @method int getSortOrder()
- * @method \Magento\SalesRule\Model\Rule setSortOrder(int $value)
+ * @method \MW\FreeGift\Model\SalesRule setSortOrder(int $value)
  * @method string getSimpleAction()
- * @method \Magento\SalesRule\Model\Rule setSimpleAction(string $value)
+ * @method \MW\FreeGift\Model\SalesRule setSimpleAction(string $value)
  * @method float getDiscountAmount()
- * @method \Magento\SalesRule\Model\Rule setDiscountAmount(float $value)
+ * @method \MW\FreeGift\Model\SalesRule setDiscountAmount(float $value)
  * @method float getDiscountQty()
- * @method \Magento\SalesRule\Model\Rule setDiscountQty(float $value)
+ * @method \MW\FreeGift\Model\SalesRule setDiscountQty(float $value)
  * @method int getDiscountStep()
- * @method \Magento\SalesRule\Model\Rule setDiscountStep(int $value)
+ * @method \MW\FreeGift\Model\SalesRule setDiscountStep(int $value)
  * @method int getApplyToShipping()
- * @method \Magento\SalesRule\Model\Rule setApplyToShipping(int $value)
+ * @method \MW\FreeGift\Model\SalesRule setApplyToShipping(int $value)
  * @method int getTimesUsed()
- * @method \Magento\SalesRule\Model\Rule setTimesUsed(int $value)
+ * @method \MW\FreeGift\Model\SalesRule setTimesUsed(int $value)
  * @method int getIsRss()
- * @method \Magento\SalesRule\Model\Rule setIsRss(int $value)
+ * @method \MW\FreeGift\Model\SalesRule setIsRss(int $value)
  * @method string getWebsiteIds()
- * @method \Magento\SalesRule\Model\Rule setWebsiteIds(string $value)
+ * @method \MW\FreeGift\Model\SalesRule setWebsiteIds(string $value)
  * @method int getCouponType()
- * @method \Magento\SalesRule\Model\Rule setCouponType(int $value)
+ * @method \MW\FreeGift\Model\SalesRule setCouponType(int $value)
  * @method int getUseAutoGeneration()
- * @method \Magento\SalesRule\Model\Rule setUseAutoGeneration(int $value)
+ * @method \MW\FreeGift\Model\SalesRule setUseAutoGeneration(int $value)
  * @method string getCouponCode()
- * @method \Magento\SalesRule\Model\Rule setCouponCode(string $value)
+ * @method \MW\FreeGift\Model\SalesRule setCouponCode(string $value)
  * @method int getRuleId()
- * @method \Magento\SalesRule\Model\Rule setRuleId(int $ruleId)
+ * @method \MW\FreeGift\Model\SalesRule setRuleId(int $ruleId)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class SalesRule extends \Magento\Rule\Model\AbstractModel
@@ -147,12 +147,12 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
     protected $_codegenFactory;
 
     /**
-     * @var \Magento\SalesRule\Model\Rule\Condition\CombineFactory
+     * @var \MW\FreeGift\Model\SalesRule\Condition\CombineFactory
      */
     protected $_condCombineFactory;
 
     /**
-     * @var \Magento\SalesRule\Model\Rule\Condition\Product\CombineFactory
+     * @var \MW\FreeGift\Model\SalesRule\Condition\Product\CombineFactory
      */
     protected $_condProdCombineF;
 
@@ -336,7 +336,7 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
     /**
      * Get rule condition combine model instance
      *
-     * @return \Magento\SalesRule\Model\Rule\Condition\Combine
+     * @return \MW\FreeGift\Model\SalesRule\Condition\Combine
      */
     public function getConditionsInstance()
     {
@@ -346,7 +346,7 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
     /**
      * Get rule condition product combine model instance
      *
-     * @return \Magento\SalesRule\Model\Rule\Condition\Product\Combine
+     * @return \MW\FreeGift\Model\SalesRule\Condition\Product\Combine
      */
     public function getActionsInstance()
     {
@@ -464,8 +464,8 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
     {
         if ($this->_couponTypes === null) {
             $this->_couponTypes = [
-                \Magento\SalesRule\Model\Rule::COUPON_TYPE_NO_COUPON => __('No Coupon'),
-                \Magento\SalesRule\Model\Rule::COUPON_TYPE_SPECIFIC => __('Specific Coupon'),
+                \MW\FreeGift\Model\SalesRule::COUPON_TYPE_NO_COUPON => __('No Coupon'),
+                \MW\FreeGift\Model\SalesRule::COUPON_TYPE_SPECIFIC => __('Specific Coupon'),
             ];
             $transport = new \Magento\Framework\DataObject(
                 ['coupon_types' => $this->_couponTypes, 'is_coupon_type_auto_visible' => false]
@@ -473,7 +473,7 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
             $this->_eventManager->dispatch('salesrule_rule_get_coupon_types', ['transport' => $transport]);
             $this->_couponTypes = $transport->getCouponTypes();
             if ($transport->getIsCouponTypeAutoVisible()) {
-                $this->_couponTypes[\Magento\SalesRule\Model\Rule::COUPON_TYPE_AUTO] = __('Auto');
+                $this->_couponTypes[\MW\FreeGift\Model\SalesRule::COUPON_TYPE_AUTO] = __('Auto');
             }
         }
         return $this->_couponTypes;
