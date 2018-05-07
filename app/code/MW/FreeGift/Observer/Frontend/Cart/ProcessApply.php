@@ -511,6 +511,14 @@ class ProcessApply implements ObserverInterface
                             $parent_gift_key => $data['qty']
                         );
 
+                        $data['freegift_rule_data'] = array(
+                            'rule_id' => $data['rule_id'],
+                            'name' => $data['rule_name'],
+                            'gift_id' => $data['product'],
+                            'number_of_free_gift' => $data['qty'],
+                            'freegift_sales_key' => $parent_gift_key,
+                        );
+
                         $rule = array(
                             'gift_id' => $data['product'],
                             'name' => $data['rule_name']
