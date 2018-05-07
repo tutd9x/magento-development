@@ -142,13 +142,12 @@ class ProcessApply implements ObserverInterface
                     continue;
                 }
 
-//                $current_gift = $this->_countGiftInCart();
                 $current_qty_gift = $this->_countQtyGiftInCart($gift, $parentKey);
-
                 if ($gift['number_of_free_gift'] > $current_qty_gift) {
                     $this->addProduct($gift, $storeId, $parentKey);
                 }else{
-                    break;
+                    $salesGiftRemoved[$parentKey] = $parentKey;
+                    $this->checkoutSession->setSalesGiftRemoved($salesGiftRemoved);
                 }
             }
         }
@@ -199,28 +198,6 @@ class ProcessApply implements ObserverInterface
 
     /**
      * Counting gift item in cart
-     *
-     * @return $count
-     */
-    public function _countGiftInCart()
-    {
-        $count = 0;
-        foreach ($this->getQuote()->getAllItems() as $item) {
-            /* @var $item \Magento\Quote\Model\Quote\Item */
-            if ($item->getParentItem()) {
-                $item = $item->getParentItem();
-            }
-
-            if ($this->_isGift($item)) {
-                $count++;
-            }
-        }
-
-        return $count;
-    }
-
-    /**
-     * Counting gift item in cart
      * @param $gift
      * @param $parentKey
      * @return int $count
@@ -234,9 +211,9 @@ class ProcessApply implements ObserverInterface
                 $item = $item->getParentItem();
             }
 
-//            if ($this->_isGift($item)) {
-//                $count++;
-//            }
+            if ($this->_isGift($item)) {
+                $count++;
+            }
 
             if ($this->_isGift($item)) {
                 if ($item->getProductId() == $gift['gift_id']) {
@@ -251,13 +228,11 @@ class ProcessApply implements ObserverInterface
                         continue;
                     }
 
-                    $freegift_qty = '';
                     foreach ($result as $key) {
-                        $freegift_qty = $freegift_qty_info[$key];
+                        if($freegift_qty_info[$key] == $parentKey){
+                            $count++;
+                        }
                     }
-
-                    $count = $freegift_qty;
-                    break;
                 }
             }
         }
