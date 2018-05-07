@@ -8,6 +8,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
     protected $checkoutSession;
     protected $_ruleFactory;
+    protected $_salesruleFactory;
 
     protected $layoutFactory;
     protected $_layout;
@@ -27,6 +28,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Checkout\Model\Session $checkoutSession,
         \MW\FreeGift\Model\RuleFactory $ruleFactory,
+        \MW\FreeGift\Model\SalesRuleFactory $salesRuleFactory,
         \Magento\Framework\View\LayoutFactory $layoutFactory,
         \Magento\Framework\View\LayoutInterface $layout,
         \Magento\Checkout\Model\Cart $cart,
@@ -35,6 +37,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         ) {
         $this->checkoutSession = $checkoutSession;
         $this->_ruleFactory = $ruleFactory;
+        $this->_salesruleFactory = $salesRuleFactory;
         $this->layoutFactory = $layoutFactory;
         $this->_layout = $layout;
         $this->cart = $cart;
@@ -537,7 +540,12 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
             /* Lay product Gift*/
             if($item->getOptionByCode('free_catalog_gift') && $item->getOptionByCode('free_catalog_gift')->getValue() == 1){
-                array_push($giftData,unserialize($item->getOptionByCode('info_buyRequest')->getValue())['freegift_parent_key']);
+                $data_buy = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+                if(array_key_exists('freegift_parent_key',$data_buy)){
+                    array_push($giftData,$data_buy['freegift_parent_key']);
+                }else{
+                    array_push($giftData,$data_buy['free_sales_key']);
+                }
 
             }
 
@@ -637,10 +645,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             $listGiftProductId[$i]['rule_id'] = $keyData['rule_id'];
             $listGiftProductId[$i]['rule_gift_ids'] = $keyData['rule_gift_ids'];
             $listGiftProductId[$i]['gift_id'] = $keyData['gift_id'];
-            $listGiftProductId[$i]['number_of_free_gift'] = $keyData['number_of_free_gift'];
-            $listGiftProductId[$i]['rule_name'] = $keyData['rule_name'];
-//            $ruleData = $this->_salesruleFactory->create()->load($keyData['rule_id']);
-//            $listGiftProductId[$i]['rule_name'] = $ruleData->getName();
+                $listGiftProductId[$i]['number_of_free_gift'] = $keyData['number_of_free_gift'];
+//            $listGiftProductId[$i]['rule_name'] = $keyData['rule_name'];
+            $ruleData = $this->_salesruleFactory->create()->load($keyData['rule_id']);
+            $listGiftProductId[$i]['rule_name'] = $ruleData->getName();
             $i++;
         }
         return $listGiftProductId;

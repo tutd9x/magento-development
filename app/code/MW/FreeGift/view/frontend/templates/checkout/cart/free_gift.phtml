@@ -50,23 +50,22 @@ if(count($ProductGiftData) > 0 || count($ProductGiftSalesRuleData) > 0):
                                     <div class="mw-hidden-product-image" data-product-image="<?php echo $this->helper('Magento\Catalog\Helper\Image')->init($product, 'category_page_list')->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(TRUE)->resize(265, 265)->getUrl()?>"></div>
                                     <div class="mw-hidden-product-has-options" data-has-options="<?php echo ($product->getOptions() ? "1" : "0")?>"></div>
                                     <div class="mw-hidden-product-type" data-product-type-id="<?php echo $product->getTypeId()?>"></div>
-                                    <button
-                                        id="btn<?php echo $product->getId(); ?>"
-                                        type="button"
-                                        title="<?php echo 'Add to Cart'; ?>"
-                                        data-has-options="<?php echo ($product->getOptions() ? "1" : "0")?>"
-                                        data-type-id="<?php echo $product->getTypeId()?>" href='<?php //echo $urlAddToCart?>'
-                                        data-url-cart="<?php //echo $urlAddToCart?>"
-                                        data-ffg-type="coupon"
-                                        data-freegift-code="<?php echo $blockFreeGift->getFreegiftCode() ?>"
-                                        data-rule-id='<?php echo $giftData['rule_id'] ?>'
-                                        data-rule-name='<?php echo $giftData['rule_name'] ?>'
-                                        data-catalog-gift="<?php //echo $giftData['item_id']; //$product->getId() ?>"
-                                        data-id="<?php echo $product->getId()?>"
-                                        class="button btn-cart action tocart primary <?php //echo $mw_class_rule; ?>"
-                                        data-url="<?php //echo $urlAddToCart; ?>">
-                                        <span><span><?php echo 'Add to Cart'; ?></span></span>
-                                    </button>
+                                    <?php
+                                    $addToCartUrl =  $blockFreeGift->getAddToCartUrl($product);
+                                    ?>
+                                    <form data-role="tocart-form" data-product-sku="<?=  /* @NoEscape */ $product->getSku() ?>" action="<?php echo $addToCartUrl ?>" method="post">
+                                        <input type="hidden" name="qty" value="1">
+                                        <input type="hidden" name="free_sales_key" value="<?php echo $giftData['rule_id'].'_'.$giftData['gift_id'].'_'.$giftData['number_of_free_gift']; ?>">
+                                        <input type="hidden" name="rule_name" value="<?php echo $giftData['rule_name']; ?>">
+                                        <input type="hidden" name="rule_id" value="<?php echo $giftData['rule_id']; ?>">
+                                        <input type="hidden" name="sales_gift_from_slider" value="1">
+                                        <?= $block->getBlockHtml('formkey') ?>
+                                        <button type="submit"
+                                                title="<?= $block->escapeHtml(__('Add to Cart')) ?>"
+                                                class="action tocart primary">
+                                            <span><?= /* @escapeNotVerified */ __('Add to Cart') ?></span>
+                                        </button>
+                                    </form>
                                     </p>
                                 </div>
                             </div>
@@ -88,7 +87,7 @@ if(count($ProductGiftData) > 0 || count($ProductGiftSalesRuleData) > 0):
                             <div id="stay-content-<?php echo $giftData['product_gift_id'].'_'.$giftData['product_gift_id']; ?>" href="<?php echo $product->getProductUrl(); ?>" class="mw-fg-item">
                                 <div class="mw-fg-item-options">
                                     <div class="mw-fg-item-option-title">
-                                        <?php echo $blockFreeGift->escapeHtml($giftData['product_gift_id']); ?>
+                                        <?php echo $blockFreeGift->escapeHtml($giftData['rule_name']); ?>
                                     </div>
                                     <div class="mw-fg-item-option-ct">
                                         <p class="mw-fg-item-name">
@@ -107,8 +106,7 @@ if(count($ProductGiftData) > 0 || count($ProductGiftSalesRuleData) > 0):
                                     <div class="mw-hidden-product-image" data-product-image="<?php echo $this->helper('Magento\Catalog\Helper\Image')->init($product, 'category_page_list')->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(TRUE)->resize(265, 265)->getUrl()?>"></div>
                                     <div class="mw-hidden-product-has-options" data-has-options="<?php echo ($product->getOptions() ? "1" : "0")?>"></div>
                                     <div class="mw-hidden-product-type" data-product-type-id="<?php echo $product->getTypeId()?>"></div>
-                                    <?php $postParams = "";
-
+                                    <?php
                                     $addToCartUrl =  $blockFreeGift->getAddToCartUrl($product);
                                     ?>
                                     <form data-role="tocart-form" data-product-sku="<?=  /* @NoEscape */ $product->getSku() ?>" action="<?php echo $addToCartUrl ?>" method="post">

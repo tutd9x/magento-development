@@ -495,11 +495,52 @@ class ProcessApply implements ObserverInterface
                         unset($data['gift_from_slider']);
                         $item->getOptionByCode('info_buyRequest')->setValue(serialize($data));
                     }
+                }
 
+//                $data = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+//                \Zend_Debug::dump($data); die("ssa");
+////                \Zend_Debug::dump(array_key_exists('sales_gift_from_slider',$data)); die("ssa");
+                if(array_key_exists('sales_gift_from_slider',$data)) {
+                    if (array_key_exists('free_sales_key',$data) && isset($data['free_sales_key'])) {
+                        $parent_gift_key = $data['free_sales_key'];
+                        $data['free_sales_key'] = array(
+                            $data['free_sales_key'] => $data['free_sales_key']
+                        );
 
+                        $data['freegift_qty_info'] = array(
+                            $parent_gift_key => $data['qty']
+                        );
+
+                        $rule = array(
+                            'gift_id' => $data['product'],
+                            'name' => $data['rule_name']
+                        );
+
+                        $additionalOptions = [[
+                            'label' => __('Free Gift'),
+                            'value' => $rule['name'],
+                            'print_value' => $rule['name'],
+                            'option_type' => 'text',
+                            'custom_view' => TRUE,
+                        ]];
+//             add the additional options array with the option code additional_options
+                        $item->addOption(
+                            array(
+                                'code' => 'free_sales_gift',
+                                'value' => 1,
+                            )
+                        );
+                        $item->addOption(
+                            array(
+                                'code' => 'additional_options',
+                                'value' => serialize($additionalOptions),
+                            )
+                        );
+                        unset($data['gift_from_slider']);
+                        $item->getOptionByCode('info_buyRequest')->setValue(serialize($data));
+                    }
                 }
             }
-
 
         return $this;
     }
