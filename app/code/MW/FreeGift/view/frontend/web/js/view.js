@@ -767,171 +767,171 @@ define(['jquery', 'mage/apply/main'], function($, mage) {
                 window.pane = window.FreeGift.$(".product-options-top").jScrollPane({autoReinitialise: true});
             }
         });
-        FreeGift.Views.Social           = Backbone.View.extend({
-            el: window.FreeGift.$('#mw_social'),
-            events: {
-                "click .share-fb"           : "shareFb"
-            },
-            initialize: function(){
-                this.initFB();
-//            this.shareTwitter();
-                //this.myTwitter();
-                this.msieversion();
-                FreeGift.on("event:after_update_cart",this.afterUpdateCart);
-            },
-            afterUpdateCart : function(params){
-                if(params.google_plus == 'true'){
-                    window.FreeGift.$('#mw_social').remove();
-                }
-                if(params.like_fb == 'true'){
-                    window.FreeGift.$('#mw_social').remove();
-                }
-                if(params.share_fb == 'true'){
-                    window.FreeGift.$('#mw_social').remove();
-                }
-                if(params.twitter == 'true'){
-                    window.FreeGift.$('#mw_social').remove();
-                }
-            },
-            callbackgoogle : function(jsonParam){
-                if(jsonParam.state =='on'){
-                    if(window.processingGift.removing) return false;
-                    if(window.processingGift.adding.gift || window.processingGift.adding.product) return false;
-                    window.staticMinicart = new FreeGift.Views.miniUpdCart({update: "true", update_social: "true",google_plus : "true" });
-                }else{
-                    if(window.processingGift.removing) return false;
-                    if(window.processingGift.adding.gift || window.processingGift.adding.product) return false;
-                    window.staticMinicart = new FreeGift.Views.miniUpdCart({update: "true", update_social: "true",google_plus : "false" });
-                }
-            },
-            shareFb : function(){
-                var _self = this;
-                var main_url = window.FreeGift.$('#freegift_share_fb').val();
-                var default_message = window.FreeGift.$('#freegift_default_message').val();
-
-                FB.ui(
-                    {
-                        method: 'feed',
-                        caption: default_message,
-                        link: main_url
-                    },
-                    function(response) {
-                        if (response && !response.error_code) {
-                            _self.shareFbSuccess();
-                        } else {
-                            _self.shareFbError();
-                        }
-                    }
-                );
-            },
-            shareFbSuccess : function(){
-                if(window.processingGift.removing) return false;
-                if(window.processingGift.adding.gift || window.processingGift.adding.product) return false;
-                window.staticMinicart = new FreeGift.Views.miniUpdCart({update: "true",share_fb : "true" });
-            },
-            shareFbError : function(){
-                if(window.processingGift.removing) return false;
-                if(window.processingGift.adding.gift || window.processingGift.adding.product) return false;
-                window.staticMinicart = new FreeGift.Views.miniUpdCart({update: "true",share_fb : "false" });
-            },
-            msieversion : function() {
-                var ua = window.navigator.userAgent;
-                var msie = ua.indexOf("MSIE ");
-                if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)){
-                    // If Internet Explorer, return version number
-                    //alert(parseInt(ua.substring(msie + 5, ua.indexOf(".", msie))));
-                    //console.log('trinh duyet ie');
-                }
-                else {
-                    // If another browser, return 0
-                    //alert('otherbrowser');
-                    //console.log('khong phai ie');
-                    this.myTwitter();
-                }
-            },
-            myTwitter : function(){
-                var _self = this;
-
-                window.twttr = (function (d, s, id) {
-                    var t, js, fjs = d.getElementsByTagName(s)[0];
-                    if (d.getElementById(id)) return;
-                    js = d.createElement(s); js.id = id;
-                    js.src= "https://platform.twitter.com/widgets.js";
-                    fjs.parentNode.insertBefore(js, fjs);
-                    return window.twttr || (t = { _e: [], ready: function (f) { t._e.push(f) } });
-                }(document, "script", "twitter-wjs"));
-
-
-                twttr.ready(function(twttr) {
-                    var url_twitter  = window.FreeGift.$.trim(window.FreeGift.$('#freegift_share_tiwtter').val());
-                    var freegift_default_message = window.FreeGift.$.trim(window.FreeGift.$('#freegift_default_message').val());
-
-                    twttr.widgets.createShareButton(
-                        url_twitter,
-                        document.getElementById('share-twitter'), {
-                            url: url_twitter,
-                            //count: 'none',
-                            text: freegift_default_message,
-                            size: 'normal'
-                            //hashtags: 'your hashtag'
-                        }).then(function(el) {
-                        console.log("Twitter Button created.")
-                    });
-                    twttr.events.bind('tweet', function(event) {
-                        //add ur post tweet stuff here
-                        console.log('tweet thanh cong');
-                        _self.twitterSuccess();
-                    });
-
-                });
-            },
-            shareTwitter : function(){
-                var _self = this;
-                //window.twttr=(function(d,s,id){var t,js,fjs=d.getElementsByTagName(s)[0];if(d.getElementById(id)){return}js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);return window.twttr||(t={_e:[],ready:function(f){t._e.push(f)}})}(document,"script","twitter-wjs"));
-                twttr.events.bind(
-                    'tweet',
-                    function (event) {
-                        _self.twitterSuccess();
-                    }
-                );
-            },
-            twitterSuccess : function(){
-                if(window.processingGift.removing) return false;
-                if(window.processingGift.adding.gift || window.processingGift.adding.product) return false;
-                window.staticMinicart = new FreeGift.Views.miniUpdCart({update: "true",twitter : "true" });
-            },
-            initFB : function(){
-                var _self = this;
-                var facebook_app_id = window.FreeGift.$('#mw_freegift_fb').val();
-                window.fbAsyncInit = function() {
-                    FB.init({
-                        appId      : facebook_app_id,
-                        xfbml      : true,
-                        version    : 'v2.5'
-                    });
-                    FB.Event.subscribe('edge.create', _self.likeFBcallback);
-                    FB.Event.subscribe('edge.remove', _self.unlikeFBcallback);
-                };
-                (function(d, s, id){
-                    var js, fjs = d.getElementsByTagName(s)[0];
-                    if (d.getElementById(id)) {return;}
-                    js = d.createElement(s); js.id = id;
-                    js.src = "//connect.facebook.net/en_US/sdk.js";
-                    fjs.parentNode.insertBefore(js, fjs);
-                }(document, 'script', 'facebook-jssdk'));
-            },
-            likeFBcallback : function(url, html_element) {
-                if(window.processingGift.removing) return false;
-                if(window.processingGift.adding.gift || window.processingGift.adding.product) return false;
-                window.staticMinicart = new FreeGift.Views.miniUpdCart({update: "true",like_fb : "true" });
-            },
-            unlikeFBcallback : function(url, html_element) {
-                if(window.processingGift.removing) return false;
-                if(window.processingGift.adding.gift || window.processingGift.adding.product) return false;
-                window.staticMinicart = new FreeGift.Views.miniUpdCart({update: "true",like_fb : "false" });
-            }
-
-        });
+//        FreeGift.Views.Social           = Backbone.View.extend({
+//            el: window.FreeGift.$('#mw_social'),
+//            events: {
+//                "click .share-fb"           : "shareFb"
+//            },
+//            initialize: function(){
+//                this.initFB();
+////            this.shareTwitter();
+//                //this.myTwitter();
+//                this.msieversion();
+//                FreeGift.on("event:after_update_cart",this.afterUpdateCart);
+//            },
+//            afterUpdateCart : function(params){
+//                if(params.google_plus == 'true'){
+//                    window.FreeGift.$('#mw_social').remove();
+//                }
+//                if(params.like_fb == 'true'){
+//                    window.FreeGift.$('#mw_social').remove();
+//                }
+//                if(params.share_fb == 'true'){
+//                    window.FreeGift.$('#mw_social').remove();
+//                }
+//                if(params.twitter == 'true'){
+//                    window.FreeGift.$('#mw_social').remove();
+//                }
+//            },
+//            callbackgoogle : function(jsonParam){
+//                if(jsonParam.state =='on'){
+//                    if(window.processingGift.removing) return false;
+//                    if(window.processingGift.adding.gift || window.processingGift.adding.product) return false;
+//                    window.staticMinicart = new FreeGift.Views.miniUpdCart({update: "true", update_social: "true",google_plus : "true" });
+//                }else{
+//                    if(window.processingGift.removing) return false;
+//                    if(window.processingGift.adding.gift || window.processingGift.adding.product) return false;
+//                    window.staticMinicart = new FreeGift.Views.miniUpdCart({update: "true", update_social: "true",google_plus : "false" });
+//                }
+//            },
+//            shareFb : function(){
+//                var _self = this;
+//                var main_url = window.FreeGift.$('#freegift_share_fb').val();
+//                var default_message = window.FreeGift.$('#freegift_default_message').val();
+//
+//                FB.ui(
+//                    {
+//                        method: 'feed',
+//                        caption: default_message,
+//                        link: main_url
+//                    },
+//                    function(response) {
+//                        if (response && !response.error_code) {
+//                            _self.shareFbSuccess();
+//                        } else {
+//                            _self.shareFbError();
+//                        }
+//                    }
+//                );
+//            },
+//            shareFbSuccess : function(){
+//                if(window.processingGift.removing) return false;
+//                if(window.processingGift.adding.gift || window.processingGift.adding.product) return false;
+//                window.staticMinicart = new FreeGift.Views.miniUpdCart({update: "true",share_fb : "true" });
+//            },
+//            shareFbError : function(){
+//                if(window.processingGift.removing) return false;
+//                if(window.processingGift.adding.gift || window.processingGift.adding.product) return false;
+//                window.staticMinicart = new FreeGift.Views.miniUpdCart({update: "true",share_fb : "false" });
+//            },
+//            msieversion : function() {
+//                var ua = window.navigator.userAgent;
+//                var msie = ua.indexOf("MSIE ");
+//                if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)){
+//                    // If Internet Explorer, return version number
+//                    //alert(parseInt(ua.substring(msie + 5, ua.indexOf(".", msie))));
+//                    //console.log('trinh duyet ie');
+//                }
+//                else {
+//                    // If another browser, return 0
+//                    //alert('otherbrowser');
+//                    //console.log('khong phai ie');
+//                    this.myTwitter();
+//                }
+//            },
+//            myTwitter : function(){
+//                var _self = this;
+//
+//                window.twttr = (function (d, s, id) {
+//                    var t, js, fjs = d.getElementsByTagName(s)[0];
+//                    if (d.getElementById(id)) return;
+//                    js = d.createElement(s); js.id = id;
+//                    js.src= "https://platform.twitter.com/widgets.js";
+//                    fjs.parentNode.insertBefore(js, fjs);
+//                    return window.twttr || (t = { _e: [], ready: function (f) { t._e.push(f) } });
+//                }(document, "script", "twitter-wjs"));
+//
+//
+//                twttr.ready(function(twttr) {
+//                    var url_twitter  = window.FreeGift.$.trim(window.FreeGift.$('#freegift_share_tiwtter').val());
+//                    var freegift_default_message = window.FreeGift.$.trim(window.FreeGift.$('#freegift_default_message').val());
+//
+//                    twttr.widgets.createShareButton(
+//                        url_twitter,
+//                        document.getElementById('share-twitter'), {
+//                            url: url_twitter,
+//                            //count: 'none',
+//                            text: freegift_default_message,
+//                            size: 'normal'
+//                            //hashtags: 'your hashtag'
+//                        }).then(function(el) {
+//                        console.log("Twitter Button created.")
+//                    });
+//                    twttr.events.bind('tweet', function(event) {
+//                        //add ur post tweet stuff here
+//                        console.log('tweet thanh cong');
+//                        _self.twitterSuccess();
+//                    });
+//
+//                });
+//            },
+//            shareTwitter : function(){
+//                var _self = this;
+//                //window.twttr=(function(d,s,id){var t,js,fjs=d.getElementsByTagName(s)[0];if(d.getElementById(id)){return}js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);return window.twttr||(t={_e:[],ready:function(f){t._e.push(f)}})}(document,"script","twitter-wjs"));
+//                twttr.events.bind(
+//                    'tweet',
+//                    function (event) {
+//                        _self.twitterSuccess();
+//                    }
+//                );
+//            },
+//            twitterSuccess : function(){
+//                if(window.processingGift.removing) return false;
+//                if(window.processingGift.adding.gift || window.processingGift.adding.product) return false;
+//                window.staticMinicart = new FreeGift.Views.miniUpdCart({update: "true",twitter : "true" });
+//            },
+//            initFB : function(){
+//                var _self = this;
+//                var facebook_app_id = window.FreeGift.$('#mw_freegift_fb').val();
+//                window.fbAsyncInit = function() {
+//                    FB.init({
+//                        appId      : facebook_app_id,
+//                        xfbml      : true,
+//                        version    : 'v2.5'
+//                    });
+//                    FB.Event.subscribe('edge.create', _self.likeFBcallback);
+//                    FB.Event.subscribe('edge.remove', _self.unlikeFBcallback);
+//                };
+//                (function(d, s, id){
+//                    var js, fjs = d.getElementsByTagName(s)[0];
+//                    if (d.getElementById(id)) {return;}
+//                    js = d.createElement(s); js.id = id;
+//                    js.src = "//connect.facebook.net/en_US/sdk.js";
+//                    fjs.parentNode.insertBefore(js, fjs);
+//                }(document, 'script', 'facebook-jssdk'));
+//            },
+//            likeFBcallback : function(url, html_element) {
+//                if(window.processingGift.removing) return false;
+//                if(window.processingGift.adding.gift || window.processingGift.adding.product) return false;
+//                window.staticMinicart = new FreeGift.Views.miniUpdCart({update: "true",like_fb : "true" });
+//            },
+//            unlikeFBcallback : function(url, html_element) {
+//                if(window.processingGift.removing) return false;
+//                if(window.processingGift.adding.gift || window.processingGift.adding.product) return false;
+//                window.staticMinicart = new FreeGift.Views.miniUpdCart({update: "true",like_fb : "false" });
+//            }
+//
+//        });
         FreeGift.Views.CheckoutCart     = Backbone.View.extend({
             el: window.FreeGift.$(window.tableSelectorCart),
             events: {
@@ -1283,7 +1283,7 @@ define(['jquery', 'mage/apply/main'], function($, mage) {
         view_freegift_catalog_view      = new FreeGift.Views.CatalogView();
         view_freegift_checkout_onepage  = new FreeGift.Views.CheckoutOnepage();
         view_freegift_cart              = new FreeGift.Views.CheckoutCart();
-        view_freegift_social            = new FreeGift.Views.Social();
+        //view_freegift_social            = new FreeGift.Views.Social();
 
         window.giftModal    = new FreeGift.Views.modal();
         window.staticLoaderGift = new FreeGift.Views.Loader();

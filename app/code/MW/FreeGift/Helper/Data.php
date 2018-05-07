@@ -649,6 +649,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 //            $listGiftProductId[$i]['rule_name'] = $keyData['rule_name'];
             $ruleData = $this->_salesruleFactory->create()->load($keyData['rule_id']);
             $listGiftProductId[$i]['rule_name'] = $ruleData->getName();
+            $listGiftProductId[$i]['is_able'] = $this->checkAbleSalesRuleGift($keyData['rule_id'],$keyData['number_of_free_gift']) ? 1 : 0;
             $i++;
         }
         return $listGiftProductId;
@@ -687,5 +688,59 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $diffData = array_diff($parent,$gift);
         return $diffData;
     }
+
+    public function checkAbleSalesRuleGift($ruleId, $numberGifts){
+        $quote = $this->checkoutSession->getQuote();
+        $items = $quote->getAllVisibleItems();
+        if (count($items) >= 0 && $quote->getSubtotal() == 0) {
+            $this->resetSession();
+            return false;
+        }
+
+        $giftDataByRule = $this->checkoutSession->getGiftSalesProductIds();
+        $allGift = array();
+        if(!$giftDataByRule) return [];
+        foreach($giftDataByRule as $gift){
+            $free_sales_key = $gift['rule_id'].'_'.$gift['gift_id'].'_'.$gift['number_of_free_gift'];
+            $allGift[] = $free_sales_key;
+        }
+        $items = $quote->getAllVisibleItems();
+        $giftData = array();
+        foreach($items as $item){
+            /* Lay product Gift trong cart */
+            if($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1){
+                $key = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+                $keyVal = $key['free_sales_key'];
+                $giftData[] = $keyVal;
+            }
+        }
+        $diffGifts = $this->checkIntersectSalesRuleGifts($allGift,$giftData);
+        $giftsOfRuleInCart = 0;
+        foreach($diffGifts as $result) {
+            $keyData = $this->splitSalesRuleKey($result);
+            if($keyData['rule_id'] == $ruleId){
+                $giftsOfRuleInCart++;
+            }
+
+        }
+        if($giftsOfRuleInCart >= $numberGifts){
+            return false;
+        }
+        return true;
+    }
+
+    public function checkIntersectSalesRuleGifts($parentData,$giftData){
+        $parent = $parentData; //array();
+        $gift = array();
+
+        foreach($giftData as $keyg){
+            foreach($keyg as $key){
+                $gift[] = $key;
+            }
+        }
+        $diffData = array_intersect($parent,$gift);
+        return $diffData;
+    }
+
 }
 

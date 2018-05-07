@@ -1,12 +1,21 @@
 <?php
 $blockFreeGift= $block->getLayout()->createBlock('MW\FreeGift\Block\Category\FreeGifts');
-
 $ProductGiftData = $blockFreeGift->getProductGiftsDeleted();
-
 $ProductGiftSalesRuleData = $blockFreeGift->getFreeGiftSalesRuleAvailable(); //cho Shopping cart
-
+//\Zend_Debug::dump($ProductGiftSalesRuleData); die;
+//\Zend_Debug::dump($blockFreeGift->isAbleSalesRuleGift()); die;
+//\Zend_Debug::dump($ProductGiftSalesRuleData); die();
 if(count($ProductGiftData) > 0 || count($ProductGiftSalesRuleData) > 0):
     ?>
+    <style>
+        .disableGift{
+            -webkit-filter: grayscale(100%);
+            -moz-filter: blur(10px);
+            -o-filter: blur(10px);
+            -ms-filter: blur(10px);
+            filter: grayscale(100%);
+        }
+    </style>
     <div id="mw-fg-slider-cart">
         <script type="text/javascript">
             hasGiftProduct = true;
@@ -20,15 +29,13 @@ if(count($ProductGiftData) > 0 || count($ProductGiftSalesRuleData) > 0):
 
                 <?php foreach($ProductGiftSalesRuleData as $giftData):
                     $product = $blockFreeGift->getProductGiftData($giftData['rule_gift_ids']);
-                    if($product->isSaleable()) :
-                        ?>
-
+                    if($product->isSaleable()) : ?>
                         <li class="mw-fg-items">
-                            <a id="stay-target-<?php echo $giftData['rule_id'].'_'.$giftData['rule_id'].'_sr'; ?>" href="<?php echo $product->getProductUrl(); ?>" href="<?php echo $product->getProductUrl()?>" title="<?php echo $blockFreeGift->escapeHtml($product->getName()); ?>" class="product-image">
+                            <a id="stay-target-<?php echo $giftData['gift_id'].'_'.$giftData['gift_id'].'_sr'; ?>" href="<?php echo $product->getProductUrl(); ?>" href="<?php echo $product->getProductUrl()?>" title="<?php echo $blockFreeGift->escapeHtml($product->getName()); ?>" class="product-image <?php if($giftData['is_able'] == 0) echo "disableGift" ?>">
                                 <img src="<?php echo $this->helper('Magento\Catalog\Helper\Image')->init($product, 'category_page_list')->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(TRUE)->resize(140,135)->getUrl(); ?>" width="140" height="135" alt="<?php echo $blockFreeGift->escapeHtml($product->getName()); ?>" />
                             </a>
                             <span style="display: none" class="product-name"><a href="javascript:;"><?php echo $product->getName(); ?></a></span>
-                            <div id="stay-content-<?php echo $giftData['rule_id'].'_'.$giftData['rule_id'].'_sr'; ?>" href="<?php echo $product->getProductUrl(); ?>" class="mw-fg-item">
+                            <div id="stay-content-<?php echo $giftData['gift_id'].'_'.$giftData['gift_id'].'_sr'; ?>" href="<?php echo $product->getProductUrl(); ?>" class="mw-fg-item">
                                 <div class="mw-fg-item-options">
                                     <div class="mw-fg-item-option-title">
                                         <?php echo $blockFreeGift->escapeHtml($giftData['rule_name']); ?>
@@ -52,6 +59,7 @@ if(count($ProductGiftData) > 0 || count($ProductGiftSalesRuleData) > 0):
                                     <div class="mw-hidden-product-type" data-product-type-id="<?php echo $product->getTypeId()?>"></div>
                                     <?php
                                     $addToCartUrl =  $blockFreeGift->getAddToCartUrl($product);
+                                    if($giftData['is_able'] == 1){
                                     ?>
                                     <form data-role="tocart-form" data-product-sku="<?=  /* @NoEscape */ $product->getSku() ?>" action="<?php echo $addToCartUrl ?>" method="post">
                                         <input type="hidden" name="qty" value="1">
@@ -66,6 +74,7 @@ if(count($ProductGiftData) > 0 || count($ProductGiftSalesRuleData) > 0):
                                             <span><?= /* @escapeNotVerified */ __('Add to Cart') ?></span>
                                         </button>
                                     </form>
+                                    <?php } ?>
                                     </p>
                                 </div>
                             </div>
