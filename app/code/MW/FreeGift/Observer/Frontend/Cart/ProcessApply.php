@@ -169,20 +169,23 @@ class ProcessApply implements ObserverInterface
 
             foreach ($giftData as $gift) {
                 // process for buy x get y
-                if (!empty($gift) && $current_qty >= $gift['buy_x']) {
+                if (!empty($gift)) {
 
                     if ($gift['buy_x'] > 0) {
                         $buy_x = $gift['buy_x'];
                     }
 
                     $current_qty_gift = $this->_countGiftInCart($gift, $freegift_keys);
-                    $qty_for_gift = (int)($current_qty / $buy_x) - $current_qty_gift;
+                    $qty_for_gift = (int)($current_qty * $buy_x) - $current_qty_gift;
+
                     if ($qty_for_gift <= 0) {
                         continue;
                     }
 
-                    $this->addProduct($gift, $qty_for_gift, $storeId, $gift['freegift_parent_key']);
-                    unset($freegift_keys[$gift['freegift_parent_key']]);
+                    if($current_qty * $buy_x <= $qty_for_gift){
+                        $this->addProduct($gift, $qty_for_gift, $storeId, $gift['freegift_parent_key']);
+                        unset($freegift_keys[$gift['freegift_parent_key']]);
+                    }
                 }
             }
         }
