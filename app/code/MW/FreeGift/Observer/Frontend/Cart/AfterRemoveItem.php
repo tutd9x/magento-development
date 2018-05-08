@@ -116,7 +116,7 @@ class AfterRemoveItem implements ObserverInterface
             }
         }
 
-        $current_qty = $this->_countCurrentItemInCart($item_removed, $parent_key);
+        $current_qty = $this->_countCurrentItemInCart($parent_key);
 
         foreach ($items as $item) {
 
@@ -137,12 +137,14 @@ class AfterRemoveItem implements ObserverInterface
                     }
 
                     if ($current_qty < 1) {
+                        $qtyGiftToRemove = 0;
                         foreach ($result as $key) {
                             unset($data['freegift_parent_key'][$key]);
+                            $qtyGiftToRemove += $data['freegift_qty_info'][$key];
                         }
                     }
 
-                    $qtyToUpdate = $item->getQty() - $qtyRemoved * count($result);
+                    $qtyToUpdate = $item->getQty() - $qtyGiftToRemove;
                     if ($qtyToUpdate <= 0) {
                         $quote->removeItem($item->getItemId())->save();
                     } else {
@@ -245,10 +247,9 @@ class AfterRemoveItem implements ObserverInterface
      *
      * @return $count
      */
-    public function _countCurrentItemInCart($item, $parent_keys)
+    public function _countCurrentItemInCart($parent_keys)
     {
         $count = 0;
-
         foreach ($this->getQuote()->getAllItems() as $item) {
 
             /* @var $item \Magento\Quote\Model\Quote\Item */
@@ -258,7 +259,7 @@ class AfterRemoveItem implements ObserverInterface
 
             if (!$this->_isGift($item)) {
                 $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
-                $freegift_parent_key = $info['freegift_keys'];
+                $freegift_parent_key = isset($info['freegift_keys']) ? $info['freegift_keys'] : array();
                 $result = array_intersect($parent_keys,$freegift_parent_key);
                 if (empty($result)) {
                     continue;

@@ -26,4 +26,8 @@
         <observer name="freegift" instance="MW\FreeGift\Observer\Frontend\Cart\AfterRemoveItem" />
     </event>
 
+    <event name="checkout_cart_update_items_after">
+        <observer name="freegift" instance="MW\FreeGift\Observer\Frontend\Cart\AfterUpdateItems" />
+    </event>
+
 </config>
