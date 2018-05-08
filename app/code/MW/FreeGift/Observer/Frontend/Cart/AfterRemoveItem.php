@@ -116,7 +116,7 @@ class AfterRemoveItem implements ObserverInterface
             }
         }
 
-        $current_qty = $this->_countCurrentItemInCart($parent_key);
+        $current_qty = $this->_countCurrentItemInCart($item_removed, $parent_key);
 
         foreach ($items as $item) {
 
@@ -136,8 +136,9 @@ class AfterRemoveItem implements ObserverInterface
                         continue;
                     }
 
+                    $qtyGiftToRemove = 0;
+
                     if ($current_qty < 1) {
-                        $qtyGiftToRemove = 0;
                         foreach ($result as $key) {
                             unset($data['freegift_parent_key'][$key]);
                             $qtyGiftToRemove += $data['freegift_qty_info'][$key];
@@ -247,24 +248,25 @@ class AfterRemoveItem implements ObserverInterface
      *
      * @return $count
      */
-    public function _countCurrentItemInCart($parent_keys)
+    public function _countCurrentItemInCart($item_removed, $parent_keys)
     {
         $count = 0;
         foreach ($this->getQuote()->getAllItems() as $item) {
-
-            /* @var $item \Magento\Quote\Model\Quote\Item */
-            if ($item->getParentItem()) {
-                continue;
-            }
-
-            if (!$this->_isGift($item)) {
-                $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
-                $freegift_parent_key = isset($info['freegift_keys']) ? $info['freegift_keys'] : array();
-                $result = array_intersect($parent_keys,$freegift_parent_key);
-                if (empty($result)) {
+            if($item->getId() == $item_removed->getId()) {
+                /* @var $item \Magento\Quote\Model\Quote\Item */
+                if ($item->getParentItem()) {
                     continue;
-                } else {
-                    $count += $item->getQty();
+                }
+
+                if (!$this->_isGift($item)) {
+                    $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+                    $freegift_parent_key = isset($info['freegift_keys']) ? $info['freegift_keys'] : array();
+                    $result = array_intersect($parent_keys,$freegift_parent_key);
+                    if (empty($result)) {
+                        continue;
+                    } else {
+                        $count += $item->getQty();
+                    }
                 }
             }
         }
