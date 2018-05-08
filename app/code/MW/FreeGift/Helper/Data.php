@@ -566,11 +566,15 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $i = 0;
         foreach($results as $result){
             $keyData = $this->splitKey($result);
+            $par = $this->getParentOfGift($result);
+            $condition_customized = unserialize(unserialize($par->getOptionByCode('info_buyRequest')->getValue())['freegift_rule_data'][$keyData['rule_id']]['condition_customized']);
+            $buyX = $condition_customized['buy_x_get_y']['bx'];
             $listGiftProductId[] = $keyData;
             $listGiftProductId[$i]['freegift_parent_key'] = $result;
             $listGiftProductId[$i]['rule_id'] = $keyData['rule_id'];
             $ruleData = $this->_ruleFactory->create()->load($keyData['rule_id']);
             $listGiftProductId[$i]['rule_name'] = $ruleData->getName();
+            $listGiftProductId[$i]['qty'] = $par->getQty() * $buyX;
             $i++;
         }
         return $listGiftProductId;
@@ -752,5 +756,48 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $diffData;
     }
 
+    /**
+     * Counting gift item in cart
+     * @param $gift
+     * @param $parent_keys
+     * @return int $count
+     */
+    public function getParentOfGift($gift_keys)
+    {
+        foreach ( $this->checkoutSession->getQuote()->getAllItems() as $item) {
+            /* @var $item \Magento\Quote\Model\Quote\Item */
+
+            $dataKey = $this->splitKey($gift_keys);
+
+            if ($item->getParentItem()) {
+                $item = $item->getParentItem();
+            }
+            if ($this->_isParentGift($item)) {
+                if ($item->getProductId() == $dataKey['product_parent_id']) {
+                    $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+                    $freegift_parent_key = $info['freegift_keys'];
+                    $gift_keys = array(
+                        $gift_keys => $gift_keys
+                    );
+                    $result = array_intersect($freegift_parent_key,$gift_keys);
+                    if (empty($result)) {
+                        continue;
+                    }else{
+                        return $item;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public function _isParentGift($item)
+    {
+        if($item->getOptionByCode('mw_free_catalog_gift') && $item->getOptionByCode('mw_free_catalog_gift')->getValue() == 1){
+            return true;
+        }
+
+        return false;
+    }
 }
 

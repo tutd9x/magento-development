@@ -182,7 +182,7 @@ class ProcessApply implements ObserverInterface
                         continue;
                     }
 
-                    if($current_qty * $buy_x <= $qty_for_gift){
+                    if($current_qty * $buy_x >= $qty_for_gift){
                         $this->addProduct($gift, $qty_for_gift, $storeId, $gift['freegift_parent_key']);
                         unset($freegift_keys[$gift['freegift_parent_key']]);
                     }
@@ -465,9 +465,9 @@ class ProcessApply implements ObserverInterface
                         $data['freegift_parent_key'] = array(
                             $data['freegift_parent_key'] => $data['freegift_parent_key']
                         );
-
+                        $qty = $data['qty'];
                         $data['freegift_qty_info'] = array(
-                            $parent_gift_key => $data['qty']
+                            $parent_gift_key => $qty
                         );
 
                         $rule = array(
@@ -500,9 +500,6 @@ class ProcessApply implements ObserverInterface
                     }
                 }
 
-//                $data = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
-//                \Zend_Debug::dump($data); die("ssa");
-////                \Zend_Debug::dump(array_key_exists('sales_gift_from_slider',$data)); die("ssa");
                 if(array_key_exists('sales_gift_from_slider',$data)) {
                     if (array_key_exists('free_sales_key',$data) && isset($data['free_sales_key'])) {
                         $parent_gift_key = $data['free_sales_key'];
@@ -511,14 +508,14 @@ class ProcessApply implements ObserverInterface
                         );
 
                         $data['freegift_qty_info'] = array(
-                            $parent_gift_key => $data['qty']
+                            $parent_gift_key => 1 //$data['qty']
                         );
 
                         $data['freegift_rule_data'] = array(
                             'rule_id' => $data['rule_id'],
                             'name' => $data['rule_name'],
                             'gift_id' => $data['product'],
-                            'number_of_free_gift' => $data['qty'],
+                            'number_of_free_gift' => 1, //$data['qty'],
                             'freegift_sales_key' => $parent_gift_key,
                         );
 

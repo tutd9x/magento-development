@@ -62,7 +62,6 @@ if(count($ProductGiftData) > 0 || count($ProductGiftSalesRuleData) > 0):
                                     if($giftData['is_able'] == 1){
                                     ?>
                                     <form data-role="tocart-form" data-product-sku="<?=  /* @NoEscape */ $product->getSku() ?>" action="<?php echo $addToCartUrl ?>" method="post">
-                                        <input type="hidden" name="qty" value="1">
                                         <input type="hidden" name="free_sales_key" value="<?php echo $giftData['rule_id'].'_'.$giftData['gift_id'].'_'.$giftData['number_of_free_gift']; ?>">
                                         <input type="hidden" name="rule_name" value="<?php echo $giftData['rule_name']; ?>">
                                         <input type="hidden" name="rule_id" value="<?php echo $giftData['rule_id']; ?>">
@@ -119,7 +118,7 @@ if(count($ProductGiftData) > 0 || count($ProductGiftSalesRuleData) > 0):
                                     $addToCartUrl =  $blockFreeGift->getAddToCartUrl($product);
                                     ?>
                                     <form data-role="tocart-form" data-product-sku="<?=  /* @NoEscape */ $product->getSku() ?>" action="<?php echo $addToCartUrl ?>" method="post">
-                                        <input type="hidden" name="qty" value="1">
+                                        <input type="hidden" name="qty" value="<?php echo $giftData['qty']; ?>">
                                         <input type="hidden" name="freegift_parent_key" value="<?php echo $giftData['freegift_parent_key']; ?>">
                                         <input type="hidden" name="rule_name" value="<?php echo $giftData['rule_name']; ?>">
                                         <input type="hidden" name="rule_id" value="<?php echo $giftData['rule_id']; ?>">

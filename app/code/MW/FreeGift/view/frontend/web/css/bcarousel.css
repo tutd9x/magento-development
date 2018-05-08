@@ -39,6 +39,7 @@ Usage: with bCarousel js
 	list-style:none;
 	height:auto; /* carousel height */
 	margin-right:35px;
+	margin-left:35px;
 	width: 140px;
 }
 .bCarousel-wrapper li a{display:block;}
