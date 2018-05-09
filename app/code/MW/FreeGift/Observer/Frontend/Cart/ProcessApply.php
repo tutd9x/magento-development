@@ -52,6 +52,10 @@ class ProcessApply implements ObserverInterface
      * @var \Magento\Catalog\Api\ProductRepositoryInterface
      */
     protected $productRepository;
+    /**
+     * @var \Magento\Catalog\Model\ProductFactory
+     */
+    protected $productFactory;
 
     /**
      * @param \MW\FreeGift\Model\ResourceModel\RuleFactory $resourceRuleFactory
@@ -68,7 +72,8 @@ class ProcessApply implements ObserverInterface
         \MW\FreeGift\Helper\Data $helper,
         \Magento\Checkout\Model\Session $resourceSession,
         CustomerCart $cart,
-        \Magento\Catalog\Api\ProductRepositoryInterface $productRepository
+//        \Magento\Catalog\Api\ProductRepositoryInterface $productRepository
+        \Magento\Catalog\Model\ProductFactory $productFactory
     ) {
         $this->resourceRuleFactory = $resourceRuleFactory;
         $this->storeManager = $storeManager;
@@ -78,7 +83,8 @@ class ProcessApply implements ObserverInterface
         $this->helper = $helper;
         $this->checkoutSession = $resourceSession;
         $this->cart = $cart;
-        $this->productRepository = $productRepository;
+//        $this->productRepository = $productRepository;
+        $this->productFactory = $productFactory;
     }
 
     /**
@@ -226,7 +232,11 @@ class ProcessApply implements ObserverInterface
     public function addProduct($rule, $qty_for_gift, $storeId, $parentKey)
     {
 
-        $product = $this->productRepository->getById($rule['gift_id'], false, $storeId);
+        $product = $this->productFactory->create()->load($rule['gift_id']);
+
+        if(!$product){
+            return $this;
+        }
 
         $params['uenc'] = $uenc = strtr(base64_encode($product->getProductUrl()), '+/=', '-_,');
         $params['product'] = $rule['gift_id'];
@@ -252,13 +262,14 @@ class ProcessApply implements ObserverInterface
                 'print_value' => $rule['name'],
                 'option_type' => 'text',
                 'custom_view' => TRUE,
+                'rule_id' => $rule['rule_id']
             ]];
             // add the additional options array with the option code additional_options
             $product->addCustomOption('free_catalog_gift', 1);
             $product->addCustomOption('additional_options', serialize($additionalOptions));
 
             /* check item in cart */
-            $itemInCart = $this->_getItemByProduct($product, $storeId);
+            $itemInCart = $this->_getItemByProduct($product);
             if ($itemInCart == false) {
                 $this->cart->addProduct($product, $params);
             } else {

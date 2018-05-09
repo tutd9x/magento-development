@@ -43,6 +43,11 @@ class ProcessApply implements ObserverInterface
      */
     protected $productRepository;
     /**
+     * @var \Magento\Catalog\Model\ProductFactory
+     */
+    protected $productFactory;
+
+    /**
      * Initialize dependencies.
      *
      * @param \MW\FreeGift\Model\Config $config
@@ -55,7 +60,8 @@ class ProcessApply implements ObserverInterface
         \MW\FreeGift\Model\SalesRuleFactory $salesRuleFactory,
         \MW\FreeGift\Helper\Data $helper,
         CustomerCart $cart,
-        \Magento\Catalog\Api\ProductRepositoryInterface $productRepository
+//        \Magento\Catalog\Api\ProductRepositoryInterface $productRepository
+        \Magento\Catalog\Model\ProductFactory $productFactory
     ) {
         $this->config = $config;
         $this->_calculator = $validator;
@@ -63,7 +69,8 @@ class ProcessApply implements ObserverInterface
         $this->_salesRuleFactory = $salesRuleFactory;
         $this->helper = $helper;
         $this->cart = $cart;
-        $this->productRepository = $productRepository;
+//        $this->productRepository = $productRepository;
+        $this->productFactory = $productFactory;
     }
 
     /**
@@ -170,7 +177,11 @@ class ProcessApply implements ObserverInterface
 
     public function addProduct($rule, $storeId, $parentKey)
     {
-        $product = $this->productRepository->getById($rule['gift_id'], false, $storeId);
+        $product = $this->productFactory->create()->load($rule['gift_id']);
+
+        if(!$product){
+            return $this;
+        }
 
         $params['uenc'] = $uenc = strtr(base64_encode($product->getProductUrl()), '+/=', '-_,');
         $params['product'] = $rule['gift_id'];
@@ -188,6 +199,7 @@ class ProcessApply implements ObserverInterface
                 'print_value' => $rule['name'],
                 'option_type' => 'text',
                 'custom_view' => TRUE,
+                'rule_id' => $rule['rule_id']
             ]];
             // add the additional options array with the option code additional_options
             $product->addCustomOption('free_sales_gift', 1);

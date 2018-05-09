@@ -100,20 +100,13 @@ class AfterUpdateItems implements ObserverInterface
                 continue;
             }
 
-            $product = $item->getProduct();
-            $pId = $item->getProductId();
-            $storeId = $item->getStoreId();
-            $wId = $this->storeManager->getStore($storeId)->getWebsiteId();
-
-            if ($product->hasCustomerGroupId()) {
-                $gId = $product->getCustomerGroupId();
-            } else {
-                $gId = $this->customerSession->getCustomerGroupId();
-            }
-
-            $this->_updateListGift($item);
+            //$this->_updateListGift($item);
             //$this->_addOptionGiftProductAgain($item);
-            //$this->_processCatalogRule($item, $wId, $gId, $pId, $storeId);
+            if($this->_isGift($item) || $this->_isSalesGift($item)) {
+                //return $this->_processRulePrice($item);
+            } else {
+                $this->_processCatalogRule($item);
+            }
         }
 
         return $this;
@@ -125,61 +118,110 @@ class AfterUpdateItems implements ObserverInterface
      * @param \Magento\Framework\Event\Observer $observer
      * @return $this
      */
-    private function _processCatalogRule(\Magento\Quote\Model\Quote\Item $item, $wId, $gId, $pId, $storeId)
+    private function _processCatalogRule(\Magento\Quote\Model\Quote\Item $item)
     {
-        if($this->_isGift($item) || $this->_isSalesGift($item)) {
-            return $this->_processRulePrice($item);
-        }
+        $quote = $this->getQuote();
+        $qtyNew = $item->getQty();
 
-        $dateTs = $this->localeDate->scopeTimeStamp($storeId);
+        if($item->getOptionByCode('mw_free_catalog_gift') && $item->getOptionByCode('mw_free_catalog_gift')->getValue() == 1) {
+            if ($item->getOptionByCode('info_buyRequest') && $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue())) {
 
-        $ruleData = null;
-        $buy_x = 1;
+                $parent_keys = $info['freegift_keys'];
 
-        /* @var $resourceModel \MW\FreeGift\Model\ResourceModel\Rule */
-        $resourceModel = $this->resourceRuleFactory->create();
-        $ruleData = $resourceModel->getRulesFromProduct($dateTs, $wId, $gId, $pId);
+                    foreach ($this->getQuote()->getAllItems() as $itemGift) {
+                        /* @var $itemGift \Magento\Quote\Model\Quote\Item */
+                        if ($itemGift->getParentItem()) {
+                            $itemGift = $itemGift->getParentItem();
+                        }
 
-        if (!empty($ruleData)) {
+                        if ($this->_isGift($itemGift)) {
+                            $infoGift = unserialize($itemGift->getOptionByCode('info_buyRequest')->getValue());
 
-            /* Sort array by column sort_order */
-            array_multisort(array_column($ruleData, 'sort_order'), SORT_ASC, $ruleData);
-            $ruleData = $this->_filterByActionStop($ruleData);
-            $giftData = $this->helper->getGiftDataByRule($ruleData);
+                            $gift_rule_data = $infoGift['freegift_rule_data'];
+                            $freegift_parent_key = $infoGift['freegift_parent_key'];
 
-            if (count($giftData) <= 0) {
-                return $this;
-            }
+                            $result = array_intersect($parent_keys,$freegift_parent_key);
+                            if (empty($result)) {
+                                continue;
+                            }
 
-            $this->addRuleInfo($item, $ruleData, $giftData);
+                            foreach ($result as $key) {
+                                $infoGift['freegift_qty_info'][$key] = ($gift_rule_data[$key]['buy_x'] * $qtyNew);
+                            }
 
-            /* Process for gift if exist */
-            $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
-            $freegift_keys = $info['freegift_keys'];
-            $current_qty = $this->_countCurrentItemInCart($freegift_keys);
+                            $qtyToUpdate = 0;
+                            foreach ($infoGift['freegift_qty_info'] as $key => $val){
+                                $qtyToUpdate += $val;
+                            }
 
-            foreach ($giftData as $gift) {
-                // process for buy x get y
-                if (!empty($gift)) {
+                            if ($qtyToUpdate <= 0) {
+                                $quote->removeItem($itemGift->getItemId())->save();
+                            } else {
+                                $infoGift['qty'] = $qtyToUpdate;
+                                $itemGift->getOptionByCode('info_buyRequest')->setValue(serialize($infoGift));
+                                $itemGift->setQty($qtyToUpdate);
+                            }
 
-                    if ($gift['buy_x'] > 0) {
-                        $buy_x = $gift['buy_x'];
+                        }
                     }
-
-                    $current_qty_gift = $this->_countGiftInCart($gift, $freegift_keys);
-                    $qty_for_gift = (int)($current_qty * $buy_x) - $current_qty_gift;
-
-                    if ($qty_for_gift <= 0) {
-                        continue;
-                    }
-
-                    if($current_qty * $buy_x >= $qty_for_gift){
-                        $this->addProduct($gift, $qty_for_gift, $storeId, $gift['freegift_parent_key']);
-                        unset($freegift_keys[$gift['freegift_parent_key']]);
-                    }
-                }
             }
         }
+
+
+
+
+
+
+
+
+//        $dateTs = $this->localeDate->scopeTimeStamp($storeId);
+//        $ruleData = null;
+//        $buy_x = 1;
+//
+//        /* @var $resourceModel \MW\FreeGift\Model\ResourceModel\Rule */
+//        $resourceModel = $this->resourceRuleFactory->create();
+//        $ruleData = $resourceModel->getRulesFromProduct($dateTs, $wId, $gId, $pId);
+//
+//        if (!empty($ruleData)) {
+//
+//            /* Sort array by column sort_order */
+//            array_multisort(array_column($ruleData, 'sort_order'), SORT_ASC, $ruleData);
+//            $ruleData = $this->_filterByActionStop($ruleData);
+//            $giftData = $this->helper->getGiftDataByRule($ruleData);
+//
+//            if (count($giftData) <= 0) {
+//                return $this;
+//            }
+//
+//            $this->addRuleInfo($item, $ruleData, $giftData);
+//
+//            /* Process for gift if exist */
+//            $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+//            $freegift_keys = $info['freegift_keys'];
+//            $current_qty = $this->_countCurrentItemInCart($freegift_keys);
+//
+//            foreach ($giftData as $gift) {
+//                // process for buy x get y
+//                if (!empty($gift)) {
+//
+//                    if ($gift['buy_x'] > 0) {
+//                        $buy_x = $gift['buy_x'];
+//                    }
+//
+//                    $current_qty_gift = $this->_countGiftInCart($gift, $freegift_keys);
+//                    $qty_for_gift = (int)($current_qty * $buy_x) - $current_qty_gift;
+//
+//                    if ($qty_for_gift <= 0) {
+//                        continue;
+//                    }
+//
+//                    if($current_qty * $buy_x >= $qty_for_gift){
+//                        $this->addProduct($gift, $qty_for_gift, $storeId, $gift['freegift_parent_key']);
+//                        unset($freegift_keys[$gift['freegift_parent_key']]);
+//                    }
+//                }
+//            }
+//        }
 
         return $this;
     }
@@ -219,13 +261,24 @@ class AfterUpdateItems implements ObserverInterface
      * */
     public function addProduct($rule, $qty_for_gift, $storeId, $parentKey)
     {
+        $product = $this->productRepository->getById($rule['gift_id'], false, $storeId);
+
+        $params['uenc'] = $uenc = strtr(base64_encode($product->getProductUrl()), '+/=', '-_,');
+        $params['product'] = $rule['gift_id'];
         $params['product'] = $rule['gift_id'];
         $params['rule_name'] = $rule['name'];
         $params['qty'] = $qty_for_gift;
         $params['freegift_parent_key'][$parentKey] = $parentKey;
         $params['freegift_qty_info'][$parentKey] = $qty_for_gift;
+        $params['freegift_rule_data'][$parentKey] = $rule;
 
-        $product = $this->productRepository->getById($rule['gift_id'], false, $storeId);
+        /* remove custom option 'mw_free_catalog_gift' out of gift product */
+        if( $product->hasCustomOptions() && $productCustomOptions = $product->getCustomOptions() ) {
+            if($product->getCustomOption('mw_free_catalog_gift') && $product->getCustomOption('mw_free_catalog_gift')->getValue() == 1){
+                unset($productCustomOptions['mw_free_catalog_gift']);
+                $product->setCustomOptions($productCustomOptions);
+            }
+        }
 
         if($product->getTypeId() == 'simple') {
             $additionalOptions = [[
@@ -260,6 +313,7 @@ class AfterUpdateItems implements ObserverInterface
                         }
 
                         $data['freegift_qty_info'][$parentKey] = $current_qty_info + $qty_for_gift;
+                        $data['freegift_rule_data'][$parentKey] = $rule;
                     }
                     $itemInCart->getOptionByCode('info_buyRequest')->setValue(serialize($data));
                 }
@@ -284,9 +338,6 @@ class AfterUpdateItems implements ObserverInterface
         $item->setCustomPrice(0);
         $item->setOriginalCustomPrice(0);
         $item->getProduct()->setIsSuperMode(true);
-
-
-
 
         return $this;
     }
@@ -453,9 +504,9 @@ class AfterUpdateItems implements ObserverInterface
                     $data['freegift_parent_key'] = array(
                         $data['freegift_parent_key'] => $data['freegift_parent_key']
                     );
-
+                    $qty = $data['qty'];
                     $data['freegift_qty_info'] = array(
-                        $parent_gift_key => $data['qty']
+                        $parent_gift_key => $qty
                     );
 
                     $rule = array(
@@ -488,9 +539,6 @@ class AfterUpdateItems implements ObserverInterface
                 }
             }
 
-//                $data = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
-//                \Zend_Debug::dump($data); die("ssa");
-////                \Zend_Debug::dump(array_key_exists('sales_gift_from_slider',$data)); die("ssa");
             if(array_key_exists('sales_gift_from_slider',$data)) {
                 if (array_key_exists('free_sales_key',$data) && isset($data['free_sales_key'])) {
                     $parent_gift_key = $data['free_sales_key'];
@@ -499,14 +547,14 @@ class AfterUpdateItems implements ObserverInterface
                     );
 
                     $data['freegift_qty_info'] = array(
-                        $parent_gift_key => $data['qty']
+                        $parent_gift_key => 1 //$data['qty']
                     );
 
                     $data['freegift_rule_data'] = array(
                         'rule_id' => $data['rule_id'],
                         'name' => $data['rule_name'],
                         'gift_id' => $data['product'],
-                        'number_of_free_gift' => $data['qty'],
+                        'number_of_free_gift' => 1, //$data['qty'],
                         'freegift_sales_key' => $parent_gift_key,
                     );
 
