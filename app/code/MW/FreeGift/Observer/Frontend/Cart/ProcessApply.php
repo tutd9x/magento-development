@@ -228,7 +228,7 @@ class ProcessApply implements ObserverInterface
 
         $product = $this->productRepository->getById($rule['gift_id'], false, $storeId);
 
-        $params['uenc'] = $uenc = strtr(base64_encode($product->getProductUrl()), '+/=', '-_,');;
+        $params['uenc'] = $uenc = strtr(base64_encode($product->getProductUrl()), '+/=', '-_,');
         $params['product'] = $rule['gift_id'];
         $params['product'] = $rule['gift_id'];
         $params['rule_name'] = $rule['name'];

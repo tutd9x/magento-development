@@ -170,6 +170,9 @@ class ProcessApply implements ObserverInterface
 
     public function addProduct($rule, $storeId, $parentKey)
     {
+        $product = $this->productRepository->getById($rule['gift_id'], false, $storeId);
+
+        $params['uenc'] = $uenc = strtr(base64_encode($product->getProductUrl()), '+/=', '-_,');
         $params['product'] = $rule['gift_id'];
         $params['rule_name'] = $rule['name'];
         $params['qty'] = 1;
@@ -177,7 +180,6 @@ class ProcessApply implements ObserverInterface
         $params['freegift_qty_info'][$parentKey] = 1;
         $params['freegift_rule_data'][$parentKey] = $rule;
 
-        $product = $this->productRepository->getById($rule['gift_id'], false, $storeId);
 
         if($product->getTypeId() == 'simple') {
             $additionalOptions = [[

@@ -171,9 +171,21 @@ class AfterRemoveItem implements ObserverInterface
         if ($this->_isSalesGift($item_removed)) {
 
             if ( $item_removed->getOptionByCode('info_buyRequest') && $itemInfo = unserialize($item_removed->getOptionByCode('info_buyRequest')->getValue()) ) {
-                $freegift_sales_key = $itemInfo['freegift_rule_data']['freegift_sales_key'];
-                $salesGiftRemoved[$freegift_sales_key] = $freegift_sales_key;
-                $this->checkoutSession->setSalesGiftRemoved($salesGiftRemoved);
+
+                if (isset($itemInfo['free_sales_key'])) {
+                    $parent_keys = $itemInfo['free_sales_key'];
+                    if (empty($parent_keys)) {
+                        return $this;
+                    }
+                }
+
+                foreach ($parent_keys as $key){
+                    $freegift_rule_data = $itemInfo['freegift_rule_data'][$key];
+                    $freegift_sales_key = $freegift_rule_data['freegift_sales_key'];
+                    $salesGiftRemoved[$freegift_sales_key] = $freegift_sales_key;
+                    $this->checkoutSession->setSalesGiftRemoved($salesGiftRemoved);
+                }
+
             }
         }
 
