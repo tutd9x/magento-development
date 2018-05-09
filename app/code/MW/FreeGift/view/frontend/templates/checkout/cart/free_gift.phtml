@@ -26,6 +26,61 @@ if(count($ProductGiftData) > 0 || count($ProductGiftSalesRuleData) > 0):
 
         <div id="the-carousel" class="bcarousel">
             <ul id="freegift" class="jcarousel-skin-tango mw-fg-slide" >
+                <?php foreach($ProductGiftData as $giftData):
+
+                    $product = $blockFreeGift->getProductGiftData($giftData['product_gift_id']);
+                    if($product->isSaleable()) :
+                        ?>
+
+                        <li class="mw-fg-items">
+                            <a id="stay-target-<?php echo $giftData['freegift_parent_key'].'_'.$giftData['product_gift_id']; ?>" href="<?php echo $product->getProductUrl(); ?>" href="<?php echo $product->getProductUrl()?>" title="<?php echo $blockFreeGift->escapeHtml($product->getName()); ?>" class="product-image">
+                                <img src="<?php echo $this->helper('Magento\Catalog\Helper\Image')->init($product, 'category_page_list')->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(TRUE)->resize(140,135)->getUrl(); ?>" width="140" height="135" alt="<?php echo $blockFreeGift->escapeHtml($product->getName()); ?>" />
+                            </a>
+                            <span style="display: none" class="product-name"><a href="javascript:;"><?php echo $product->getName(); ?></a></span>
+                            <div id="stay-content-<?php echo $giftData['freegift_parent_key'].'_'.$giftData['product_gift_id']; ?>" href="<?php echo $product->getProductUrl(); ?>" class="mw-fg-item">
+                                <div class="mw-fg-item-options">
+                                    <div class="mw-fg-item-option-title">
+                                        <?php echo $blockFreeGift->escapeHtml($giftData['rule_name']); ?>
+                                    </div>
+                                    <div class="mw-fg-item-option-ct">
+                                        <p class="mw-fg-item-name">
+                                            <a href="<?php echo $product->getProductUrl() ?>" title="<?php echo $product->getName() ?>"><?php echo $product->getName() ?></a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-shop">
+                                <div class="f-fix">
+                                    <div class="old-price">
+                                        <?php echo '<span class="price">' . $product->getPrice() . '</span>'; ?>
+                                    </div>
+                                    <p>
+                                    <div class="mw-hidden-product" data-product-id="<?php echo $product->getId()?>"></div>
+                                    <div class="mw-hidden-product-image" data-product-image="<?php echo $this->helper('Magento\Catalog\Helper\Image')->init($product, 'category_page_list')->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(TRUE)->resize(265, 265)->getUrl()?>"></div>
+                                    <div class="mw-hidden-product-has-options" data-has-options="<?php echo ($product->getOptions() ? "1" : "0")?>"></div>
+                                    <div class="mw-hidden-product-type" data-product-type-id="<?php echo $product->getTypeId()?>"></div>
+                                    <?php
+                                    $addToCartUrl =  $blockFreeGift->getAddToCartUrl($product);
+                                    ?>
+                                    <form data-role="tocart-form" data-product-sku="<?=  /* @NoEscape */ $product->getSku() ?>" action="<?php echo $addToCartUrl ?>" method="post">
+                                        <input type="hidden" name="qty" value="<?php echo $giftData['qty']; ?>">
+                                        <input type="hidden" name="freegift_parent_key" value="<?php echo $giftData['freegift_parent_key']; ?>">
+                                        <input type="hidden" name="rule_name" value="<?php echo $giftData['rule_name']; ?>">
+                                        <input type="hidden" name="rule_id" value="<?php echo $giftData['rule_id']; ?>">
+                                        <input type="hidden" name="gift_from_slider" value="1">
+                                        <?= $block->getBlockHtml('formkey') ?>
+                                        <button type="submit"
+                                                title="<?= $block->escapeHtml(__('Add to Cart')) ?>"
+                                                class="action tocart primary">
+                                            <span><?= /* @escapeNotVerified */ __('Add to Cart') ?></span>
+                                        </button>
+                                    </form>
+                                    </p>
+                                </div>
+                            </div>
+                        </li>
+                    <?php endif; ?>
+                <?php endforeach; ?>
 
                 <?php foreach($ProductGiftSalesRuleData as $giftData):
                     $product = $blockFreeGift->getProductGiftData($giftData['rule_gift_ids']);
@@ -74,62 +129,6 @@ if(count($ProductGiftData) > 0 || count($ProductGiftSalesRuleData) > 0):
                                         </button>
                                     </form>
                                     <?php } ?>
-                                    </p>
-                                </div>
-                            </div>
-                        </li>
-                    <?php endif; ?>
-                <?php endforeach; ?>
-
-
-                <?php foreach($ProductGiftData as $giftData):
-                    $product = $blockFreeGift->getProductGiftData($giftData['product_gift_id']);
-                    if($product->isSaleable()) :
-                        ?>
-
-                        <li class="mw-fg-items">
-                            <a id="stay-target-<?php echo $giftData['product_gift_id'].'_'.$giftData['product_gift_id']; ?>" href="<?php echo $product->getProductUrl(); ?>" href="<?php echo $product->getProductUrl()?>" title="<?php echo $blockFreeGift->escapeHtml($product->getName()); ?>" class="product-image">
-                                <img src="<?php echo $this->helper('Magento\Catalog\Helper\Image')->init($product, 'category_page_list')->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(TRUE)->resize(140,135)->getUrl(); ?>" width="140" height="135" alt="<?php echo $blockFreeGift->escapeHtml($product->getName()); ?>" />
-                            </a>
-                            <span style="display: none" class="product-name"><a href="javascript:;"><?php echo $product->getName(); ?></a></span>
-                            <div id="stay-content-<?php echo $giftData['product_gift_id'].'_'.$giftData['product_gift_id']; ?>" href="<?php echo $product->getProductUrl(); ?>" class="mw-fg-item">
-                                <div class="mw-fg-item-options">
-                                    <div class="mw-fg-item-option-title">
-                                        <?php echo $blockFreeGift->escapeHtml($giftData['rule_name']); ?>
-                                    </div>
-                                    <div class="mw-fg-item-option-ct">
-                                        <p class="mw-fg-item-name">
-                                            <a href="<?php echo $product->getProductUrl() ?>" title="<?php echo $product->getName() ?>"><?php echo $product->getName() ?></a>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="product-shop">
-                                <div class="f-fix">
-                                    <div class="old-price">
-                                        <?php echo '<span class="price">' . $product->getPrice() . '</span>'; ?>
-                                    </div>
-                                    <p>
-                                    <div class="mw-hidden-product" data-product-id="<?php echo $product->getId()?>"></div>
-                                    <div class="mw-hidden-product-image" data-product-image="<?php echo $this->helper('Magento\Catalog\Helper\Image')->init($product, 'category_page_list')->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(TRUE)->resize(265, 265)->getUrl()?>"></div>
-                                    <div class="mw-hidden-product-has-options" data-has-options="<?php echo ($product->getOptions() ? "1" : "0")?>"></div>
-                                    <div class="mw-hidden-product-type" data-product-type-id="<?php echo $product->getTypeId()?>"></div>
-                                    <?php
-                                    $addToCartUrl =  $blockFreeGift->getAddToCartUrl($product);
-                                    ?>
-                                    <form data-role="tocart-form" data-product-sku="<?=  /* @NoEscape */ $product->getSku() ?>" action="<?php echo $addToCartUrl ?>" method="post">
-                                        <input type="hidden" name="qty" value="<?php echo $giftData['qty']; ?>">
-                                        <input type="hidden" name="freegift_parent_key" value="<?php echo $giftData['freegift_parent_key']; ?>">
-                                        <input type="hidden" name="rule_name" value="<?php echo $giftData['rule_name']; ?>">
-                                        <input type="hidden" name="rule_id" value="<?php echo $giftData['rule_id']; ?>">
-                                        <input type="hidden" name="gift_from_slider" value="1">
-                                        <?= $block->getBlockHtml('formkey') ?>
-                                        <button type="submit"
-                                                title="<?= $block->escapeHtml(__('Add to Cart')) ?>"
-                                                class="action tocart primary">
-                                            <span><?= /* @escapeNotVerified */ __('Add to Cart') ?></span>
-                                        </button>
-                                    </form>
                                     </p>
                                 </div>
                             </div>

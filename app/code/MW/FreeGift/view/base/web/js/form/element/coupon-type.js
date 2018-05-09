@@ -42,7 +42,7 @@ define([
             couponType = uiRegistry
                 .get('mw_freegift_sales_rule_form.areas.rule_information.rule_information.coupon_type')
                 .value();
-            disableAuto = couponType === 3 || isUseAutoGenerationChecked;
+            disableAuto = couponType === 2 || isUseAutoGenerationChecked;
             _.each(
                 document.querySelectorAll(selector),
                 function (element) {

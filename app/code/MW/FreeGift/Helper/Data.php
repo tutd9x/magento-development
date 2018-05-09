@@ -566,16 +566,33 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $i = 0;
         foreach($results as $result){
             $keyData = $this->splitKey($result);
-            $par = $this->getParentOfGift($result);
-            $condition_customized = unserialize(unserialize($par->getOptionByCode('info_buyRequest')->getValue())['freegift_rule_data'][$keyData['rule_id']]['condition_customized']);
-            $buyX = $condition_customized['buy_x_get_y']['bx'];
+            $pars = $this->getParentOfGift($result);
             $listGiftProductId[] = $keyData;
             $listGiftProductId[$i]['freegift_parent_key'] = $result;
             $listGiftProductId[$i]['rule_id'] = $keyData['rule_id'];
             $ruleData = $this->_ruleFactory->create()->load($keyData['rule_id']);
             $listGiftProductId[$i]['rule_name'] = $ruleData->getName();
-            $listGiftProductId[$i]['qty'] = $par->getQty() * $buyX;
+            $listGiftProductId[$i]['qty'] = 0;
+            foreach($pars as $par){
+                $parentItem = $this->checkoutSession->getQuote()->getItemById($par);
+                $condition_customized = unserialize(unserialize($parentItem->getOptionByCode('info_buyRequest')->getValue())['freegift_rule_data'][$keyData['rule_id']]['condition_customized']);
+                $buyX = $condition_customized['buy_x_get_y']['bx'];
+                $listGiftProductId[$i]['qty'] += $parentItem->getQty() * $buyX;
+            }
             $i++;
+        }
+        $keyRemove = array();
+        foreach($listGiftProductId as $keyA => $giftA){
+            foreach($listGiftProductId as $keyB => $giftB){
+                if($keyA != $keyB && !in_array($keyA, $keyRemove)){
+                    if($giftA['freegift_parent_key'] == $giftB['freegift_parent_key']){
+                        $keyRemove[] = $keyB;
+//                        $listGiftProductId[$keyA]['qty'] += $giftB['qty'];
+                        unset($listGiftProductId[$keyB]);
+                    }
+                }
+
+            }
         }
         return $listGiftProductId;
     }
@@ -764,6 +781,8 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     public function getParentOfGift($gift_keys)
     {
+
+        $resultParent = array();
         foreach ( $this->checkoutSession->getQuote()->getAllItems() as $item) {
             /* @var $item \Magento\Quote\Model\Quote\Item */
 
@@ -776,18 +795,34 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 if ($item->getProductId() == $dataKey['product_parent_id']) {
                     $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
                     $freegift_parent_key = $info['freegift_keys'];
-                    $gift_keys = array(
-                        $gift_keys => $gift_keys
+                    $keyGift = $gift_keys;
+                    $keyGift = array(
+                        $keyGift => $keyGift
                     );
-                    $result = array_intersect($freegift_parent_key,$gift_keys);
+                    $result = array_intersect($freegift_parent_key,$keyGift);
                     if (empty($result)) {
                         continue;
                     }else{
-                        return $item;
+                        $resultParent[] = $item->getId();
                     }
                 }
             }
         }
+
+        //merge array
+        $keyRemove = array();
+        foreach($resultParent as $keyA => $parentA){
+
+            foreach($resultParent as $keyB => $parentB){
+                if($keyA != $keyB && !in_array($keyA, $keyRemove)){
+                    if($parentA == $parentB){
+                        $keyRemove[] = $keyB;
+                        unset($resultParent[$keyB]);
+                    }
+                }
+            }
+        }
+        if(count($resultParent) > 0) return $resultParent;
         return false;
     }
 

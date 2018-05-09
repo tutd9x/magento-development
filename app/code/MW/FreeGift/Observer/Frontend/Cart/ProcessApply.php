@@ -52,6 +52,7 @@ class ProcessApply implements ObserverInterface
      * @var \Magento\Catalog\Api\ProductRepositoryInterface
      */
     protected $productRepository;
+    protected $_ruleFactory;
     /**
      * @var \Magento\Catalog\Model\ProductFactory
      */
@@ -65,6 +66,7 @@ class ProcessApply implements ObserverInterface
      */
     public function __construct(
         \MW\FreeGift\Model\ResourceModel\RuleFactory $resourceRuleFactory,
+        \MW\FreeGift\Model\RuleFactory $ruleFactory,
         StoreManagerInterface $storeManager,
         TimezoneInterface $localeDate,
         CustomerModelSession $customerSession,
@@ -76,6 +78,7 @@ class ProcessApply implements ObserverInterface
         \Magento\Catalog\Model\ProductFactory $productFactory
     ) {
         $this->resourceRuleFactory = $resourceRuleFactory;
+        $this->_ruleFactory = $ruleFactory;
         $this->storeManager = $storeManager;
         $this->localeDate = $localeDate;
         $this->customerSession = $customerSession;
@@ -483,11 +486,35 @@ class ProcessApply implements ObserverInterface
                         $data['freegift_parent_key'] = array(
                             $data['freegift_parent_key'] => $data['freegift_parent_key']
                         );
-                        $qty = $data['qty'];
+
+                        $ruleData = $this->_ruleFactory->create()->load($data['rule_id']);
+                        $condition_customized = unserialize($ruleData->getData('condition_customized'));
+                        $buy_x = $condition_customized['buy_x_get_y']['bx'];
+                        $keySplit = $this->helper->splitKey($parent_gift_key);
+                        $qty = 0;
+                        $parents = $this->helper->getParentOfGift($parent_gift_key);
+                        if(count($parents) <= 0) return $this;
+                        foreach($parents as $par){
+                            $parentItem = $this->checkoutSession->getQuote()->getItemById($par);
+                            $condition_customized = unserialize(unserialize($parentItem->getOptionByCode('info_buyRequest')->getValue())['freegift_rule_data'][$data['rule_id']]['condition_customized']);
+                            $buyX = $condition_customized['buy_x_get_y']['bx'];
+                            $qty += $parentItem->getQty() * $buyX;
+                        }
                         $data['freegift_qty_info'] = array(
                             $parent_gift_key => $qty
                         );
 
+                        $data['freegift_rule_data'] = array(
+                            $parent_gift_key => array(
+                                'rule_id' => $data['rule_id'],
+                                'name' => $data['rule_name'],
+                                'product_id' => $keySplit['product_parent_id'],
+                                'rule_product_id' => $keySplit['key_id'],
+                                'gift_id' => $keySplit['product_gift_id'],
+                                'buy_x' => $buy_x,
+                                'freegift_parent_key'=> $parent_gift_key,
+                            )
+                        );
                         $rule = array(
                             'gift_id' => $data['product'],
                             'name' => $data['rule_name']
