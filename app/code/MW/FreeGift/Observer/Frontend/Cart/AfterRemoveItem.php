@@ -116,7 +116,7 @@ class AfterRemoveItem implements ObserverInterface
             }
         }
 
-        $current_qty = $this->_countCurrentItemInCart($item_removed, $parent_key);
+        //$current_qty = $this->_countCurrentItemInCart($item_removed, $parent_key);
 
         foreach ($items as $item) {
 
@@ -135,28 +135,26 @@ class AfterRemoveItem implements ObserverInterface
                     if (empty($result)) {
                         continue;
                     }
+                    $freegift_rule_data = $data['freegift_rule_data'];
+                    $qtyToUpdate = 0;
+                    foreach ($result as $key) {
+                        $qtyGiftToRemove = ($freegift_rule_data[$key]['buy_x'] * $qtyRemoved);
 
-                    $qtyGiftToRemove = 0;
-
-                    if ($current_qty < 1) {
-                        foreach ($result as $key) {
-                            unset($data['freegift_parent_key'][$key]);
-                            $qtyGiftToRemove += $data['freegift_qty_info'][$key];
-                        }
-                    }
-
-                    $qtyToUpdate = $item->getQty() - $qtyGiftToRemove;
-                    if ($qtyToUpdate <= 0) {
-                        $quote->removeItem($item->getItemId())->save();
-                    } else {
-                        if ( isset($data['freegift_qty_info']) ) {
-                            foreach ($result as $key) {
-                                $data['freegift_qty_info'][$key] = $data['freegift_qty_info'][$key] - $qtyRemoved;
+                        $qtyToUpdate = $item->getQty() - $qtyGiftToRemove;
+                        if ($qtyToUpdate <= 0) {
+                            $quote->removeItem($item->getItemId())->save();
+                        } else {
+                            $freegift_qty_info = $data['freegift_qty_info'][$key] - $qtyGiftToRemove;
+                            if($freegift_qty_info == 0){
+                                unset($data['freegift_parent_key'][$key]);
+                                unset($data['freegift_qty_info'][$key]);
+                                unset($data['freegift_rule_data'][$key]);
+                            }else{
+                                $data['freegift_qty_info'][$key] = $freegift_qty_info;
                             }
+                            $item->getOptionByCode('info_buyRequest')->setValue(serialize($data));
+                            $item->setQty($qtyToUpdate);
                         }
-
-                        $item->getOptionByCode('info_buyRequest')->setValue(serialize($data));
-                        $item->setQty($qtyToUpdate);
                     }
                 }
             }

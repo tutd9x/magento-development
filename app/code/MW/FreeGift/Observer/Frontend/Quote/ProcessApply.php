@@ -175,7 +175,7 @@ class ProcessApply implements ObserverInterface
         $params['qty'] = 1;
         $params['free_sales_key'][$parentKey] = $parentKey;
         $params['freegift_qty_info'][$parentKey] = 1;
-        $params['freegift_rule_data'] = $rule;
+        $params['freegift_rule_data'][$parentKey] = $rule;
 
         $product = $this->productRepository->getById($rule['gift_id'], false, $storeId);
 

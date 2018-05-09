@@ -225,14 +225,17 @@ class ProcessApply implements ObserverInterface
      * */
     public function addProduct($rule, $qty_for_gift, $storeId, $parentKey)
     {
+
+        $product = $this->productRepository->getById($rule['gift_id'], false, $storeId);
+
+        $params['uenc'] = $uenc = strtr(base64_encode($product->getProductUrl()), '+/=', '-_,');;
+        $params['product'] = $rule['gift_id'];
         $params['product'] = $rule['gift_id'];
         $params['rule_name'] = $rule['name'];
         $params['qty'] = $qty_for_gift;
         $params['freegift_parent_key'][$parentKey] = $parentKey;
         $params['freegift_qty_info'][$parentKey] = $qty_for_gift;
-
-        $product = $this->productRepository->getById($rule['gift_id'], false, $storeId);
-
+        $params['freegift_rule_data'][$parentKey] = $rule;
 
         /* remove custom option 'mw_free_catalog_gift' out of gift product */
         if( $product->hasCustomOptions() && $productCustomOptions = $product->getCustomOptions() ) {
@@ -275,20 +278,9 @@ class ProcessApply implements ObserverInterface
                         }
 
                         $data['freegift_qty_info'][$parentKey] = $current_qty_info + $qty_for_gift;
+                        $data['freegift_rule_data'][$parentKey] = $rule;
                     }
                     $itemInCart->getOptionByCode('info_buyRequest')->setValue(serialize($data));
-                }
-
-
-
-                if ( $itemInCart->getOptionByCode('additional_options') && $additionalOptions = unserialize($itemInCart->getOptionByCode('additional_options')->getValue()) ) {
-
-//                    foreach ($additionalOptions as $key => $value) {
-//                        $additionalOptions[$key]['value'] = $value['value'] .' '. $rule['name'];
-//                        $additionalOptions[$key]['print_value'] = $value['value'] .' & '. $rule['name'];
-//                    }
-
-                    $itemInCart->getOptionByCode('additional_options')->setValue(serialize($additionalOptions));
                 }
             }
         }
