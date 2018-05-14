@@ -89,7 +89,7 @@ class Utility
          * check per coupon usage limit
          */
         if ($rule->getCouponType() != \MW\FreeGift\Model\Salesrule::COUPON_TYPE_NO_COUPON) {
-            $couponCode = $address->getQuote()->getCouponCode();
+            $couponCode = $address->getQuote()->getFreegiftCouponCode();
             if (strlen($couponCode)) {
                 /** @var \MW\FreeGift\Model\Coupon $coupon */
                 $coupon = $this->couponFactory->create();

@@ -180,10 +180,12 @@ class AfterRemoveItem implements ObserverInterface
                 }
 
                 foreach ($parent_keys as $key){
-                    $freegift_rule_data = $itemInfo['freegift_rule_data'][$key];
-                    $freegift_sales_key = $freegift_rule_data['freegift_sales_key'];
-                    $salesGiftRemoved[$freegift_sales_key] = $freegift_sales_key;
-                    $this->checkoutSession->setSalesGiftRemoved($salesGiftRemoved);
+                    if(array_key_exists($key, $itemInfo['freegift_rule_data'])) {
+                        $freegift_rule_data = $itemInfo['freegift_rule_data'][$key];
+                        $freegift_sales_key = $freegift_rule_data['freegift_sales_key'];
+                        $salesGiftRemoved[$freegift_sales_key] = $freegift_sales_key;
+                        $this->checkoutSession->setSalesGiftRemoved($salesGiftRemoved);
+                    }
                 }
 
             }

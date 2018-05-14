@@ -50,5 +50,13 @@
             <block class="MW\FreeGift\Block\Quote" name="cart.freegift.quote" cacheable="false"  after="cart.freegift.promotion_banner" />
         </referenceContainer>
 
+        <referenceContainer name="cart.summary">
+            <block class="MW\FreeGift\Block\Cart\Coupon" name="checkout.cart.coupon1" as="coupon1" after="checkout.cart.coupon" template="MW_FreeGift::cart/coupon.phtml"/>
+        </referenceContainer>
+
+        <move element="checkout.cart.coupon1" destination="cart.discount" />
+
+
+
     </body>
 </page>
