@@ -49,12 +49,13 @@ class BeforeUpdateItems
         if($infoDataObject) {
             foreach ($infoDataObject->getData() as $itemId => $itemInfo) {
                 $item = $this->getQuote()->getItemById($itemId);
-                if ($this->_isGift($item) || $this->_isSalesGift($item)) {
-                    unset($data[$itemId]);
+                if ($this->_isSalesGift($item)) {
+                    $data[$itemId]['qty'] = 1;
+                    $data[$itemId]['before_suggest_qty'] = 1;
                 }
             }
         }
-        return $data;
+        return [$data];
     }
 
     /**
