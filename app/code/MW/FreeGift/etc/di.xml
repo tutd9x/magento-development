@@ -33,4 +33,7 @@
     <preference for="MW\FreeGift\Api\Data\CouponGenerationSpecInterface"
                 type="MW\FreeGift\Model\Data\CouponGenerationSpec" />
 
+    <type name="Magento\Checkout\Model\Cart">
+        <plugin name="mw_freegift_cart" type="MW\FreeGift\Plugin\Frontend\Cart\BeforeUpdateItems" sortOrder="100" />
+    </type>
 </config>
