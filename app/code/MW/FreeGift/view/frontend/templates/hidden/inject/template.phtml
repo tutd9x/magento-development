@@ -1,0 +1,125 @@
+<?php
+//$path_to_skin = Mage::getSingleton('core/design_package')->getPackageName()."/".Mage::getSingleton('core/design_package')->getTheme('frontend');
+$translates = array(
+    'Please wait..',
+);
+?>
+<script type="text/javascript">
+    <?php foreach($translates as $translate):?>
+//    Translator.add('<?php //echo $translate?>//', '<?php //echo $this->escapeHtml(__($translate))?>//');
+//    Translator.add('<?php //echo $translate?>//', '<?php //echo $translate ?>//');
+    <?php endforeach;?>
+</script>
+<script type="text/template" id="mwFreeGiftModal">
+    <div class="mwmodal-header <%= header_class_size%>">
+        <div class="close"><img src="<?php echo $this->getViewFileUrl('MW_FreeGift::images/1390484869__close.png') ?>" alt=""/></div>
+        <!--<%= title%>-->
+    </div>
+    <div style="clear: both"></div>
+    <div>
+<!--        <form method="post" enctype="multipart/form-data" id="product_addtocart_modal_form">-->
+        <form method="post" enctype="multipart/form-data" id="product_addtocart_form">
+            <%= content%>
+            <% if(input_hidden) {%>
+            <%= input_hidden %>
+            <% }%>
+        </form>
+    </div>
+</script>
+
+<script type="text/template" id="freegiftSimpleProduct">
+    <div class="md-simple-product">
+        <h3><%= title%></h3>
+        <div class="image">
+            <img src="<%= image%>" alt=""/>
+        </div>
+        <div class="wrapper-options product-options" id="product-options-wrapper">
+            <div id="mw-loader"><%= options_html%></div>
+        </div>
+        <input type="hidden" name="product" id="product_id" value="<%= product_id%>"/>
+        <input type="hidden" name="action" id="action" value="<%= action%>"/>
+        <input type="hidden" name="item_id" id="item_id" value="<%= item_id%>"/>
+        <div style="clear: both;"></div>
+    </div>
+</script>
+<script type="text/template" id="freegiftConfigurableProduct">
+    <div class="md-configurable-product">
+        <h3><%= title%></h3>
+        <div class="image">
+            <img src="<%= image%>" alt=""/>
+        </div>
+        <div class="wrapper-options product-options" id="product-options-wrapper">
+            <div id="mw-loader"><%= options_html%></div>
+        </div>
+        <input type="hidden" name="product" id="product_id" value="<%= product_id%>"/>
+        <input type="hidden" name="action" id="action" value="<%= action%>"/>
+        <input type="hidden" name="item_id" id="item_id" value="<%= item_id%>"/>
+        <div style="clear: both;"></div>
+    </div>
+</script>
+<script type="text/template" id="freegiftVirtualProduct">
+    <form method="post" enctype="multipart/form-data" id="product_addtocart_modal_form">
+        <div class="md-virtual-product">
+            <h3><%= title%></h3>
+            <div class="image">
+                <img src="<%= image%>" alt=""/>
+            </div>
+            <div class="wrapper-options product-options" id="product-options-wrapper">
+                <div id="mw-loader"><%= options_html%></div>
+            </div>
+            <input type="hidden" name="product" id="product_id" value="<%= product_id%>"/>
+            <input type="hidden" name="action" id="action" value="<%= action%>"/>
+            <input type="hidden" name="item_id" id="item_id" value="<%= item_id%>"/>
+            <div style="clear: both;"></div>
+        </div>
+    </form>
+</script>
+<script type="text/template" id="freegiftDownloadableProduct">
+    <div class="md-downloadable-product">
+        <h3><%= title%></h3>
+        <div class="image">
+            <img src="<%= image%>" alt=""/>
+        </div>
+        <div class="wrapper-options product-options" id="product-options-wrapper">
+            <div id="mw-loader"><%= options_html%></div>
+        </div>
+        <input type="hidden" name="product" id="product_id" value="<%= product_id%>"/>
+        <input type="hidden" name="action" id="action" value="<%= action%>"/>
+        <input type="hidden" name="item_id" id="item_id" value="<%= item_id%>"/>
+        <div style="clear: both;"></div>
+    </div>
+</script>
+<script type="text/template" id="freegiftTmplBundleProduct">
+    <div class="md-bundle-product">
+        <h3><%= title%></h3>
+        <div class="image">
+            <img src="<%= image%>" alt=""/>
+        </div>
+        <div class="wrapper-options product-options" id="product-options-wrapper">
+            <div id="mw-loader"><%= options_html%></div>
+        </div>
+        <input type="hidden" name="product" id="product_id" value="<%= product_id%>"/>
+        <input type="hidden" name="action" id="action" value="<%= action%>"/>
+        <input type="hidden" name="item_id" id="item_id" value="<%= item_id%>"/>
+        <div style="clear: both;"></div>
+    </div>
+</script>
+<script type="text/template" id="freegiftGroupedProduct">
+    <div class="md-grouped-product">
+        <h3><%= title%></h3>
+        <div class="image">
+            <img src="<%= image%>" alt=""/>
+        </div>
+        <div class="wrapper-options product-options" id="product-options-wrapper">
+            <div id="mw-loader"><%= options_html%></div>
+        </div>
+        <input type="hidden" name="product" id="product_id" value="<%= product_id%>"/>
+        <input type="hidden" name="product_id" value="<%= product_id%>"/>
+        <input type="hidden" name="action" id="action" value="<%= action%>"/>
+        <input type="hidden" name="item_id" id="item_id" value="<%= item_id%>"/>
+        <div style="clear: both;"></div>
+    </div>
+</script>
+<script type="text/template" id="itemCheckoutCart">
+    <!-- If customer use another theme, we can change template per item in checkout cart here -->
+</script>

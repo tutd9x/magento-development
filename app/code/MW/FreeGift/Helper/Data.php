@@ -402,21 +402,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 
 
     /**
-     * Generate content to log file debug.log By Hattetek.Com
-     *
-     * @param  $message string|array
-     * @return void
-     */
-    function xlog($message = 'null')
-    {
-        $log = print_r($message, true);
-        \Magento\Framework\App\ObjectManager::getInstance()
-            ->get('Psr\Log\LoggerInterface')
-            ->debug($log)
-        ;
-    }
-
-    /**
      * todo: Add configuration validation, that checks if all required xml config nodes are populated
      *
      */
@@ -487,14 +472,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             ['template' => 'Magento_Checkout::cart/item/renderer/actions/remove.phtml']
         );
 
-//        $this->xlog(
-//            $block_cart->getChildNames()
-//        );
-//        $this->xlog(
-//            $block_render_list->getChildBlock(
-//                'actions'
-//            )->getChildNames()
-//        );
 //        $block_cart->getChildBlock(
 //            'renderer.list'
 //        );

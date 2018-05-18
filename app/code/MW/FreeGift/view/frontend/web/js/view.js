@@ -217,15 +217,42 @@ define(['jquery', 'mage/apply/main'], function($, mage) {
 
                 switch(_button.attr('data-ffg-type')){ //catalog
                     case 'catalog':
-                        input_hidden += "<input type='hidden' name='free_catalog_gift' value='"+_button.attr('data-catalog-gift')+"'>\n";
-                        input_hidden += "<input type='hidden' name='applied_catalog_rule' value='"+_button.attr('data-applied-catalog-rule')+"'>\n";
-                        data_post.push({name: 'free_catalog_gift' , value: _button.attr('data-catalog-gift')}); // 16
-                        data_post.push({name: 'applied_catalog_rule' , value: _button.attr('data-applied-catalog-rule')}); //2
+                        input_hidden += "<input type='hidden' name='rule_id' value='"+_button.attr('data-applied-rule')+"'>\n";
+                        input_hidden += "<input type='hidden' name='freegift' value='1'>\n";
+                        input_hidden += "<input type='hidden' name='rule_name' value='"+_button.attr('data-applied-rule-name')+"'>\n";
+                        input_hidden += "<input type='hidden' name='freegift_parent_key' value='"+_button.attr('data-free-parent-key')+"'>\n";
+                        input_hidden += "<input type='hidden' name='data_ffg_type' value='"+_button.attr('data-ffg-type')+"'>\n";
+                        input_hidden += "<input type='hidden' name='gift_from_slider' value='"+_button.attr('data-rule-gift-from-slider')+"'>\n";
+                        input_hidden += "<input type='hidden' name='selected_configurable_option' value=''>\n";
+                        input_hidden += "<input type='hidden' name='related_product' value=''>\n";
+                        input_hidden += "<input type='hidden' name='qty'  value='"+_button.attr('data-qty')+"'>\n";
+                        //data_post.push({name: 'free_catalog_gift' , value: _button.attr('data-catalog-gift')});
+                        //data_post.push({name: 'applied_catalog_rule' , value: _button.attr('data-applied-catalog-rule')});
+                        data_post.push({name: 'rule_id' , value: _button.attr('data-applied-rule')});
+                        data_post.push({name: 'rule_name' , value: _button.attr('data-applied-rule-name')});
+                        data_post.push({name: 'freegift_parent_key' , value: _button.attr('data-free-parent-key')});
+                        data_post.push({name: 'data_ffg_type' , value: _button.attr('data-ffg-type')});
+                        data_post.push({name: 'gift_from_slider' , value: _button.attr('data-sales-gift-from-slider')});
+                        data_post.push({name: 'qty' , value: _button.attr('data-qty')});
+                        data_post.push({name: 'freegift' , value: 1});
                         break;
                     case 'sale':
-                        input_hidden += "<input type='hidden' name='applied_rule' value='"+_button.attr('data-applied-rule')+"'>\n";
+                        input_hidden += "<input type='hidden' name='rule_id' value='"+_button.attr('data-applied-rule')+"'>\n";
                         input_hidden += "<input type='hidden' name='freegift' value='1'>\n";
-                        data_post.push({name: 'applied_rule' , value: _button.attr('data-applied-rule')});
+                        input_hidden += "<input type='hidden' name='rule_name' value='"+_button.attr('data-applied-rule-name')+"'>\n";
+                        input_hidden += "<input type='hidden' name='free_sales_key' value='"+_button.attr('data-free-sales-key')+"'>\n";
+                        input_hidden += "<input type='hidden' name='data_ffg_type' value='"+_button.attr('data-ffg-type')+"'>\n";
+                        input_hidden += "<input type='hidden' name='sales_gift_from_slider' value='"+_button.attr('data-sales-gift-from-slider')+"'>\n";
+                        input_hidden += "<input type='hidden' name='selected_configurable_option' value=''>\n";
+                        input_hidden += "<input type='hidden' name='related_product' value=''>\n";
+
+                        //data_post.push({name: 'applied_rule' , value: _button.attr('data-applied-rule')});
+                        data_post.push({name: 'rule_id' , value: _button.attr('data-applied-rule')});
+                        //data_post.push({name: 'applied_rule_name' , value: _button.attr('data-applied-rule-name')});
+                        data_post.push({name: 'rule_name' , value: _button.attr('data-applied-rule-name')});
+                        data_post.push({name: 'free_sales_key' , value: _button.attr('data-free-sales-key')});
+                        data_post.push({name: 'data_ffg_type' , value: _button.attr('data-ffg-type')});
+                        data_post.push({name: 'sales_gift_from_slider' , value: _button.attr('data-sales-gift-from-slider')});
                         data_post.push({name: 'freegift' , value: 1});
                         break;
                     case 'coupon':
@@ -404,7 +431,8 @@ define(['jquery', 'mage/apply/main'], function($, mage) {
                         tBody.find("tr[id*=item_adding]").each(function(){
                             window.FreeGift.$(this).remove();
                         });
-                        alert(data.message);
+                        //alert(data.message);
+                        location.reload();
                     }
                     FreeGift.off('event:after_quick_add_to_cart');
                     FreeGift.off('event:after_general_add_to_cart');
@@ -562,6 +590,19 @@ define(['jquery', 'mage/apply/main'], function($, mage) {
                 //var productAddToCartForm = new VarienForm('#product_addtocart_modal_form');
                 //if (productAddToCartForm.validator.validate()) {
                 if (jQuery('#product_addtocart_form').mage('validation')) {
+                    window.attrValue = []; //$('#attribute141').val();
+
+                    var number_attr = $('#number_attribute').val();
+                    for (var i = 0; i < number_attr; i++) {
+                        var attr_id = $('#attribute_id_'+i).val();
+                        var value_attr = $('#attribute'+attr_id).val();
+                        if(value_attr == "" || value_attr <= 0){
+                            alert("Please select " +$('#attribute_id_'+i).attr('label') +"!");
+                            return;
+                        }
+                        window.attrValue.push({name: 'super_attribute['+attr_id+']' , value: value_attr});
+                    }
+                    console.log(window.attrValue);
                     if(ev.delegateTarget.className.indexOf("simple") > -1){
                         this.generalAddToCart(ev, "simple");
                     }else if(ev.delegateTarget.className.indexOf("configurable") > -1){
@@ -593,9 +634,6 @@ define(['jquery', 'mage/apply/main'], function($, mage) {
                 }
 
                 params.method = (typeof params.method == "undefined") ? "addg" : params.method;
-                //console.log('func: quickAddTocart');
-                //console.log(params.method);
-                //console.log(params.data);
                 var view = this;
                 var session_id = Math.floor(new Date().getTime() / 1000);
                 FreeGift.trigger('event:before_quick_add_to_cart', {session_id: session_id, p_name: params.p_name, image: params.p_image});
@@ -634,10 +672,15 @@ define(['jquery', 'mage/apply/main'], function($, mage) {
 
                 var action = window.FreeGift.$(".modal."+el).find(".md-"+el+"-product").find("#action").val();
                 data.push({name: 'session_id' , value: session_id});
-                console.log(data);
+
                 window.FreeGift.$.ajax(option_submit(ev, el));
                 function option_submit(ev, el){
-                    data = window.FreeGift.$("#product_addtocart_form").serializeArray();
+                    var ff =  window.FreeGift.$("#product_addtocart_form");
+                    data = ff.serializeArray();
+                    $.each(window.attrValue, function( index, value ) {
+                        //console.log( index + ": " + value );
+                        data.push({name: value.name , value: value.value});
+                    });
                     return {
                         type : 'POST',
                         url  : (thisView._params.is_gift == "true" || thisView._params.is_gift == true) ? window.freegiftConfig.url.add : (thisView._params.action == "view" ? window.freegiftConfig.url.updatePost : window.freegiftConfig.url.configure),
@@ -748,7 +791,6 @@ define(['jquery', 'mage/apply/main'], function($, mage) {
                 var thisEl = this.$el;
                 var thisView = this;
                 params.pid = (typeof params.pid == 'undefined') ? 0 : params.pid;
-                console.log(params);
                 window.FreeGift.$.ajax({
                     type : 'POST',
                     url  : window.freegiftConfig.url.getproduct,
@@ -935,7 +977,7 @@ define(['jquery', 'mage/apply/main'], function($, mage) {
         FreeGift.Views.CheckoutCart     = Backbone.View.extend({
             el: window.FreeGift.$(window.tableSelectorCart),
             events: {
-                //"click a.sc-edit"           : "hdlEdit",
+                "click a.sc-edit"           : "hdlEdit",
                 //"click a.action-edit"       : "hdlEdit",
                 //"click a.btn-remove"        : "hdlRemove",
                 //"click a.action-delete"     : "hdlRemove",

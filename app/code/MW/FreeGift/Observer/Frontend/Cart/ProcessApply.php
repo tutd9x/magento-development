@@ -125,6 +125,8 @@ class ProcessApply implements ObserverInterface
         /* @var $item \Magento\Quote\Model\Quote\Item */
         $item = $observer->getEvent()->getQuoteItem();
         $this->_addOptionGiftProductAgain($item);
+        /*update qty gift*/
+        //$this->helper->updateQtyCatalogGiftInCart($item);
 
         $this->_processCatalogRule($observer, $wId, $gId, $pId, $storeId);
 
@@ -530,12 +532,14 @@ class ProcessApply implements ObserverInterface
 //             add the additional options array with the option code additional_options
                         $item->addOption(
                             array(
+                                'product_id' => $item->getProductId(),
                                 'code' => 'free_catalog_gift',
                                 'value' => 1,
                             )
                         );
                         $item->addOption(
                             array(
+                                'product_id' => $item->getProductId(),
                                 'code' => 'additional_options',
                                 'value' => serialize($additionalOptions),
                             )
@@ -548,6 +552,7 @@ class ProcessApply implements ObserverInterface
                 if(array_key_exists('sales_gift_from_slider',$data)) {
                     if (array_key_exists('free_sales_key',$data) && isset($data['free_sales_key'])) {
                         $parent_gift_key = $data['free_sales_key'];
+                        $freegift_coupon_code = $this->checkoutSession->getQuote()->getFreegiftCouponCode();;
                         $data['free_sales_key'] = array(
                             $data['free_sales_key'] => $data['free_sales_key']
                         );
@@ -557,13 +562,16 @@ class ProcessApply implements ObserverInterface
                         );
 
                         $data['freegift_rule_data'] = array(
-                            'rule_id' => $data['rule_id'],
-                            'name' => $data['rule_name'],
-                            'gift_id' => $data['product'],
-                            'number_of_free_gift' => 1, //$data['qty'],
-                            'freegift_sales_key' => $parent_gift_key,
+                            $parent_gift_key => array(
+                                'rule_id' => $data['rule_id'],
+                                'name' => $data['rule_name'],
+                                'gift_id' => $data['product'],
+                                'number_of_free_gift' => 1, //$data['qty'],
+                                'freegift_sales_key' => $parent_gift_key,
+                            )
                         );
-
+                        $data['freegift_with_code'] = 1;
+                        $data['freegift_coupon_code'] = $freegift_coupon_code;
                         $rule = array(
                             'gift_id' => $data['product'],
                             'name' => $data['rule_name']
@@ -575,16 +583,20 @@ class ProcessApply implements ObserverInterface
                             'print_value' => $rule['name'],
                             'option_type' => 'text',
                             'custom_view' => TRUE,
+                            'freegift_with_code' => 1,
+                            'freegift_coupon_code' => $freegift_coupon_code,
                         ]];
 //             add the additional options array with the option code additional_options
                         $item->addOption(
                             array(
+                                'product_id' => $item->getProductId(),
                                 'code' => 'free_sales_gift',
                                 'value' => 1,
                             )
                         );
                         $item->addOption(
                             array(
+                                'product_id' => $item->getProductId(),
                                 'code' => 'additional_options',
                                 'value' => serialize($additionalOptions),
                             )
