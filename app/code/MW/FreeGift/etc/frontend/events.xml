@@ -30,11 +30,4 @@
         <observer name="freegift" instance="MW\FreeGift\Observer\Frontend\Cart\AfterUpdateItems" />
     </event>
 
-    <event name="freegift_coupon_code_validate_success">
-        <observer name="freegift" instance="MW\FreeGift\Observer\Frontend\Quote\ProcessApplyCoupon" />
-    </event>
-
-    <event name="freegift_coupon_code_validate_canceled">
-        <observer name="freegift" instance="MW\FreeGift\Observer\Frontend\Quote\ProcessCanceledCoupon" />
-    </event>
 </config>

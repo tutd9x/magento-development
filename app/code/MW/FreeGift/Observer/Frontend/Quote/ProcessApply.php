@@ -191,7 +191,6 @@ class ProcessApply implements ObserverInterface
         $params['freegift_qty_info'][$parentKey] = 1;
         $params['freegift_rule_data'][$parentKey] = $rule;
 
-
         if($product->getTypeId() == 'simple') {
             $additionalOptions = [[
                 'label' => __('Free Gift'),

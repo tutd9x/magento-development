@@ -120,7 +120,6 @@ class CouponPost extends \Magento\Checkout\Controller\Cart
                             )
                         );
                     } else if($isCodeLengthValid && $couponCode == $cartQuote->getFreegiftCouponCode()){
-                        $this->_eventManager->dispatch('freegift_coupon_code_validate_success', ['quote' => $cartQuote]);
                         $this->messageManager->addSuccess(
                             __(
                                 'You used free gift code "%1".',
@@ -137,7 +136,6 @@ class CouponPost extends \Magento\Checkout\Controller\Cart
                     }
                 }
             } else {
-                $this->_eventManager->dispatch('freegift_coupon_code_validate_canceled', ['quote' => $cartQuote, 'old_coupon_code' => $oldCouponCode]);
                 $this->messageManager->addSuccess(__('You canceled the free gift code.'));
             }
         } catch (\Magento\Framework\Exception\LocalizedException $e) {
