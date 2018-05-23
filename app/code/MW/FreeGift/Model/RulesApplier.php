@@ -152,7 +152,7 @@ class RulesApplier
         return $this;
     }
 
-    function removeItemGift($item = null)
+    public function removeItemGift($item = null)
     {
         if ($item) {
             if ($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1) {
