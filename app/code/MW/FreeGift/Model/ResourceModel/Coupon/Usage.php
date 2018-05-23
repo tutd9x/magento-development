@@ -45,13 +45,13 @@ class Usage extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
         $timesUsed = $connection->fetchOne($select, [':coupon_id' => $couponId, ':customer_id' => $customerId]);
 
         if ($timesUsed > 0) {
-            $this->_getWriteAdapter()->update(
+            $this->getConnection()->update(
                 $this->getMainTable(),
                 ['times_used' => $timesUsed + 1],
                 ['coupon_id = ?' => $couponId, 'customer_id = ?' => $customerId]
             );
         } else {
-            $this->_getWriteAdapter()->insert(
+            $this->getConnection()->insert(
                 $this->getMainTable(),
                 ['coupon_id' => $couponId, 'customer_id' => $customerId, 'times_used' => 1]
             );

@@ -13,7 +13,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
     {
         /** @var \Magento\Framework\Data\Form $form */
         $form = $this->_formFactory->create();
-        $form->setHtmlIdPrefix('guide_');
+        $form->setHtmlIdPrefix('report_');
 
         /*
          * guide for google API
@@ -21,20 +21,20 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
         $fieldset = $form->addFieldset(
             'google_fieldset',
             [
-                'legend' => __('Report'),
-                'class' => 'guide-fieldset',
+//                'legend' => __('Report'),
+                'class' => 'report-fieldset',
             ]
         );
 
         $fieldset->addField(
-            'google',
-            'text',
-            [
-                'name' => 'google',
-                'label' => __('report free gift'),
-                'title' => __('reportfree gift'),
-            ]
-        )->setRenderer($this->getChildBlock('freegift_report_render'));
+        'report',
+        'text',
+        [
+            'name' => 'report',
+            'label' => __('report free gift'),
+            'title' => __('report free gift'),
+        ]
+    )->setRenderer($this->getChildBlock('freegift_report_render'));
 
         $form->setUseContainer(true);
         $this->setForm($form);

@@ -17,12 +17,12 @@ class CouponPost extends \Magento\Checkout\Controller\Cart
      */
     protected $couponFactory;
 
-    /**
-     * Core event manager proxy
-     *
-     * @var \Magento\Framework\Event\ManagerInterface
-     */
-    protected $_eventManager = null;
+//    /**
+//     * Core event manager proxy
+//     *
+//     * @var \Magento\Framework\Event\ManagerInterface
+//     */
+//    protected $_eventManager = null;
 
     /**
      * @param \Magento\Framework\App\Action\Context $context
@@ -43,8 +43,8 @@ class CouponPost extends \Magento\Checkout\Controller\Cart
         \Magento\Framework\Data\Form\FormKey\Validator $formKeyValidator,
         \Magento\Checkout\Model\Cart $cart,
         \MW\FreeGift\Model\CouponFactory $couponFactory,
-        \Magento\Quote\Api\CartRepositoryInterface $quoteRepository,
-        \Magento\Framework\Event\ManagerInterface $eventManager
+        \Magento\Quote\Api\CartRepositoryInterface $quoteRepository
+//        \Magento\Framework\Event\ManagerInterface $eventManager
     ) {
         parent::__construct(
             $context,
@@ -56,7 +56,7 @@ class CouponPost extends \Magento\Checkout\Controller\Cart
         );
         $this->couponFactory = $couponFactory;
         $this->quoteRepository = $quoteRepository;
-        $this->_eventManager = $eventManager;
+//        $this->_eventManager = $eventManager;
     }
 
     /**

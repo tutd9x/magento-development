@@ -30,4 +30,7 @@
         <observer name="freegift" instance="MW\FreeGift\Observer\Frontend\Cart\AfterUpdateItems" />
     </event>
 
+    <event name="checkout_onepage_controller_success_action">
+        <observer name="freegiftcontroller_action_predispatch" instance="MW\FreeGift\Observer\Frontend\Order\OrderPlaceAfter" />
+    </event>
 </config>

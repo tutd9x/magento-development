@@ -552,7 +552,7 @@ class ProcessApply implements ObserverInterface
                 if(array_key_exists('sales_gift_from_slider',$data)) {
                     if (array_key_exists('free_sales_key',$data) && isset($data['free_sales_key'])) {
                         $parent_gift_key = $data['free_sales_key'];
-                        $freegift_coupon_code = $this->checkoutSession->getQuote()->getFreegiftCouponCode();;
+                        $freegift_coupon_code = $this->checkoutSession->getQuote()->getFreegiftCouponCode();
                         $data['free_sales_key'] = array(
                             $data['free_sales_key'] => $data['free_sales_key']
                         );
@@ -570,8 +570,11 @@ class ProcessApply implements ObserverInterface
                                 'freegift_sales_key' => $parent_gift_key,
                             )
                         );
-                        $data['freegift_with_code'] = 1;
-                        $data['freegift_coupon_code'] = $freegift_coupon_code;
+                        if($freegift_coupon_code){
+                            $data['freegift_with_code'] = 1;
+                            $data['freegift_coupon_code'] = $freegift_coupon_code;
+                        }
+
                         $rule = array(
                             'gift_id' => $data['product'],
                             'name' => $data['rule_name']
