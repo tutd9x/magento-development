@@ -5,9 +5,9 @@
  * Copyright © 2015 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace MW\FreeGift\Model\ResourceModel\SalesrRule\Quote;
+namespace MW\FreeGift\Model\ResourceModel\SalesRule\Quote;
 
-class Collection extends \MW\FreeGift\Model\ResourceModel\SalesrRule\Collection
+class Collection extends \MW\FreeGift\Model\ResourceModel\SalesRule\Collection
 {
     /**
      * Add websites for load

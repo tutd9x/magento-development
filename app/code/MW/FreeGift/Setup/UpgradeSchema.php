@@ -232,7 +232,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                     [
                         'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                         'after' => 'freegift_ids',
-                        'comment' => 'FreeGift Ids',
+                        'comment' => 'Free Gift Gift Ids',
                         'nullable' => true
                     ]
                 );
@@ -244,7 +244,22 @@ class UpgradeSchema implements UpgradeSchemaInterface
                     [
                         'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
                         'after' => 'freegift_applied_rule_ids',
-                        'comment' => 'FreeGift Coupon',
+                        'comment' => 'Free Gift Coupon',
+                        'nullable' => true
+                    ]
+                );
+            }
+        }
+
+        if (version_compare($context->getVersion(), '0.0.6') <= 0) {
+            if (!$setup->getConnection()->tableColumnExists($setup->getTable('quote_item'),'freegift_applied_rule_ids')) {
+                $setup->getConnection()->addColumn(
+                    $setup->getTable('quote_item'),
+                    'freegift_applied_rule_ids',
+                    [
+                        'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                        'after' => 'applied_rule_ids',
+                        'comment' => 'Free Gift Applied Rule Ids',
                         'nullable' => true
                     ]
                 );

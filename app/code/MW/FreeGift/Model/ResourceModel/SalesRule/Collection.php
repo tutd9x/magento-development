@@ -15,7 +15,18 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
      *
      * @var array
      */
-    protected $_associatedEntitiesMap;
+    protected $_associatedEntitiesMap = [
+        'website' => [
+            'associations_table' => 'mw_freegift_salesrule_website',
+            'rule_id_field' => 'rule_id',
+            'entity_id_field' => 'website_id',
+        ],
+        'customer_group' => [
+            'associations_table' => 'mw_freegift_salesrule_customer_group',
+            'rule_id_field' => 'rule_id',
+            'entity_id_field' => 'customer_group_id',
+        ],
+    ];
 
     /**
      * @var \Magento\SalesRule\Model\ResourceModel\Rule\DateApplier
@@ -47,7 +58,7 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
     ) {
         parent::__construct($entityFactory, $logger, $fetchStrategy, $eventManager, $connection, $resource);
         $this->_date = $date;
-        $this->_associatedEntitiesMap = $this->getAssociatedEntitiesMap();
+//        $this->_associatedEntitiesMap = $this->getAssociatedEntitiesMap();
     }
 
     /**
@@ -58,7 +69,6 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
     protected function _construct()
     {
         $this->_init('MW\FreeGift\Model\SalesRule', '\MW\FreeGift\Model\ResourceModel\SalesRule');
-//        $this->_init('Magento\SalesRule\Model\Rule', 'Magento\SalesRule\Model\ResourceModel\Rule');
         $this->_map['fields']['rule_id'] = 'main_table.rule_id';
     }
 
@@ -326,20 +336,6 @@ class Collection extends \Magento\Rule\Model\ResourceModel\Rule\Collection\Abstr
             );
         }
         return $this;
-    }
-
-    /**
-     * @return array
-     * @deprecated
-     */
-    private function getAssociatedEntitiesMap()
-    {
-        if (!$this->_associatedEntitiesMap) {
-            $this->_associatedEntitiesMap = \Magento\Framework\App\ObjectManager::getInstance()
-                ->get('Magento\SalesRule\Model\ResourceModel\Rule\AssociatedEntityMap')
-                ->getData();
-        }
-        return $this->_associatedEntitiesMap;
     }
 
     /**

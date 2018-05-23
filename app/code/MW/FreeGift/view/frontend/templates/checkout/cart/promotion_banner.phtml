@@ -1,0 +1,49 @@
+<div id="mw-fg-slider-cart">
+</div>
+<?php
+$allActiveRules = $block->getAllActiveRules();
+//        \Zend_Debug::dump(count($allActiveRules));
+//        \Zend_Debug::dump(sizeof($allActiveRules));
+//die("KK");
+if(sizeof($allActiveRules)):?>
+    <?php
+    $arrShowin = array(1,3);
+    $showin = $this->helper('MW\FreeGift\Helper\Data')->getStoreConfig('mw_freegift/group_general/showfreegiftpromotion');
+    $sizePromotionBanner = $this->helper('MW\FreeGift\Helper\Data')->getStoreConfig('mw_freegift/group_general/sizepromotionbanner');  //Mage::getStoreConfig('freegift/config/sizepromotionbanner');
+    $height = 120;
+    $width = 900;
+    if($sizePromotionBanner != ""){
+        $arr = explode("x",$sizePromotionBanner);
+        $height = $arr[0];
+        $width = $arr[1];
+    }
+    ?>
+
+    <div class="freegift_rules_banner_container">
+        <?php
+        if(in_array($showin,$arrShowin)){
+            $listBanner = array();
+            foreach($allActiveRules as $rule):
+                if($rule->getData('promotion_banner') != ""){
+                    $listBanner[] = $rule->getData('promotion_banner');
+                }
+            endforeach;
+            if(count($listBanner)>0){
+                ?>
+                <script type="text/javascript">
+                    hasPromotionBanner = true;
+                </script>
+                <div id="promotion_banner" class="mw_jcarousel" style="height: 400px;">
+                    <ul>
+                        <?php foreach($listBanner as $banner): //\Zend_Debug::dump($banner); die("fffddd"); ?>
+                            <li><img src="<?php echo $this->resizeImg($banner,$width,$height,'');?>" alt=""></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+                <?php
+            }
+        }
+        ?>
+    </div>
+<?php endif; ?>
+

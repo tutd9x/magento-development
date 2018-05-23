@@ -3,7 +3,7 @@
  * Copyright © 2015 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
-namespace MW\FreeGift\Model\SalesrRule;
+namespace MW\FreeGift\Model\SalesRule;
 
 /**
  * SalesRule Rule Customer Model
@@ -29,7 +29,7 @@ class Customer extends \Magento\Framework\Model\AbstractModel
     protected function _construct()
     {
         parent::_construct();
-        $this->_init('MW\FreeGift\Model\ResourceModel\SalesrRule\Customer');
+        $this->_init('MW\FreeGift\Model\ResourceModel\SalesRule\Customer');
     }
 
     /**

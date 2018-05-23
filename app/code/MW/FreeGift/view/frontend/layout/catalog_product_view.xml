@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<page layout="2columns-right" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+
+    <head>
+        <css src="MW_FreeGift::css/skin.css"/>
+        <!--<link src="MW_FreeGift::js/page/catalog_product_view.js"/>-->
+        <link src="MW_FreeGift::js/mw_freegift_js.js"/>
+        <!--<link src="MW_FreeGift::js/newlib/backbone-min.js"/>-->
+    </head>
+
+    <body>
+        <referenceBlock name="head.additional">
+            <block class="MW\FreeGift\Block\Checkout\Top" name="onestepcheckout.head" template="MW_FreeGift::top.phtml"  />
+        </referenceBlock>
+        <!--<referenceContainer name="content">-->
+            <!--<block class="MW\FreeGift\Block\Category\Freeproduct" template="MW_FreeGift::freegift_image.phtml" before="product.info.main" ifconfig="mw_freegift/group_general/active"/>-->
+        <!--</referenceContainer>-->
+        <referenceContainer name="product.info.main">
+            <block class="MW\FreeGift\Block\Category\Freeproduct" template="MW_FreeGift::freegift_image.phtml" before="product.info.price" ifconfig="mw_freegift/group_general/active"/>
+            <!--<block class="Magento\Framework\View\Element\Template" template="MW_FreeGift::main.phtml" before="product.price.tier"/>-->
+            <block class="MW\FreeGift\Block\Category\Freeproduct" template="MW_FreeGift::catalog_product_view_gift.phtml" before="product.price.tier" ifconfig="mw_freegift/group_general/active"/>
+            <!--<container name="product.info.media" htmlTag="div" htmlClass="product media" after="product.info.main">-->
+            <!--<block class="Magento\Framework\View\Element\Template" name="product.info.media.image" template="MW_FreeGift::catalog_product_view_image.phtml"></block>-->
+            <!--</container>-->
+        </referenceContainer>
+    </body>
+</page>

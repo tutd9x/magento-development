@@ -18,7 +18,7 @@ class Subselect extends \MW\FreeGift\Model\SalesRule\Condition\Product\Combine
         array $data = []
     ) {
         parent::__construct($context, $ruleConditionProduct, $data);
-        $this->setType(\MW\FreeGift\Model\SalesRule\Condition\Product\Subselect::class)->setValue(null);
+        $this->setType('MW\FreeGift\Model\SalesRule\Condition\Product\Subselect')->setValue(null);
     }
 
     /**

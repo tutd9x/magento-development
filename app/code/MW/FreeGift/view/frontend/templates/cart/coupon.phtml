@@ -1,0 +1,46 @@
+<?php
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<div class="block freegift_discount" id="block-freegift-discount" data-mage-init='{"collapsible":{"openedState": "active", "saveState": false}}'>
+    <div class="title" data-role="title">
+        <strong id="block-discount-heading" role="heading" aria-level="2"><?php /* @escapeNotVerified */ echo __('Apply Free Gift Code') ?></strong>
+    </div>
+    <div class="content" data-role="content" aria-labelledby="block-discount-heading">
+        <form id="freegift-discount-coupon-form"
+              action="<?php /* @escapeNotVerified */ echo $block->getUrl('freegift/cart/couponPost') ?>"
+              method="post"
+              data-mage-init='{"discountCode":{"couponCodeSelector": "#freegift_coupon_code",
+                                               "removeCouponSelector": "#freegift-remove-coupon",
+                                               "applyButton": "button.action.mw_apply",
+                                               "cancelButton": "button.action.mw_cancel"}}'>
+            <div class="fieldset coupon<?php strlen($block->getCouponCode()) ? ' applied' : ''?>">
+                <input type="hidden" name="remove" id="freegift-remove-coupon" value="0" />
+                <div class="field">
+                    <label for="freegift_coupon_code" class="label"><span><?php /* @escapeNotVerified */ echo __('Enter free gift code') ?></span></label>
+                    <div class="control">
+                        <input type="text" class="input-text" id="freegift_coupon_code" name="freegift_coupon_code" value="<?php echo $block->escapeHtml($block->getCouponCode()) ?>" placeholder="<?php echo $block->escapeHtml(__('Enter free gift code'));?>" />
+                    </div>
+                </div>
+                <div class="actions-toolbar">
+                    <?php if (!strlen($block->getCouponCode())): ?>
+                    <div class="primary">
+                        <button class="action mw_apply primary" type="button" value="<?php /* @escapeNotVerified */ echo __('Apply Free Gift') ?>">
+                            <span><?php /* @escapeNotVerified */ echo __('Apply Free Gift') ?></span>
+                        </button>
+                    </div>
+                    <?php else: ?>
+                        <div class="primary">
+                            <button  type="button" class="action mw_cancel primary" value="<?php /* @escapeNotVerified */ echo __('Cancel Free Gift Coupon') ?>"><span><?php /* @escapeNotVerified */ echo __('Cancel Free Gift Coupon') ?></span></button>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

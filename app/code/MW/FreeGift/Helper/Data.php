@@ -1,7 +1,6 @@
 <?php
 namespace MW\FreeGift\Helper;
 
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Customer\Model\Session as CustomerModelSession;
 
@@ -9,11 +8,11 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
     protected $checkoutSession;
     protected $_ruleFactory;
+    protected $_salesruleFactory;
 
     protected $layoutFactory;
     protected $_layout;
     protected $cart;
-    protected $_scopeConfig;
     /**
      * @var CustomerModelSession
      */
@@ -29,7 +28,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Framework\App\Helper\Context $context,
         \Magento\Checkout\Model\Session $checkoutSession,
         \MW\FreeGift\Model\RuleFactory $ruleFactory,
-        ScopeConfigInterface $scopeConfig,
+        \MW\FreeGift\Model\SalesRuleFactory $salesRuleFactory,
         \Magento\Framework\View\LayoutFactory $layoutFactory,
         \Magento\Framework\View\LayoutInterface $layout,
         \Magento\Checkout\Model\Cart $cart,
@@ -38,7 +37,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         ) {
         $this->checkoutSession = $checkoutSession;
         $this->_ruleFactory = $ruleFactory;
-        $this->_scopeConfig = $scopeConfig;
+        $this->_salesruleFactory = $salesRuleFactory;
         $this->layoutFactory = $layoutFactory;
         $this->_layout = $layout;
         $this->cart = $cart;
@@ -47,10 +46,24 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         parent::__construct($context);
     }
 
+    protected function resetSession()
+    {
+        $this->checkoutSession->unsetData('gift_product_ids');
+        $this->checkoutSession->unsetData('gift_sales_product_ids');
+        $this->checkoutSession->unsetData('sales_gift_removed');
+        $this->checkoutSession->unsRulegifts();
+        $this->checkoutSession->unsProductgiftid();
+        $this->checkoutSession->unsGooglePlus();
+        $this->checkoutSession->unsLikeFb();
+        $this->checkoutSession->unsShareFb();
+        $this->checkoutSession->unsTwitter();
+
+        return $this;
+    }
 
     public function getStoreConfig($xmlPath)
     {
-        return $this->_scopeConfig->getValue(
+        return $this->scopeConfig->getValue(
             $xmlPath,
             ScopeInterface::SCOPE_STORE
         );
@@ -85,7 +98,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
     public function renderFreeGiftLabel($product)
     {
-        if (!$this->_scopeConfig->getValue('mw_freegift/group_general/active',ScopeInterface::SCOPE_STORE))
+        if (!$this->scopeConfig->getValue('mw_freegift/group_general/active',ScopeInterface::SCOPE_STORE))
             return '';
 
         $url_image = '';
@@ -108,9 +121,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
     }
     public function renderFreeGiftCatalogList($product)
     {
-        if (!$this->_scopeConfig->getValue('mw_freegift/group_general/active',ScopeInterface::SCOPE_STORE))
+        if (!$this->scopeConfig->getValue('mw_freegift/group_general/active',ScopeInterface::SCOPE_STORE))
             return '';
-        if (!$this->_scopeConfig->getValue('mw_freegift/group_general/showfreegiftoncategory',ScopeInterface::SCOPE_STORE))
+        if (!$this->scopeConfig->getValue('mw_freegift/group_general/showfreegiftoncategory',ScopeInterface::SCOPE_STORE))
             return '';
 
         $block_freegift = $this->_layout->createBlock('MW\FreeGift\Block\Category\Freeproduct');
@@ -132,7 +145,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      * */
     public function renderFreegitCodeForm()
     {
-        if (!$this->_scopeConfig->getValue('mw_freegift/group_general/active',ScopeInterface::SCOPE_STORE))
+        if (!$this->scopeConfig->getValue('mw_freegift/group_general/active',ScopeInterface::SCOPE_STORE))
             return '';
 
         $block_html = '';
@@ -158,19 +171,105 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         if(isset($data['rule_product_id'])){
             $giftData[$data['rule_id']]['rule_product_id'] = $data['rule_product_id'];
         }
+        $giftData[$data['rule_id']]['sort_order'] =  $data['sort_order'];
         return $giftData;
     }
-    /*
-     * return array gift
-     * */
-    public function getFreeGiftCatalogProduct($ruleData = null, $getOnlyGiftId = FALSE)
+
+    public function getGiftDataByRule($ruleData, $getOnlyGiftId = FALSE)
     {
-        if(is_array($ruleData)){
+        $giftData = [];
+        $num = 0;
+        foreach ($ruleData as $data) {
+            $condition_customized = unserialize($data['condition_customized']);
+            $giftIds = [];
+            $giftIds = explode(',',$data['rule_gift_ids']);
+
+            if (count($giftIds) >= 1) {
+                foreach ($giftIds as $giftId) {
+                    $giftData[$num]['rule_id'] = $data['rule_id'];
+                    $giftData[$num]['name'] = $data['name'];
+                    $giftData[$num]['product_id'] = $data['product_id'];
+                    $giftData[$num]['rule_product_id'] = $data['rule_product_id'];
+                    $giftData[$num]['gift_id'] = $giftId;
+                    $giftData[$num]['buy_x'] = $condition_customized['buy_x_get_y']['bx'];
+                    $giftData[$num]['freegift_parent_key'] = $data['rule_product_id'] . '_' . $data['rule_id'] . '_' . $data['product_id'] . '_' . $giftId;
+                    $num++;
+                }
+            }
+        }
+
+        if ($getOnlyGiftId === TRUE) {
+            return $giftData = $this->_prepareFreeGiftIds($giftData);
+        }
+
+        return $giftData;
+    }
+
+    public function getGiftDataBySalesRule($ruleData, $getOnlyGiftId = FALSE)
+    {
+        $giftData = [];
+        $num = 0;
+        foreach ($ruleData as $data) {
+            $giftIds = [];
+            $giftIds = explode(',',$data['gift_product_ids']);
+
+            if (count($giftIds) >= 1) {
+                foreach ($giftIds as $giftId) {
+                    $giftData[$num]['rule_id'] = $data['rule_id'];
+                    $giftData[$num]['name'] = $data['name'];
+                    $giftData[$num]['gift_id'] = $giftId;
+                    $giftData[$num]['number_of_free_gift'] = $data['number_of_free_gift'];
+                    $giftData[$num]['freegift_sales_key'] = $data['rule_id'] .'_'. $giftId .'_'. $data['number_of_free_gift'];
+                    $num++;
+                }
+            }
+        }
+        return $giftData;
+    }
+
+    public function getSalesKeysByGiftData($giftData)
+    {
+        $result = [];
+        foreach ($giftData as $data) {
+            $key = $data['freegift_sales_key'];
+            $result[$data['rule_id']][$key] = $key;
+        }
+        return $result;
+    }
+
+    /**
+     * var $arrayGift string
+     * return array
+     */
+    function _prepareFreeGiftIds($arrayGift)
+    {
+        $rule_gift_ids = array();
+        foreach ($arrayGift as $item) {
+            $rule_gift_ids[] = $item['gift_id'];
+        }
+
+        $ids = implode(",",$rule_gift_ids); // gộp mảng thành chuỗi nối nhau bởi dấu ,
+        $ids = explode(",",$ids); // tách chuỗi thành mảng qua dấu ,
+        $ids = array_unique($ids); // xóa trùng
+
+        return $ids;
+    }
+
+    /**
+     *
+     * @return array()
+     */
+
+
+    public function _removed_getFreeGiftCatalogProduct($ruleData = null, $getOnlyGiftId = FALSE)
+    {
+        if (is_array($ruleData)) {
             // giftDataAT, priorityAT use for action_stop = 1
             $giftData = $giftDataAT = [];
             $priority = $priorityAT = null;
             $websiteId = $this->_storeManager->getStore()->getWebsiteId();
             $customerGroupId = $this->_customerSession->getCustomerGroupId();
+
 
             foreach($ruleData as $data) {
                 if (isset($data['rule_id'])) {
@@ -199,7 +298,10 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                                 $giftData = $this->processArrayGiftData($giftData, $data);
                             }else if($data['sort_order'] < $priority){
                                 $priority = $data['sort_order'];
-                                unset($giftData); $giftData = [];
+//                                unset($giftData); $giftData = []; //leric comment
+                                $giftData = $this->processArrayGiftData($giftData, $data);
+
+                            }else{
                                 $giftData = $this->processArrayGiftData($giftData, $data);
                             }
                         }
@@ -210,7 +312,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             if(count($giftDataAT) > 0) {
                 $giftData = $giftDataAT;
             }
-
             if(count($giftData)) {
                 if ($getOnlyGiftId === TRUE) {
                     return $giftData = $this->_prepareFreeGiftIds($giftData);
@@ -284,23 +385,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->checkoutSession->getGiftProductIds() ? $this->checkoutSession->getGiftProductIds() : [];
     }
 
-    /**
-     * var $arrayGift string
-     * return array
-     */
-    function _prepareFreeGiftIds($arrayGift)
-    {
-        $rule_gift_ids = array();
-        foreach ($arrayGift as $item) {
-            $rule_gift_ids[] = $item['rule_gift_ids'];
-        }
 
-        $ids = implode(",",$rule_gift_ids); // gộp mảng thành chuỗi nối nhau bởi dấu ,
-        $ids = explode(",",$ids); // tách chuỗi thành mảng qua dấu ,
-        $ids = array_unique($ids); // xóa trùng
-//        $ids = array(20);
-        return $ids;
-    }
     /*
      * use when save applied_rule_ids to quote option
      * return @array rule id*/
@@ -315,21 +400,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $ids;
     }
 
-
-    /**
-     * Generate content to log file debug.log By Hattetek.Com
-     *
-     * @param  $message string|array
-     * @return void
-     */
-    function xlog($message = 'null')
-    {
-        $log = print_r($message, true);
-        \Magento\Framework\App\ObjectManager::getInstance()
-            ->get('Psr\Log\LoggerInterface')
-            ->debug($log)
-        ;
-    }
 
     /**
      * todo: Add configuration validation, that checks if all required xml config nodes are populated
@@ -402,14 +472,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             ['template' => 'Magento_Checkout::cart/item/renderer/actions/remove.phtml']
         );
 
-//        $this->xlog(
-//            $block_cart->getChildNames()
-//        );
-//        $this->xlog(
-//            $block_render_list->getChildBlock(
-//                'actions'
-//            )->getChildNames()
-//        );
 //        $block_cart->getChildBlock(
 //            'renderer.list'
 //        );
@@ -447,5 +509,307 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $data;
     }
 
+    public function getProductGiftAvailable(){
+        /** @var \Magento\Quote\Model\Quote  */
+        $quote = $this->checkoutSession->getQuote();
+        $items = $quote->getAllVisibleItems();
+
+        $parentData = array();
+        $giftData = array();
+        foreach($items as $item){
+            /* Lay product chua Gift*/
+            if($item->getOptionByCode('mw_free_catalog_gift') && $item->getOptionByCode('mw_free_catalog_gift')->getValue() == 1){
+                $key = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+                $freegift_keys = isset($key['freegift_keys']) ? $key['freegift_keys'] : null;
+                array_push($parentData,$freegift_keys);
+
+            }
+
+            /* Lay product Gift*/
+            if($item->getOptionByCode('free_catalog_gift') && $item->getOptionByCode('free_catalog_gift')->getValue() == 1){
+                $data_buy = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+                if(array_key_exists('freegift_parent_key',$data_buy)){
+                    array_push($giftData,$data_buy['freegift_parent_key']);
+                }else{
+                    array_push($giftData,$data_buy['free_sales_key']);
+                }
+
+            }
+
+        }
+        $results = $this->checkDiffGifts($parentData,$giftData);
+        if(count($results) == 0) return array();
+        $listGiftProductId = array();
+        $i = 0;
+        foreach($results as $result){
+            $keyData = $this->splitKey($result);
+            $pars = $this->getParentOfGift($result);
+            $listGiftProductId[] = $keyData;
+            $listGiftProductId[$i]['freegift_parent_key'] = $result;
+            $listGiftProductId[$i]['rule_id'] = $keyData['rule_id'];
+            $ruleData = $this->_ruleFactory->create()->load($keyData['rule_id']);
+            $listGiftProductId[$i]['rule_name'] = $ruleData->getName();
+            $listGiftProductId[$i]['qty'] = 0;
+            foreach($pars as $par){
+                $parentItem = $this->checkoutSession->getQuote()->getItemById($par);
+                $condition_customized = unserialize(unserialize($parentItem->getOptionByCode('info_buyRequest')->getValue())['freegift_rule_data'][$keyData['rule_id']]['condition_customized']);
+                $buyX = $condition_customized['buy_x_get_y']['bx'];
+                $listGiftProductId[$i]['qty'] += $parentItem->getQty() * $buyX;
+            }
+            $i++;
+        }
+        $keyRemove = array();
+        foreach($listGiftProductId as $keyA => $giftA){
+            foreach($listGiftProductId as $keyB => $giftB){
+                if($keyA != $keyB && !in_array($keyA, $keyRemove)){
+                    if($giftA['freegift_parent_key'] == $giftB['freegift_parent_key']){
+                        $keyRemove[] = $keyB;
+//                        $listGiftProductId[$keyA]['qty'] += $giftB['qty'];
+                        unset($listGiftProductId[$keyB]);
+                    }
+                }
+
+            }
+        }
+        return $listGiftProductId;
+    }
+    public function checkDiffGifts($parentData,$giftData){
+        $parent = array();
+        $gift = array();
+
+        foreach($parentData as $keyp){
+            if(!empty($keyp)){
+                foreach($keyp as $key){
+                    $parent[] = $key;
+                }
+            }
+
+        }
+
+        foreach($giftData as $keyg){
+            foreach($keyg as $key){
+                $gift[] = $key;
+            }
+        }
+
+        $diffData = array_diff($parent,$gift);
+        return $diffData;
+    }
+
+    public function splitKey($key){
+        $data = explode( '_', $key );
+        $result = array(
+            'key_id' => $data[0],
+            'rule_id' => $data[1],
+            'product_parent_id' => $data[2],
+            'product_gift_id' => $data[3]
+        );
+        return $result;
+    }
+
+    public function getProductGiftSalesRuleAvailable(){
+        $quote = $this->checkoutSession->getQuote();
+        $items = $quote->getAllVisibleItems();
+        if (count($items) >= 0 && $quote->getSubtotal() == 0) {
+            $this->resetSession();
+            return [];
+        }
+
+        $productGift = $quote->getFreegiftIds();
+        $rules  = $quote->getFreegiftAppliedRuleIds(); //1,2
+        $giftDataByRule = $this->checkoutSession->getGiftSalesProductIds();
+        $allGift = array();
+        if(!$giftDataByRule) return [];
+//        \Zend_Debug::dump($giftDataByRule); die();
+        foreach($giftDataByRule as $gift){
+            $free_sales_key = $gift['rule_id'].'_'.$gift['gift_id'].'_'.$gift['number_of_free_gift'];
+            $allGift[] = $free_sales_key;
+        }
+//        \Zend_Debug::dump($allGift);
+        $productList = explode(",",$productGift);
+        $ruleList = explode(",",$rules);
+
+        $items = $quote->getAllVisibleItems();
+
+        $parentData = $productList;
+        $giftData = array();
+        foreach($items as $item){
+            /* Lay product Gift trong cart */
+            if($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1){
+//                array_push($giftData,unserialize($item->getOptionByCode('info_buyRequest')->getValue())['free_sales_key']);
+                $key = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+                $keyVal = $key['free_sales_key'];
+                $giftData[] = $keyVal;
+            }
+        }
+        $diffGifts = $this->checkDiffSalesRuleGifts($allGift,$giftData);
+        if(count($diffGifts) == 0) return array();
+        $listGiftProductId = array();
+        $i = 0;
+        foreach($diffGifts as $result){
+            $keyData = $this->splitSalesRuleKey($result);
+//            $listGiftProductId[] = $keyData;
+//            $listGiftProductId[$i]['freegift_parent_key'] = $result;
+            $listGiftProductId[$i]['rule_id'] = $keyData['rule_id'];
+            $listGiftProductId[$i]['rule_gift_ids'] = $keyData['rule_gift_ids'];
+            $listGiftProductId[$i]['gift_id'] = $keyData['gift_id'];
+                $listGiftProductId[$i]['number_of_free_gift'] = $keyData['number_of_free_gift'];
+//            $listGiftProductId[$i]['rule_name'] = $keyData['rule_name'];
+            $ruleData = $this->_salesruleFactory->create()->load($keyData['rule_id']);
+            $listGiftProductId[$i]['rule_name'] = $ruleData->getName();
+            $listGiftProductId[$i]['is_able'] = $this->checkAbleSalesRuleGift($keyData['rule_id'],$keyData['number_of_free_gift']) ? 1 : 0;
+            $i++;
+        }
+        return $listGiftProductId;
+
+//        return $diffGifts;
+    }
+
+    public function splitSalesRuleKey($key){
+        $data = explode( '_', $key );
+        $result = array(
+            'rule_gift_ids' => $data[1],
+            'gift_id' => $data[1],
+            'rule_id' => $data[0],
+            'rule_name' => $data[0],
+            'number_of_free_gift' => $data[2]
+        );
+        return $result;
+    }
+
+    public function checkDiffSalesRuleGifts($parentData,$giftData){
+        $parent = $parentData; //array();
+        $gift = array();
+
+//        foreach($parentData as $keyp){
+//            foreach($keyp as $key){
+//                $parent[] = $key;
+//            }
+//        }
+
+        foreach($giftData as $keyg){
+            foreach($keyg as $key){
+                $gift[] = $key;
+            }
+        }
+
+        $diffData = array_diff($parent,$gift);
+        return $diffData;
+    }
+
+    public function checkAbleSalesRuleGift($ruleId, $numberGifts){
+        $quote = $this->checkoutSession->getQuote();
+        $items = $quote->getAllVisibleItems();
+        if (count($items) >= 0 && $quote->getSubtotal() == 0) {
+            $this->resetSession();
+            return false;
+        }
+
+        $giftDataByRule = $this->checkoutSession->getGiftSalesProductIds();
+        $allGift = array();
+        if(!$giftDataByRule) return [];
+        foreach($giftDataByRule as $gift){
+            $free_sales_key = $gift['rule_id'].'_'.$gift['gift_id'].'_'.$gift['number_of_free_gift'];
+            $allGift[] = $free_sales_key;
+        }
+        $items = $quote->getAllVisibleItems();
+        $giftData = array();
+        foreach($items as $item){
+            /* Lay product Gift trong cart */
+            if($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1){
+                $key = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+                $keyVal = $key['free_sales_key'];
+                $giftData[] = $keyVal;
+            }
+        }
+        $diffGifts = $this->checkIntersectSalesRuleGifts($allGift,$giftData);
+        $giftsOfRuleInCart = 0;
+        foreach($diffGifts as $result) {
+            $keyData = $this->splitSalesRuleKey($result);
+            if($keyData['rule_id'] == $ruleId){
+                $giftsOfRuleInCart++;
+            }
+
+        }
+        if($giftsOfRuleInCart >= $numberGifts){
+            return false;
+        }
+        return true;
+    }
+
+    public function checkIntersectSalesRuleGifts($parentData,$giftData){
+        $parent = $parentData; //array();
+        $gift = array();
+
+        foreach($giftData as $keyg){
+            foreach($keyg as $key){
+                $gift[] = $key;
+            }
+        }
+        $diffData = array_intersect($parent,$gift);
+        return $diffData;
+    }
+
+    /**
+     * Counting gift item in cart
+     * @param $gift
+     * @param $parent_keys
+     * @return int $count
+     */
+    public function getParentOfGift($gift_keys)
+    {
+
+        $resultParent = array();
+        foreach ( $this->checkoutSession->getQuote()->getAllItems() as $item) {
+            /* @var $item \Magento\Quote\Model\Quote\Item */
+
+            $dataKey = $this->splitKey($gift_keys);
+
+            if ($item->getParentItem()) {
+                $item = $item->getParentItem();
+            }
+            if ($this->_isParentGift($item)) {
+                if ($item->getProductId() == $dataKey['product_parent_id']) {
+                    $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
+                    $freegift_parent_key = $info['freegift_keys'];
+                    $keyGift = $gift_keys;
+                    $keyGift = array(
+                        $keyGift => $keyGift
+                    );
+                    $result = array_intersect($freegift_parent_key,$keyGift);
+                    if (empty($result)) {
+                        continue;
+                    }else{
+                        $resultParent[] = $item->getId();
+                    }
+                }
+            }
+        }
+
+        //merge array
+        $keyRemove = array();
+        foreach($resultParent as $keyA => $parentA){
+
+            foreach($resultParent as $keyB => $parentB){
+                if($keyA != $keyB && !in_array($keyA, $keyRemove)){
+                    if($parentA == $parentB){
+                        $keyRemove[] = $keyB;
+                        unset($resultParent[$keyB]);
+                    }
+                }
+            }
+        }
+        if(count($resultParent) > 0) return $resultParent;
+        return false;
+    }
+
+    public function _isParentGift($item)
+    {
+        if($item->getOptionByCode('mw_free_catalog_gift') && $item->getOptionByCode('mw_free_catalog_gift')->getValue() == 1){
+            return true;
+        }
+
+        return false;
+    }
 }
 

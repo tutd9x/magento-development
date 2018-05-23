@@ -18,7 +18,7 @@ class Found extends \MW\FreeGift\Model\SalesRule\Condition\Product\Combine
         array $data = []
     ) {
         parent::__construct($context, $ruleConditionProduct, $data);
-        $this->setType(\MW\FreeGift\Model\SalesRule\Condition\Product\Found::class);
+        $this->setType('MW\FreeGift\Model\SalesRule\Condition\Product\Found');
     }
 
     /**
