@@ -14,6 +14,10 @@ class Renderer extends \Magento\Backend\Block\Template implements RendererInterf
 {
     protected $_order;
     /**
+     * @var \MW\FreeGift\Model\Config
+     */
+    protected $config;
+    /**
      * @param \Magento\Backend\Block\Widget\Context $context
      * @param \Magento\Framework\Registry           $registry
      * @param array                                 $data
@@ -21,9 +25,11 @@ class Renderer extends \Magento\Backend\Block\Template implements RendererInterf
     public function __construct(
         \Magento\Backend\Block\Widget\Context $context,
         \Magento\Sales\Model\OrderFactory $orderFactory,
+        \MW\FreeGift\Model\Config $config,
         array $data = []
     ) {
         $this->_order = $orderFactory;
+        $this->config = $config;
         parent::__construct($context, $data);
     }
 
@@ -45,7 +51,7 @@ class Renderer extends \Magento\Backend\Block\Template implements RendererInterf
         date_default_timezone_set('UTC');
 
         // Start date
-        $date = '01/01/17';
+        $date = $this->config->getReportTimeStart();
         // End date
         $end_date = date('m/d/y', time());
         $dateData = null;
@@ -102,7 +108,7 @@ class Renderer extends \Magento\Backend\Block\Template implements RendererInterf
     public function getFreeGiftData(){
         date_default_timezone_set('UTC');
         // Start date
-        $date = '01/01/17';
+        $date = $this->config->getReportTimeStart();
         // End date
         $end_date = date('m/d/y', time());
         $dateData = null;

@@ -12,6 +12,7 @@ class Config
      * Minimum advertise price constants
      */
     const XML_PATH_ENABLED = 'mw_freegift/group_general/active';
+    const XML_PATH_REPORT_START_TIME = 'mw_freegift/group_report/report_from';
 //    const XML_PATH_DISPLAY_ACTUAL_PRICE_TYPE = 'sales/msrp/display_price_type';
 //    const XML_PATH_EXPLANATION_MESSAGE = 'sales/msrp/explanation_message';
 //    const XML_PATH_EXPLANATION_MESSAGE_WHATS_THIS = 'sales/msrp/explanation_message_whats_this';
@@ -74,6 +75,15 @@ class Config
     {
         return (bool)$this->scopeConfig->getValue(
             self::XML_PATH_ENABLED,
+            ScopeInterface::SCOPE_STORE,
+            $this->storeId
+        );
+    }
+
+    public function getReportTimeStart()
+    {
+        return $this->scopeConfig->getValue(
+            self::XML_PATH_REPORT_START_TIME,
             ScopeInterface::SCOPE_STORE,
             $this->storeId
         );
