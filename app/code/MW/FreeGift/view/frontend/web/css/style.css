@@ -250,15 +250,21 @@ button.btn-close span { background-color:#ccc; border: 1px solid gray;}
 }
 
 /*style for social*/
-.social {
-    border-bottom: 1px solid #d0cbc1;
-    /*background: #fff url(../images/bkg_block-title.gif) 0 0 repeat-x;*/
-    /*padding: 12px 15px;*/
-    /*margin: 0 0 18px;*/
-    padding: 0 0 18px;
+#mw_social{
+    background: white;
+    padding: 20px;
+    margin: 0px -20px 0 -20px;
 }
 
-.cart .social h2{
+/*style for social*/
+.mw_social {
+    border: 1px solid #d0cbc1;
+    background: #fff url(../images/bkg_block-title.gif) 0 0 repeat-x;
+    padding: 12px 15px;
+    margin: 0 0 18px;
+}
+
+.cart .mw_social h2{
     background-position: 0 0;
     background-repeat: no-repeat;
     font: bold 13px/16px Arial, Helvetica, sans-serif;
@@ -282,7 +288,8 @@ button.btn-close span { background-color:#ccc; border: 1px solid gray;}
     margin-top: 5px;
     cursor: pointer;
 }
-.jspTrack ,.jspDrag  ,.jspHorizontalBar{
-    background: none !important;
-    background: #D4D4D4 none repeat scroll 0% 0% !important;
+.mw_clearfix{
+    background: white;
+    padding: 10px;
+    margin: 0px -20px 0 -20px;
 }

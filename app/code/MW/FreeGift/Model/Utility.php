@@ -185,23 +185,23 @@ class Utility
      * @param float $qty
      * @return void
      */
-    public function minFix(
-        \MW\FreeGift\Model\SalesRule\Action\Discount\Data $discountData,
-        \Magento\Quote\Model\Quote\Item\AbstractItem $item,
-        $qty
-    ) {
-        $itemPrice = $this->getItemPrice($item);
-        $baseItemPrice = $this->getItemBasePrice($item);
-
-        $itemDiscountAmount = $item->getDiscountAmount();
-        $itemBaseDiscountAmount = $item->getBaseDiscountAmount();
-
-        $discountAmount = min($itemDiscountAmount + $discountData->getAmount(), $itemPrice * $qty);
-        $baseDiscountAmount = min($itemBaseDiscountAmount + $discountData->getBaseAmount(), $baseItemPrice * $qty);
-
-        $discountData->setAmount($discountAmount);
-        $discountData->setBaseAmount($baseDiscountAmount);
-    }
+//    public function minFix(
+//        \MW\FreeGift\Model\SalesRule\Action\Discount\Data $discountData,
+//        \Magento\Quote\Model\Quote\Item\AbstractItem $item,
+//        $qty
+//    ) {
+//        $itemPrice = $this->getItemPrice($item);
+//        $baseItemPrice = $this->getItemBasePrice($item);
+//
+//        $itemDiscountAmount = $item->getDiscountAmount();
+//        $itemBaseDiscountAmount = $item->getBaseDiscountAmount();
+//
+//        $discountAmount = min($itemDiscountAmount + $discountData->getAmount(), $itemPrice * $qty);
+//        $baseDiscountAmount = min($itemBaseDiscountAmount + $discountData->getBaseAmount(), $baseItemPrice * $qty);
+//
+//        $discountData->setAmount($discountAmount);
+//        $discountData->setBaseAmount($baseDiscountAmount);
+//    }
 
     /**
      * Process "delta" rounding
@@ -211,34 +211,34 @@ class Utility
      * @return $this
      * @SuppressWarnings(PHPMD.UnusedLocalVariable)
      */
-    public function deltaRoundingFix(
-        \MW\FreeGift\Model\SalesRule\Action\Discount\Data $discountData,
-        \Magento\Quote\Model\Quote\Item\AbstractItem $item
-    ) {
-        $store = $item->getQuote()->getStore();
-        $discountAmount = $discountData->getAmount();
-        $baseDiscountAmount = $discountData->getBaseAmount();
-
-        //TODO Seems \Magento\Quote\Model\Quote\Item\AbstractItem::getDiscountPercent() returns float value
-        //that can not be used as array index
-        $percentKey = $item->getDiscountPercent();
-        if ($percentKey) {
-            $delta = isset($this->_roundingDeltas[$percentKey]) ? $this->_roundingDeltas[$percentKey] : 0;
-            $baseDelta = isset($this->_baseRoundingDeltas[$percentKey]) ? $this->_baseRoundingDeltas[$percentKey] : 0;
-
-            $discountAmount += $delta;
-            $baseDiscountAmount += $baseDelta;
-
-            $this->_roundingDeltas[$percentKey] = $discountAmount - $this->priceCurrency->round($discountAmount);
-            $this->_baseRoundingDeltas[$percentKey] = $baseDiscountAmount
-                - $this->priceCurrency->round($baseDiscountAmount);
-        }
-
-        $discountData->setAmount($this->priceCurrency->round($discountAmount));
-        $discountData->setBaseAmount($this->priceCurrency->round($baseDiscountAmount));
-
-        return $this;
-    }
+//    public function deltaRoundingFix(
+//        \MW\FreeGift\Model\SalesRule\Action\Discount\Data $discountData,
+//        \Magento\Quote\Model\Quote\Item\AbstractItem $item
+//    ) {
+//        $store = $item->getQuote()->getStore();
+//        $discountAmount = $discountData->getAmount();
+//        $baseDiscountAmount = $discountData->getBaseAmount();
+//
+//        //TODO Seems \Magento\Quote\Model\Quote\Item\AbstractItem::getDiscountPercent() returns float value
+//        //that can not be used as array index
+//        $percentKey = $item->getDiscountPercent();
+//        if ($percentKey) {
+//            $delta = isset($this->_roundingDeltas[$percentKey]) ? $this->_roundingDeltas[$percentKey] : 0;
+//            $baseDelta = isset($this->_baseRoundingDeltas[$percentKey]) ? $this->_baseRoundingDeltas[$percentKey] : 0;
+//
+//            $discountAmount += $delta;
+//            $baseDiscountAmount += $baseDelta;
+//
+//            $this->_roundingDeltas[$percentKey] = $discountAmount - $this->priceCurrency->round($discountAmount);
+//            $this->_baseRoundingDeltas[$percentKey] = $baseDiscountAmount
+//                - $this->priceCurrency->round($baseDiscountAmount);
+//        }
+//
+//        $discountData->setAmount($this->priceCurrency->round($discountAmount));
+//        $discountData->setBaseAmount($this->priceCurrency->round($baseDiscountAmount));
+//
+//        return $this;
+//    }
 
     /**
      * Return item price
@@ -246,12 +246,12 @@ class Utility
      * @param \Magento\Quote\Model\Quote\Item\AbstractItem $item
      * @return float
      */
-    public function getItemPrice($item)
-    {
-        $price = $item->getDiscountCalculationPrice();
-        $calcPrice = $item->getCalculationPrice();
-        return $price === null ? $calcPrice : $price;
-    }
+//    public function getItemPrice($item)
+//    {
+//        $price = $item->getDiscountCalculationPrice();
+//        $calcPrice = $item->getCalculationPrice();
+//        return $price === null ? $calcPrice : $price;
+//    }
 
     /**
      * Return item base price
@@ -259,11 +259,11 @@ class Utility
      * @param \Magento\Quote\Model\Quote\Item\AbstractItem $item
      * @return float
      */
-    public function getItemBasePrice($item)
-    {
-        $price = $item->getDiscountCalculationPrice();
-        return $price !== null ? $item->getBaseDiscountCalculationPrice() : $item->getBaseCalculationPrice();
-    }
+//    public function getItemBasePrice($item)
+//    {
+//        $price = $item->getDiscountCalculationPrice();
+//        return $price !== null ? $item->getBaseDiscountCalculationPrice() : $item->getBaseCalculationPrice();
+//    }
 
     /**
      * Return discount item qty

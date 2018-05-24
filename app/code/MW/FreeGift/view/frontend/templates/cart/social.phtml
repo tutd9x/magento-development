@@ -1,0 +1,100 @@
+<?php
+/**
+ * Copyright © 2013-2017 Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+/**
+ * Template for block \MW\FreeGift\Block\Cart\Social
+ */
+/** @var $block \MW\FreeGift\Block\Cart\Social */
+?>
+
+<?php
+$temp_data = $block->getCustomStatus();
+$url_productid = $block->getProductId();
+$time =  $block->getDatime()->gmtTimestamp();
+
+$google_plus = $block->getCheckoutSession()->getGooglePlus();
+$like_fb = $block->getCheckoutSession()->getLikeFb();
+$share_fb = $block->getCheckoutSession()->getShareFb();
+$twitter = $block->getCheckoutSession()->getTwitter();
+$display_social = true;
+if ($google_plus == 'true' || $like_fb == 'true' ||$share_fb == 'true' ||$twitter == 'true') {
+    $display_social = false;
+}
+
+$title_box = $block->getStoreConfig('mw_freegift/group_social/boxtitle');
+if ($title_box != '' && $title_box != 'undefined') { } else {
+    $title_box = __("Social Sharing");
+}
+?>
+
+<input type="hidden" id="mw_freegift_fb" value="<?php echo $block->getStoreConfig('mw_freegift/group_social/facebookid'); ?>"/>
+<input type="hidden" id="mw_freegift_url" value="<?php echo $block->getBaseUrl(); ?> "/>
+<input type="hidden" id="freegift_share_fb" value="<?php echo $url_productid.'?time='.$time ?> "/>
+<input type="hidden" id="freegift_share_tiwtter" value="<?php echo $url_productid ?> "/>
+<input type="hidden" id="freegift_default_message" value="<?php echo $temp_data['default_message'] ?> "/>
+
+<!-- begin social -->
+<?php if($temp_data['enable_social'] == false || $display_social == false ) { } else { ?>
+<div class="mw_social" id="mw_social">
+    <strong class="title"><?php echo $title_box; ?></strong>
+    <div>
+        <div class="so-google so-common">
+            <!-- Đặt thẻ này vào nơi bạn muốn Nút +1 kết xuất. -->
+            <?php if($temp_data['google_plus']){
+
+                ?>
+                <div class="g-plusone" data-size="tall" data-annotation="inline" data-width="300" data-callback="callbackgoogleOld" data-href="<?php echo $url_productid.'?time='.$time ?>"></div>
+            <?php } ?>
+
+            <!-- Đặt thẻ này sau thẻ Nút +1 cuối cùng. -->
+            <script type="text/javascript">
+                (function() {
+                    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+                    po.src = 'https://apis.google.com/js/platform.js';
+                    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+                })();
+            </script>
+        </div>
+
+        <div class="so-fb so-common">
+            <?php if($temp_data['like_fb']){ ?>
+                <div class="fb-like" data-href="<?php echo $url_productid.'?time='.$time ?>" data-layout="button_count" data-action="like" data-show-faces="true" data-share="false"></div>
+            <?php } ?>
+            <?php if($temp_data['share_fb']){ ?>
+                <div class="share-fb">share fb</div>
+            <?php } ?>
+        </div>
+        <?php if($temp_data['twitter']){ ?>
+            <div class="so-twitter so-common">
+                <div id="share-twitter"></div>
+
+            </div>
+        <?php } ?>
+        <?php
+        $box_des = $block->getStoreConfig('mw_freegift/group_social/description');
+        if($box_des !='null' && $box_des != 'undefined'){ ?>
+            <div class="so-description">
+                    <span>
+                        <?php echo $box_des; ?>
+                    </span>
+            </div>
+        <?php } ?>
+
+    </div>
+
+    <div id="fb-root"></div>
+</div>
+
+<div class="mw_clearfix"></div>
+
+<?php  } ?>
+
+<script>
+    function callbackgoogleOld(jsonParam){
+        view_freegift_social.callbackgoogle(jsonParam);
+    }
+</script>

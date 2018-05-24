@@ -88,6 +88,15 @@ class Config
             $this->storeId
         );
     }
+
+    public function getValue($xmlPath)
+    {
+        return $this->scopeConfig->getValue(
+            $xmlPath,
+            ScopeInterface::SCOPE_STORE,
+            $this->storeId
+        );
+    }
 //
 //    /**
 //     * Return Msrp display actual type
