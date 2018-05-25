@@ -250,21 +250,14 @@ button.btn-close span { background-color:#ccc; border: 1px solid gray;}
 }
 
 /*style for social*/
-#mw_social{
-    background: white;
+#mw_social {
+    border: 1px solid #d0cbc1;
+    background: white url(../images/bkg_block-title.gif) 0 0 repeat-x;
     padding: 20px;
     margin: 0px -20px 0 -20px;
 }
 
-/*style for social*/
-.mw_social {
-    border: 1px solid #d0cbc1;
-    background: #fff url(../images/bkg_block-title.gif) 0 0 repeat-x;
-    padding: 12px 15px;
-    margin: 0 0 18px;
-}
-
-.cart .mw_social h2{
+#mw_social strong{
     background-position: 0 0;
     background-repeat: no-repeat;
     font: bold 13px/16px Arial, Helvetica, sans-serif;
@@ -272,6 +265,7 @@ button.btn-close span { background-color:#ccc; border: 1px solid gray;}
     color: #e26703;
     text-transform: uppercase;
     margin-bottom: 10px;
+    display: block;
 }
 .so-common {
     margin-bottom: 10px;

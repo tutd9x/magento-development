@@ -6,7 +6,9 @@ define(['jquery', 'mage/apply/main'], function($, mage) {
     var view_freegift_init,
         view_freegift_catalog_view,
         view_freegift_checkout_onepage,
-        view_freegift_crosssel;
+        view_freegift_crosssel,
+        view_freegift_cart,
+        view_freegift_social;
 
     window.view_freegift_cart = null;
     window.giftModal = null;
@@ -908,23 +910,25 @@ define(['jquery', 'mage/apply/main'], function($, mage) {
                    var url_twitter  = window.FreeGift.$.trim(window.FreeGift.$('#freegift_share_tiwtter').val());
                    var freegift_default_message = window.FreeGift.$.trim(window.FreeGift.$('#freegift_default_message').val());
 
-                   twttr.widgets.createShareButton(
-                       url_twitter,
-                       document.getElementById('share-twitter'), {
-                           url: url_twitter,
-                           //count: 'none',
-                           text: freegift_default_message,
-                           size: 'normal'
-                           //hashtags: 'your hashtag'
-                       }).then(function(el) {
-                       console.log("Twitter Button created.")
-                   });
-                   twttr.events.bind('tweet', function(event) {
-                       //add ur post tweet stuff here
-                       console.log('tweet thanh cong');
-                       _self.twitterSuccess();
-                   });
-
+                   if (typeof(document.getElementById('share-twitter')) !== 'undefined' && document.getElementById('share-twitter') != null)
+                   {
+                       twttr.widgets.createShareButton(
+                           url_twitter,
+                           document.getElementById('share-twitter'), {
+                               url: url_twitter,
+                               //count: 'none',
+                               text: freegift_default_message,
+                               size: 'normal'
+                               //hashtags: 'your hashtag'
+                           }).then(function(el) {
+                           console.log("Twitter Button created.")
+                       });
+                       twttr.events.bind('tweet', function(event) {
+                           //add ur post tweet stuff here
+                           console.log('tweet thanh cong');
+                           _self.twitterSuccess();
+                       });
+                   }
                });
             },
             shareTwitter : function(){
@@ -1226,6 +1230,17 @@ define(['jquery', 'mage/apply/main'], function($, mage) {
                                 view_freegift_init.initPromotionMessage();
                             }
                         }
+
+                        require([
+                            'Magento_Customer/js/customer-data'
+                        ], function (customerData) {
+                            var sections = ['cart'];
+                            customerData.invalidate(sections);
+                            customerData.reload(sections, true);
+                        });
+
+                        window.location = window.freegiftConfig.url.cart;
+
                     },
                     error: function(){}
                 });

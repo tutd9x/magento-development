@@ -17,6 +17,7 @@ class ProcessApply implements ObserverInterface
      */
     protected $_calculator;
     protected $_validator;
+    protected $itemProductInCart = [];
 
     /**
      * @var Quote
@@ -197,7 +198,7 @@ class ProcessApply implements ObserverInterface
             $params['freegift_coupon_code'] = $freegift_coupon_code;
         }
 
-        if($product->getTypeId() == 'simple') {
+        if ( $this->availableProductType($product->getTypeId()) && (!in_array($product->getId(), $this->itemProductInCart)) ) {
             $additionalOptions = [[
                 'label' => __('Free Gift'),
                 'value' => $rule['name'],
@@ -225,6 +226,7 @@ class ProcessApply implements ObserverInterface
     public function _countQtyGiftInCart($gift, $parentsKey)
     {
         $count = 0;
+        $itemProductInCart = [];
         foreach ($this->getQuote()->getAllItems() as $item) {
             /* @var $item \Magento\Quote\Model\Quote\Item */
             if ($item->getParentItem()) {
@@ -237,12 +239,15 @@ class ProcessApply implements ObserverInterface
                 if(array_key_exists($gift['rule_id'], $parentsKey)) {
                     foreach ($free_sales_key as $key) {
                         if (in_array($key, $parentsKey[$gift['rule_id']])) {
+                            $itemProductInCart[] = $item->getProductId();
                             $count++;
                         }
                     }
                 }
             }
         }
+
+        $this->itemProductInCart = $itemProductInCart;
 
         return $count;
     }
@@ -328,5 +333,20 @@ class ProcessApply implements ObserverInterface
         }
 
         return $this;
+    }
+
+    /**
+     * Check available product type can be add to cart
+     *
+     * @param string $type
+     * @return bool
+     */
+    public function availableProductType($type = '')
+    {
+        $isAllow = false;
+        if (in_array($type, ['simple', 'virtual'])) {
+            $isAllow = true;
+        }
+        return $isAllow;
     }
 }

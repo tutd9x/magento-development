@@ -143,6 +143,9 @@ class GiftGrid extends Extended
             'attribute_set_id'
         )->addAttributeToSelect(
             'type_id'
+        )->addAttributeToFilter(
+            'type_id',
+            ['in' => ['simple', 'virtual', 'configurable']]
         )->setStore(
             $store
         );

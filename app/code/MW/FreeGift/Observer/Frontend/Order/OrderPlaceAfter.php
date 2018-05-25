@@ -39,10 +39,6 @@ class OrderPlaceAfter implements ObserverInterface
      */
     protected $_ruleCustomerFactory;
     /**
-     * @var \MW\FreeGift\Model\Coupon
-     */
-    protected $_coupon;
-    /**
      * @var \MW\FreeGift\Model\ResourceModel\Coupon\Usage
      */
     protected $_couponUsage;
@@ -73,7 +69,6 @@ class OrderPlaceAfter implements ObserverInterface
         \MW\FreeGift\Model\RuleFactory $ruleFactory,
         \Magento\Framework\App\ResourceConnection $resource,
         \MW\FreeGift\Model\SalesRule\CustomerFactory $ruleCustomerFactory,
-        \MW\FreeGift\Model\Coupon $coupon,
         \MW\FreeGift\Model\Config $config,
         \Magento\Sales\Model\ResourceModel\Order\Collection $collection,
         \MW\FreeGift\Model\ResourceModel\Coupon\Usage $couponUsage
@@ -91,7 +86,6 @@ class OrderPlaceAfter implements ObserverInterface
         $this->_ruleFactory = $ruleFactory;
         $this->_resource = $resource;
         $this->_ruleCustomerFactory = $ruleCustomerFactory;
-        $this->_coupon = $coupon;
         $this->_couponUsage = $couponUsage;
         $this->_collection = $collection;
         $this->config = $config;
@@ -105,6 +99,9 @@ class OrderPlaceAfter implements ObserverInterface
         if (!$this->config->isEnabled()) {
             return $this;
         }
+
+        $this->resetSession();
+
         $orderIds = $observer->getEvent()->getOrderIds();
         $this->_collection->addFieldToFilter('entity_id', ['in' => $orderIds]);
         /** @var $order \Magento\Sales\Model\Order */
@@ -197,7 +194,7 @@ class OrderPlaceAfter implements ObserverInterface
                 }
             }
 
-            $couponCollection = $this->_coupon->create()->getCollection();
+            $couponCollection = $this->_couponFactory->create()->getCollection();
             $couponData = $couponCollection->addFieldToFilter('code',$couponSalesRule)->getFirstItem();
             if ($couponData->getId()) {
                 $couponData->setTimesUsed($couponData->getTimesUsed() + 1);
@@ -207,6 +204,22 @@ class OrderPlaceAfter implements ObserverInterface
                 }
             }
         }
+        return $this;
+    }
+
+
+    protected function resetSession()
+    {
+        $this->checkoutSession->unsetData('gift_product_ids');
+        $this->checkoutSession->unsetData('gift_sales_product_ids');
+        $this->checkoutSession->unsetData('sales_gift_removed');
+        $this->checkoutSession->unsRulegifts();
+        $this->checkoutSession->unsProductgiftid();
+        $this->checkoutSession->unsGooglePlus();
+        $this->checkoutSession->unsLikeFb();
+        $this->checkoutSession->unsShareFb();
+        $this->checkoutSession->unsTwitter();
+
         return $this;
     }
 }
