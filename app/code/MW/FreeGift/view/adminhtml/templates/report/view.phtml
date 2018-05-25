@@ -1,62 +1,71 @@
-<div id="container-report" style="height: 400px; min-width: 310px"></div>
+<style type="text/css">
+    .grid table td.first, .grid table td.last {
+        border-right: 0;
+        width: 90px;
+    }
+    .grid tr.even, .grid tr.even tr {
+        background: #f6f6f6;
+        display: table;
+        width: 100%;
+    }
+</style>
+<input id="freegiftsymbol" type="hidden" value="<?php //echo Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol(); ?>"/>
+<p class="switcher a-right">
+    <label for="store_switcher"><?php echo __('Date Range:') ?></label>
+    <select name="report_range" id="report_range">
+        <option value="1"><?php echo __('Last 24h')?></option>
+        <option value="2"><?php echo __('Last Week')?></option>
+        <option value="3"><?php echo __('Last Month')?></option>
+        <option value="4"><?php echo __('Last 7 days')?></option>
+        <option value="5" selected="selected"><?php echo __('Last 30 days')?></option>
+        <option value="7"><?php echo __('Custom')?></option>
+    </select>
+    <span id="custom_range" style="display: none">
+        <label for="from_date"><?php echo __('From:') ?></label>
+        <input type="text" name="report_from" id="report_from" style="width: 80px;"/>
+        <label for="to_date"><?php echo __('To:') ?></label>
+        <input type="text" name="report_to" id="report_to" style="width: 80px;"/>
+        <input type="button" id="report_refresh" value="<?php echo __('Refresh') ?>" style="background: #E9E3E3;border: 1px solid #ccc;padding: 2px;">
+    </span>
+</p>
 
-<script>
 
-    require(['jquery','mw/highstock'], function($) {
-        $(document).ready(function($) {
-            require(['mw/exporting'], function($) {
-            var dataOrder = <?php echo $this->getOrderData() ?>;
-            var dataFreeGift = <?php echo $this->getFreeGiftData() ?>;
+</div>
+<?php //$customers = $block->getMostUserPoint()?>
+<div class="box-left entry-edit" style="width: 295px; float: right">
+    <div class="entry-edit-head"><h4><?php echo __('Statistics')?></h4></div>
+    <fieldset class="np">
+        <div class="grid np">
+            <table cellspacing="0" style="border:0;" id="statisticsGrid_table" class="">
+                <tbody>
+                <tr class="even pointer">
+                    <td class=""><?php echo __('Total Order Value')?></td>
+                    <td class="a-right a-right last" id="total_order">...</td>
+                </tr>
+                <tr class="even pointer">
+                    <td class=""><?php echo __('Total Gift Value')?></td>
+                    <td class="a-right a-right last" id="total_gift">...</td>
+                </tr>
+                <tr class="even pointer">
+                    <td class=""><?php echo __('Average Gift Value per Customer')?></td>
+                    <td class="a-right a-right last" id="avg_gift_customer">...</td>
+                </tr>
+                <tr class="even pointer">
+                    <td class=""><?php echo __('Average Gift Value per Order')?></td>
+                    <td class="a-right a-right last" id="avg_gift_order">...</td>
+                </tr>
+            </table>
+        </div>
+    </fieldset>
+</div>
+<div id="rwp-container" style="height: 300px; margin-right: 300px;">
+    <script type="text/javascript">
+        require(['jquery','mw/prototype','mw/head.main','mw/highcharts' ,'mw/exporting','mw/prototype-adapter'], function($ ) {
+            $(document).ready(function ($) {
+                document.observe("dom:loaded", function () {
+                    window.mwReport = new MW.FreeGift.Report.Dashboard({url: '<?php echo $block->getUrl('mw_freegift/report_dashboard/')?>'});
+                });
+            })
+        });
+    </script>
 
-            // Create the chart
-            Highcharts.stockChart('container-report', {
-
-
-                rangeSelector: {
-                    selected: 0
-                },
-
-                title: {
-                    text: 'Free Gift Report'
-                },
-
-                tooltip: {
-                    style: {
-                        width: '200px'
-                    },
-                    valueDecimals: 4,
-                    shared: true
-                },
-
-                yAxis: {
-                    title: {
-                        text: 'Value'
-                    }
-                },
-
-                series: [{
-                    name: 'Order Value',
-                    data: dataOrder,
-                    id: 'dataseries'
-
-                    // the event marker flags
-                },
-                    {
-                        name: 'Free Gift Value',
-                        data: dataFreeGift,
-                        id: 'dataseries'
-
-                        // the event marker flags
-                    },
-                    {
-                        type: 'flags',
-                        onSeries: 'dataseries',
-                        shape: 'circlepin',
-                        width: 16
-                    }]
-
-            });
-            });
-        })
-    });
-</script>
