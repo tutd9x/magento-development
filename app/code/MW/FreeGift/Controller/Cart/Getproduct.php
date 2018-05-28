@@ -1,13 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: lap15
- * Date: 10/8/2015
- * Time: 5:21 PM
- */
-
 namespace MW\FreeGift\Controller\Cart;
+
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
+
 class GetProduct extends \Magento\Checkout\Controller\Cart
 {
     /**

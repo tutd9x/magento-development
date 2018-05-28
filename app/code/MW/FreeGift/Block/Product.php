@@ -1,6 +1,9 @@
 <?php
 namespace MW\FreeGift\Block;
+
 use Magento\Store\Model\ScopeInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
+
 class Product extends \Magento\Framework\View\Element\Template
 {
     protected $checkoutSession;
@@ -322,11 +325,11 @@ class Product extends \Magento\Framework\View\Element\Template
         }
         return false;
     }
-    public function getItemProductHtml($data){
-        $block       = Mage::getSingleton('core/layout');
-        $freegiftbox = $block->createBlock('freegift/product_item')->setTemplate('mw_freegift/freegift_catalog.phtml')->setData($data);
-        return $freegiftbox->fetchView($this->getTemplateFile());
-    }
+//    public function getItemProductHtml($data){
+//        $block       = Mage::getSingleton('core/layout');
+//        $freegiftbox = $block->createBlock('freegift/product_item')->setTemplate('mw_freegift/freegift_catalog.phtml')->setData($data);
+//        return $freegiftbox->fetchView($this->getTemplateFile());
+//    }
     public function _canAddFreeGift($ruleId,$productId){
         $canAdd = true;
         $items  = $this->checkoutSession->getQuote()->getAllVisibleItems();

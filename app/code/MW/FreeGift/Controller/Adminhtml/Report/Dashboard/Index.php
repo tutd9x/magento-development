@@ -1,14 +1,35 @@
 <?php
-
 namespace MW\FreeGift\Controller\Adminhtml\Report\Dashboard;
+
+use Magento\Backend\App\Action\Context;
+use Magento\Framework\Json\Helper\Data;
 
 class Index extends \MW\FreeGift\Controller\Adminhtml\Promo\Dashboard
 //class Index extends \Magento\Backend\App\Action
 {
     /**
+     * @var Data
+     */
+    protected $jsonHelper;
+
+    /**
+     * Constructor
+     *
+     * @param Context $context
+     * @param Data $jsonHelper
+     */
+    public function __construct(
+        Context $context,
+        Data $jsonHelper
+    ) {
+        parent::__construct($context);
+        $this->jsonHelper = $jsonHelper;
+    }
+
+    /**
      * Apply all active catalog price rules
      *
-     * @return \Magento\Backend\Model\View\Result\Redirect
+     * @return $this
      */
     public function execute()
     {
@@ -27,6 +48,8 @@ class Index extends \MW\FreeGift\Controller\Adminhtml\Promo\Dashboard
         );
 
         /** @var \Magento\Framework\Controller\Result\Json $result */
-        print json_encode($data);
+//        print json_encode($data);
+        return $this->getResponse()->representJson($this->jsonHelper->jsonEncode($data));
     }
+
 }

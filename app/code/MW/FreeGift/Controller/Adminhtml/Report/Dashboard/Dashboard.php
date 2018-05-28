@@ -1,10 +1,7 @@
 <?php
-/**
- *
- * Copyright © 2015 Magento. All rights reserved.
- * See COPYING.txt for license details.
- */
 namespace MW\FreeGift\Controller\Adminhtml\Report\Dashboard;
+
+use Magento\Framework\Json\Helper\Data;
 
 class Dashboard extends \MW\FreeGift\Controller\Adminhtml\Promo\Dashboard
 {
@@ -17,22 +14,29 @@ class Dashboard extends \MW\FreeGift\Controller\Adminhtml\Promo\Dashboard
      * @var \Magento\Framework\ObjectManagerInterface
      */
     protected $_objectManager;
+    /**
+     * @var Data
+     */
+    protected $jsonHelper;
 
     /**
      * @param \Magento\Backend\App\Action\Context $context
      * @param \Magento\Framework\View\Result\PageFactory $resultPageFactory
+     * @param Data $jsonHelper
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
-        \Magento\Framework\View\Result\PageFactory $resultPageFactory
+        \Magento\Framework\View\Result\PageFactory $resultPageFactory,
+        Data $jsonHelper
     ) {
         parent::__construct($context);
         $this->_objectManager = $context->getObjectManager();
         $this->resultPageFactory = $resultPageFactory;
+        $this->jsonHelper = $jsonHelper;
     }
 
     /**
-     * @return \Magento\Backend\Model\View\Result\Page
+     * @return $this
      */
     public function execute()
     {
@@ -45,7 +49,8 @@ class Dashboard extends \MW\FreeGift\Controller\Adminhtml\Promo\Dashboard
                 case 'dashboard':
                     $data["to"]  = "05/25/2018 12:17:00";
                     $dataReport = $this->_objectManager->create('MW\FreeGift\Model\Report')->prepareCollection($data);
-                    print $dataReport;
+//                    print $dataReport;
+                    return $this->getResponse()->representJson($this->jsonHelper->jsonEncode($dataReport));
                     break;
             }
             exit;

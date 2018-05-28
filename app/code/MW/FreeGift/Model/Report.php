@@ -295,8 +295,12 @@ class Report extends \Magento\Framework\Model\AbstractModel
         $_data['statistics']['total_order'] = $this->pricingHelper->currency($total_order, true, false);
         $_data['statistics']['total_gift'] = $this->pricingHelper->currency($number_product_gift, true, false);
         $_data['statistics']['number_customer'] = $this->pricingHelper->currency($number_customer, true, false);
-        $_data['statistics']['avg_gift_per_customer'] = $this->pricingHelper->currency(round($number_product_gift/$number_customer ,2), true, false);
-        $_data['statistics']['avg_gift_per_order'] = $this->pricingHelper->currency(round($number_product_gift/$total_order_number ,2), true, false);
+
+        $avg_gift_per_customer = $number_customer ? $number_product_gift/$number_customer : 0;
+        $_data['statistics']['avg_gift_per_customer'] = $this->pricingHelper->currency(round($avg_gift_per_customer ,2), true, false);
+
+        $avg_gift_per_order = $total_order_number ? $number_product_gift/$total_order_number : 0 ;
+        $_data['statistics']['avg_gift_per_order'] = $this->pricingHelper->currency(round($avg_gift_per_order ,2), true, false);
 
         return json_encode($_data);
     }
@@ -444,7 +448,7 @@ class Report extends \Magento\Framework\Model\AbstractModel
         {
             case self::REPORT_RAGE_LAST_24H:
                 /* Last 24h */
-                date_default_timezone_set('Asia/Ho_Chi_Minh');
+                //date_default_timezone_set('Asia/Ho_Chi_Minh');
                 $_hour = date('Y-m-d H:i:s', strtotime('-1 day', $this->dateTime->gmtTimestamp()));
                 $start_hour = $this->dateFormat->formatDate($_hour, 'medium', true);
                 $_hour = date('Y-m-d H:i:s', strtotime("now"));
