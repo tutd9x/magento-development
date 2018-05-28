@@ -1,30 +1,9 @@
 <?php
 namespace MW\FreeGift\Controller\Adminhtml\Report\Dashboard;
 
-use Magento\Backend\App\Action\Context;
-use Magento\Framework\Json\Helper\Data;
-
 class Index extends \MW\FreeGift\Controller\Adminhtml\Promo\Dashboard
 //class Index extends \Magento\Backend\App\Action
 {
-    /**
-     * @var Data
-     */
-    protected $jsonHelper;
-
-    /**
-     * Constructor
-     *
-     * @param Context $context
-     * @param Data $jsonHelper
-     */
-    public function __construct(
-        Context $context,
-        Data $jsonHelper
-    ) {
-        parent::__construct($context);
-        $this->jsonHelper = $jsonHelper;
-    }
 
     /**
      * Apply all active catalog price rules
@@ -47,9 +26,7 @@ class Index extends \MW\FreeGift\Controller\Adminhtml\Promo\Dashboard
             'avg_gift_per_customer' => "$0.00"
         );
 
-        /** @var \Magento\Framework\Controller\Result\Json $result */
-//        print json_encode($data);
-        return $this->getResponse()->representJson($this->jsonHelper->jsonEncode($data));
+        return $this->getResponse()->setBody($data);
     }
 
 }
