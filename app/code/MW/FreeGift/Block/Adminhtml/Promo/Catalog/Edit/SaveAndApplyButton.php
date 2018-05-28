@@ -27,34 +27,6 @@ class SaveAndApplyButton extends GenericButton implements ButtonProviderInterfac
                             'target' => '#save',
                             'eventData' => ['action' => ['args' => ['auto_apply' => 1]]],
                         ],
-//                        'Magento_Ui/js/form/button-adapter' => [
-//                            'actions' => [
-//                                [
-//                                    'targetName' => 'mw_freegift_catalog_rule_form.catalog_rule_form_data_source',
-//                                    'actionName' => 'save',
-//                                    'params' => [
-//                                        [
-//                                            'attributes' => [
-//                                                'action' => $this->getUrl('*/*/save', ['_current' => true, 'auto_apply' => 1])
-//                                            ]
-//                                        ],
-//                                    ]
-//                                ]
-//                            ],
-//                        ],
-
-//                        'Magento_Ui/js/form/button-adapter' => [
-//                            'actions' => [
-//                                [
-//                                    'targetName' => 'mw_freegift_catalog_rule_form.mw_freegift_catalog_rule_form',
-//                                    'actionName' => 'save',
-//                                    'params' => [
-//                                        true,
-//                                        ['auto_apply' => 1],
-//                                    ]
-//                                ]
-//                            ]
-//                        ]
                     ],
                 ]
             ];

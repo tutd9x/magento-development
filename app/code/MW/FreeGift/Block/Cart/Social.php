@@ -23,6 +23,8 @@ class Social extends \Magento\Framework\View\Element\Template
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param \Magento\Customer\Model\Session $customerSession
      * @param \Magento\Checkout\Model\Session $checkoutSession
+     * @param \MW\FreeGift\Model\Config $config
+     * @param \Magento\Framework\Stdlib\DateTime\DateTime $dateTime
      * @param array $data
      * @codeCoverageIgnore
      */
@@ -53,13 +55,13 @@ class Social extends \Magento\Framework\View\Element\Template
         $default_message = '';
 
         if ($rules) {
-            foreach($rules as $rule) {
-                if($rule['enable_social'] == 1) $enable_social = true;
-                if($rule['google_plus'] == 1) $enable_google = true;
-                if($rule['like_fb'] == 1) $enable_like_fb = true;
-                if($rule['share_fb'] == 1) $enable_share_fb = true;
-                if($rule['twitter'] == 1) $enable_twitter = true;
-                if($default_message == '') $default_message = $rule['default_message'];
+            foreach ($rules as $rule) {
+                if ($rule['enable_social'] == 1) $enable_social = true;
+                if ($rule['google_plus'] == 1) $enable_google = true;
+                if ($rule['like_fb'] == 1) $enable_like_fb = true;
+                if ($rule['share_fb'] == 1) $enable_share_fb = true;
+                if ($rule['twitter'] == 1) $enable_twitter = true;
+                if ($default_message == '') $default_message = $rule['default_message'];
             }
         }
 
