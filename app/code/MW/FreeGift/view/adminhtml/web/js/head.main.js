@@ -1,6 +1,6 @@
 require([
     'prototype',
-    'calendar'
+    'mage/calendar'
 ], function() {
 
 if(typeof MW=='undefined')
@@ -176,22 +176,22 @@ MW.FreeGift.Report.Dashboard.prototype = {
 
         this.onChangeRange(null, $("report_range"));
 
-        Calendar.setup({
-            inputField: "report_from",
-            ifFormat: "%m/%e/%Y %H:%M:%S",
-            showsTime: true,
-            button: "date_select_trig",
-            align: "Bl",
-            singleClick : true
-        });
-        Calendar.setup({
-            inputField: "report_to",
-            ifFormat: "%m/%e/%Y %H:%M:%S",
-            showsTime: true,
-            button: "date_select_trig",
-            align: "Bl",
-            singleClick : true
-        });
+        //Calendar.setup({
+        //    inputField: "report_from",
+        //    ifFormat: "%m/%e/%Y %H:%M:%S",
+        //    showsTime: true,
+        //    button: "date_select_trig",
+        //    align: "Bl",
+        //    singleClick : true
+        //});
+        //Calendar.setup({
+        //    inputField: "report_to",
+        //    ifFormat: "%m/%e/%Y %H:%M:%S",
+        //    showsTime: true,
+        //    button: "date_select_trig",
+        //    align: "Bl",
+        //    singleClick : true
+        //});
     },
     onWindowKeypress: function(event, element){
         console.log(event.keyCode);

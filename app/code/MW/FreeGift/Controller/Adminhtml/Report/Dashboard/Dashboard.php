@@ -37,7 +37,6 @@ class Dashboard extends \MW\FreeGift\Controller\Adminhtml\Promo\Dashboard
             switch($this->getRequest()->getPost('type'))
             {
                 case 'dashboard':
-                    $data["to"]  = "05/25/2018 12:17:00";
                     $dataReport = $this->_objectManager->create('MW\FreeGift\Model\Report')->prepareCollection($data);
                     return $this->getResponse()->setBody($dataReport);
                     break;

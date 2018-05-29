@@ -25,12 +25,6 @@ class Dashboard extends \Magento\Backend\Block\Template
      */
     protected function _prepareLayout()
     {
-//        $this->addChild('lastOrders', 'Magento\Backend\Block\Dashboard\Orders\Grid');
-
-//        $this->addChild('totals', 'Magento\Backend\Block\Dashboard\Totals');
-
-//        $this->addChild('sales', 'Magento\Backend\Block\Dashboard\Sales');
-
         $this->addChild('mw_report', 'MW\FreeGift\Block\Adminhtml\Report\Dashboard\Grid');
 
         $isChartEnabled = $this->_scopeConfig->getValue(
@@ -39,7 +33,6 @@ class Dashboard extends \Magento\Backend\Block\Template
         );
 
         if ($isChartEnabled) {
-//            $block = $this->getLayout()->createBlock('Magento\Backend\Block\Dashboard\Diagrams');
             $block = $this->getLayout()->createBlock('MW\FreeGift\Block\Adminhtml\Report\Dashboard\Diagrams');
         }else {
             $block = $this->getLayout()->createBlock(
@@ -55,19 +48,7 @@ class Dashboard extends \Magento\Backend\Block\Template
         }
         $this->setChild('diagrams', $block);
 
-//        $this->addChild('grids', 'Magento\Backend\Block\Dashboard\Grids');
-
         parent::_prepareLayout();
     }
 
-    /**
-     * @return string
-     */
-    public function getSwitchUrl()
-    {
-        if ($url = $this->getData('switch_url')) {
-            return $url;
-        }
-        return $this->getUrl('mw_freegift/*/*', ['_current' => true, 'period' => null]);
-    }
 }

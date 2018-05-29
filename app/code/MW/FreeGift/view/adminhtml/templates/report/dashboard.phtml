@@ -10,7 +10,7 @@
         width: 100%;
     }
 </style>
-<input id="freegiftsymbol" type="hidden" value="<?php //echo Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol(); ?>"/>
+<input id="freegiftsymbol" type="hidden" value="<?php echo $block->showCurrencyLabel()  ?>"/>
 <div class="col-m-12">
     <p class="switcher a-right">
         <label for="store_switcher"><?php echo __('Date Range:') ?></label>
@@ -24,15 +24,58 @@
         </select>
         <span id="custom_range" style="display: none">
             <label for="from_date"><?php echo __('From:') ?></label>
-            <input type="text" name="report_from" id="report_from" style="width: 80px;"/>
+<!--            <input type="text" name="report_from" id="report_from" style="width: 80px;"/>-->
+            <input type="text" name="report_from" id="report_from"  style="width: 80px;">
             <label for="to_date"><?php echo __('To:') ?></label>
+<!--            <input type="text" name="report_to" id="report_to" style="width: 80px;"/>-->
             <input type="text" name="report_to" id="report_to" style="width: 80px;"/>
             <input type="button" id="report_refresh" value="<?php echo __('Refresh') ?>" style="background: #E9E3E3;border: 1px solid #ccc;padding: 2px;">
+
         </span>
+
+                        <script type="text/javascript">
+                            require([
+                                "jquery",
+                                "mage/calendar"
+                            ], function($){
+                                $('#report_from').datepicker({
+                                        prevText: '&#x3c;zurück', prevStatus: '',
+                                        prevJumpText: '&#x3c;&#x3c;', prevJumpStatus: '',
+                                        nextText: 'Vor&#x3e;', nextStatus: '',
+                                        nextJumpText: '&#x3e;&#x3e;', nextJumpStatus: '',
+                                        monthNames: ['January','February','March','April','May','June',
+                                            'July','August','September','October','November','December'],
+                                        monthNamesShort: ['January','February','March','April','May','June',
+                                            'July','August','September','October','November','December'],
+                                        dayNames: ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'],
+                                        dayNamesShort: ['Sun','Mon','Tue','Wed','Thu','Fra','Sat'],
+                                        dayNamesMin: ['Sun','Mon','Tue','Wed','Thu','Fra','Sat'],
+                                        showMonthAfterYear: false,
+                                        dateFormat:'m/d/yy '
+                                    }
+                                );
+                                $('#report_to').datepicker({
+                                        prevText: '&#x3c;zurück', prevStatus: '',
+                                        prevJumpText: '&#x3c;&#x3c;', prevJumpStatus: '',
+                                        nextText: 'Vor&#x3e;', nextStatus: '',
+                                        nextJumpText: '&#x3e;&#x3e;', nextJumpStatus: '',
+                                        monthNames: ['January','February','March','April','May','June',
+                                            'July','August','September','October','November','December'],
+                                        monthNamesShort: ['January','February','March','April','May','June',
+                                            'July','August','September','October','November','December'],
+                                        dayNames: ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'],
+                                        dayNamesShort: ['So','Mo','Di','Mi','Do','Fr','Sa'],
+                                        dayNamesMin: ['So','Mo','Di','Mi','Do','Fr','Sa'],
+                                        showMonthAfterYear: false,
+                                        dateFormat:'m/d/yy'
+                                    }
+                                );
+                            });
+                        </script>
+
     </p>
 </div>
 
-<?php $customers = $block->getMostUserPoint()?>
 <div class="row">
     <div class="col-md-4">
         <div class="box-left entry-edit" style="width: 350px; float: right">
@@ -75,25 +118,5 @@ require([
         window.mwReport = new MW.FreeGift.Report.Dashboard({url: '<?php echo $this->getUrl('mw_freegift/report_dashboard/dashboard')?>'});
     });
 });
-</script>
-
-<script type="text/javascript">
-    function switchStore(obj) {
-        var storeParam = obj.value ? 'store/' + obj.value + '/' : '';
-        if (obj.switchParams) {
-            storeParam += obj.switchParams;
-        }
-        <?php if ($block->getUseConfirm()): ?>
-        if (confirm("<?php echo $block->__('Please confirm site switching. All data that hasn\'t been saved will be lost.') ?>")) {
-            setLocation('<?php echo $block->getSwitchUrl() ?>' + storeParam);
-            return true;
-        } else {
-            obj.value = '<?php echo $block->getStoreId() ?>';
-        }
-        return false;
-        <?php else: ?>
-        setLocation('<?php echo $block->getSwitchUrl() ?>' + storeParam);
-        <?php endif; ?>
-    }
 </script>
 

@@ -39,6 +39,10 @@ class OrderPlaceAfter implements ObserverInterface
      */
     protected $_ruleCustomerFactory;
     /**
+     * @var \MW\FreeGift\Model\CouponFactory
+     */
+    protected $_couponFactory;
+    /**
      * @var \MW\FreeGift\Model\ResourceModel\Coupon\Usage
      */
     protected $_couponUsage;

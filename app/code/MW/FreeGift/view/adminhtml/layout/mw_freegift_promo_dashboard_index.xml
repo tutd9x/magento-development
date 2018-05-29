@@ -2,25 +2,12 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <update handle="styles" />
     <head>
-
         <link src="MW_FreeGift::js/prototype-adapter.js"/>
         <link src="MW_FreeGift::js/highcharts.js"/>
         <link src="MW_FreeGift::js/exporting.js"/>
-
-        <css src="MW_FreeGift::js/calendar/calendar-win2k-1.css"/>
-        <link src="MW_FreeGift::js/calendar/calendar.js"/>
-        <link src="MW_FreeGift::js/calendar/calendar-setup.js"/>
-
-
-        <!--<block type="core/html_calendar" name="head.calendar" as="calendar" template="page/js/calendar.phtml"></block>-->
-
-        <link src="MW_FreeGift::js/mw_freegift_js.js"/>
         <link src="MW_FreeGift::js/validate.js"/>
         <link src="MW_FreeGift::js/head.main.js"/>
-        <!--<link src="MW_FreeGift::js/main.js"/>-->
-
     </head>
-
     <body>
         <referenceContainer name="page.main.actions">
             <block class="Magento\Backend\Block\Template" name="refresh_statistics" after="store_switcher" template="Magento_Backend::dashboard/totalbar/refreshstatistics.phtml"/>

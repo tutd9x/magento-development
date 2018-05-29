@@ -1,7 +1,7 @@
 <?php
 namespace MW\FreeGift\Model;
 
-
+use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 class Report extends \Magento\Framework\Model\AbstractModel
 {
     const REPORT_RAGE_LAST_24H = 1;
@@ -63,6 +63,10 @@ class Report extends \Magento\Framework\Model\AbstractModel
      */
     protected $pricingHelper;
     /**
+     * @var TimezoneInterface
+     */
+    private $timezone;
+    /**
      * Class constructor
      *
      * @param \Magento\Framework\Model\Context $context
@@ -83,6 +87,7 @@ class Report extends \Magento\Framework\Model\AbstractModel
         \Magento\Framework\Stdlib\DateTime $dateFormat,
         \Magento\Framework\Stdlib\DateTime\DateTime $dateTime,
         \MW\FreeGift\Helper\Data $helperFreeGift,
+        \Magento\Framework\Stdlib\DateTime\TimezoneInterface $timezone,
         \Magento\Framework\Pricing\Helper\Data $pricingHelper,
         array $data = []
     ) {
@@ -94,14 +99,12 @@ class Report extends \Magento\Framework\Model\AbstractModel
         $this->dateFormat = $dateFormat;
         $this->dateTime = $dateTime;
         $this->helperFreeGift = $helperFreeGift;
+        $this->timezone = $timezone;
         $this->pricingHelper = $pricingHelper;
     }
 
     public function prepareCollection($data)
     {
-
-        //$resource           = Mage::getModel('core/resource');
-
         if($data['report_range'] == self::REPORT_RAGE_CUSTOM)
         {
             if($this->_validationDate($data) == false)
@@ -146,7 +149,6 @@ class Report extends \Magento\Framework\Model\AbstractModel
 
         $collection_gift = $collection_temp_order->getData();
 
-
         $total_order_number = 0;
 
         $i = 0;
@@ -155,10 +157,10 @@ class Report extends \Magento\Framework\Model\AbstractModel
 
 
         $temp = array();
+        /* foeach collection for gift */
         foreach($collection_temp_order as $order){
 
             $order_id_string = $order->getGroupId();
-
             $order_id_array = explode(",",$order_id_string);
 
             $total_gift_price = 0;
@@ -171,24 +173,25 @@ class Report extends \Magento\Framework\Model\AbstractModel
 
                 $collection_order_item = $this->_orderItemFactory->create()
                     ->getCollection()
-                    ->addFieldToFilter('order_id',$order_id)
-                    ->addFieldToFilter('price','0');
+                    ->addFieldToFilter('order_id',$order_id);
+//                    ->addFieldToFilter('price','0');
 
                 foreach($collection_order_item as $product_gift){
-                    $product_gift_id = $product_gift->getProductId();
-                    $number_gift = $product_gift->getQtyShipped();
+                    if($this->checkIsGift($product_gift)){
+//                        $product_gift_id = $product_gift->getProductId();
+                        $number_gift = $product_gift->getQtyShipped();
+//                        $pro=$this->productRepository->getById($product_gift_id);
+                        $total_gift_price = $total_gift_price + $number_gift * $product_gift->getBaseOriginalPrice();
+                    }
 
-                    $pro=$this->productRepository->getById($product_gift_id);
-
-                    $total_gift_price = $total_gift_price + $number_gift * $pro->getPrice();
                 }
 
             }
-            $number_product_gift = $number_product_gift + $total_gift_price;
+
+            $number_product_gift = $total_gift_price;
             $collection_gift[$i]['total_gift_sum'] = $total_gift_price;
             $i++;
         }
-
         $number_customer = 0;
         $flag = true;
         for($i=0; $i<sizeof($number_customer_array); $i++){
@@ -225,7 +228,6 @@ class Report extends \Magento\Framework\Model\AbstractModel
                 $startDay = date('d', $start_time);
                 $endDay = date('d',strtotime("Sunday Last Week"));
                 $rangeDate = $this->_buildArrayDate(self::REPORT_RAGE_LAST_WEEK, $startDay, $endDay);
-
                 $_data = $this->_buildResult($collection_gift, $collection_order, 'day', $rangeDate);
 
                 $_data['report']['date_start'] = array(
@@ -253,6 +255,7 @@ class Report extends \Magento\Framework\Model\AbstractModel
                 break;
             case self::REPORT_RAGE_LAST_7DAYS:
             case self::REPORT_RAGE_LAST_30DAYS:
+                $last_x_day = 7;
                 if($data['report_range'] == self::REPORT_RAGE_LAST_7DAYS)
                 {
                     $last_x_day = 7;
@@ -262,8 +265,7 @@ class Report extends \Magento\Framework\Model\AbstractModel
                     $last_x_day = 30;
                 }
 
-
-                $start_day = date('Y-m-d h:i:s', strtotime('-'.$last_x_day.' day', $this->dateTime->gmtTimestamp()));
+                $start_day = date('Y-m-d h:i:s', strtotime('-'.$last_x_day.' day', $this->timezone->scopeTimeStamp()));
                 $end_day = date('Y-m-d h:i:s', strtotime("-1 day"));
 
                 $original_time = array(
@@ -271,16 +273,14 @@ class Report extends \Magento\Framework\Model\AbstractModel
                     'to'    => $end_day
                 );
                 $rangeDate = $this->_buildArrayDate(self::REPORT_RAGE_CUSTOM, 0, 0, $original_time);
-
                 $_data = $this->_buildResult($collection_gift, $collection_order, 'multiday', $rangeDate, $original_time);
                 break;
             case self::REPORT_RAGE_CUSTOM:
                 $original_time = array(
-                    'from'  => $data['from'],
-                    'to'    => $data['to']
+                    'from'  => date('m/d/Y h:i:s', strtotime($data['from'])),
+                    'to'    => date('m/d/Y h:i:s', strtotime($data['to']))
                 );
                 $rangeDate = $this->_buildArrayDate(self::REPORT_RAGE_CUSTOM, 0, 0, $original_time);
-
                 $_data = $this->_buildResult($collection_gift, $collection_order, 'multiday', $rangeDate, $original_time);
                 break;
         }
@@ -294,13 +294,11 @@ class Report extends \Magento\Framework\Model\AbstractModel
 
         $_data['statistics']['total_order'] = $this->pricingHelper->currency($total_order, true, false);
         $_data['statistics']['total_gift'] = $this->pricingHelper->currency($number_product_gift, true, false);
-        $_data['statistics']['number_customer'] = $this->pricingHelper->currency($number_customer, true, false);
-
+        $_data['statistics']['number_customer'] = $number_customer;
         $avg_gift_per_customer = $number_customer ? $number_product_gift/$number_customer : 0;
         $_data['statistics']['avg_gift_per_customer'] = $this->pricingHelper->currency(round($avg_gift_per_customer ,2), true, false);
-
-        $avg_gift_per_order = $total_order_number ? $number_product_gift/$total_order_number : 0 ;
-        $_data['statistics']['avg_gift_per_order'] = $this->pricingHelper->currency(round($avg_gift_per_order ,2), true, false);
+        $avg_gift_per_order = $total_order_number ? $number_product_gift/$total_order_number : 0;
+        $_data['statistics']['avg_gift_per_order'] = $this->pricingHelper->currency(round($avg_gift_per_order,2), true, false);
 
         return json_encode($_data);
     }
@@ -390,7 +388,8 @@ class Report extends \Magento\Framework\Model\AbstractModel
                     $_data['report']['order'][$i] = 0;
                     foreach($collection_gift as $redeemd)
                     {
-                        if((int)$redeemd[$type] == $count)
+
+                        if((int)$redeemd[$type] == (int)$count)
                         {
                             if(isset($date['day']) && $date['day'] == (int)$redeemd['day'])
                             {
@@ -408,10 +407,12 @@ class Report extends \Magento\Framework\Model\AbstractModel
                     }
                     foreach($collection_order as $reward)
                     {
-                        if((int)$reward->{"get$type"}() == $count)
-                        {
-                            if(isset($date['day']))
+//                        \Zend_Debug::dump(count($collection_order));
+//                        \Zend_Debug::dump($reward->debug());
 
+
+                        if((int)$reward->{"get$type"}() == (int)$count)
+                        {
                             if(isset($date['day']) && $date['day'] == (int)$reward->getDay())
                             {
                                 //$_data['report']['rewarded'][$i] = (int)$reward->getTotalOrderSum() ;
@@ -425,13 +426,13 @@ class Report extends \Magento\Framework\Model\AbstractModel
                         }
                     }
 
-                    foreach($collection_order as $order)
-                    {
-                        if((int)$order->{"get$type"}() == $count)
-                        {
-                            $_data['report']['order'][$i] = 0;
-                        }
-                    }
+//                    foreach($collection_order as $order)
+//                    {
+//                        if((int)$order->{"get$type"}() == $count)
+//                        {
+//                            $_data['report']['order'][$i] = 0;
+//                        }
+//                    }
                     $i++;
                 }
             }
@@ -448,18 +449,19 @@ class Report extends \Magento\Framework\Model\AbstractModel
         {
             case self::REPORT_RAGE_LAST_24H:
                 /* Last 24h */
-                //date_default_timezone_set('Asia/Ho_Chi_Minh');
-                $_hour = date('Y-m-d H:i:s', strtotime('-1 day', $this->dateTime->gmtTimestamp()));
+//                date_default_timezone_set('Asia/Ho_Chi_Minh');
+                $_hour = date('Y-m-d H:i:s', strtotime('-1 day', $this->timezone->scopeTimeStamp()));
+//                $_hour = date('Y-m-d H:i:s', strtotime('-1 day', $this->dateTime->gmtTimestamp()));
                 $start_hour = $this->dateFormat->formatDate($_hour, 'medium', true);
                 $_hour = date('Y-m-d H:i:s', strtotime("now"));
                 $end_hour = $this->dateFormat->formatDate($_hour, 'medium', true);
-
                 if($group == true)
                 {
                     $collection->addExpressionFieldToSelect('hour', 'HOUR(CONVERT_TZ(updated_at, \'+00:00\', \'+'.$this->_calOffsetHourGMT().':00\'))', 'hour');
                     $collection->addExpressionFieldToSelect('day', 'DAY(CONVERT_TZ(updated_at, \'+00:00\', \'+'.$this->_calOffsetHourGMT().':00\'))', 'day');
                     $collection->addExpressionFieldToSelect('group_id', 'GROUP_CONCAT(entity_id)', 'group_id');
                     $collection->getSelect()->group(array('hour'));
+//                    \Zend_Debug::dump($collection->getSelect()->__toString());
                 }
                 $where = 'CONVERT_TZ(main_table.updated_at, \'+00:00\', \'+'.$this->_calOffsetHourGMT().':00\')';
                 $collection->getSelect()->where($where . ' >= "'.$start_hour.'" AND '. $where . ' <= "'.$end_hour .'"');
@@ -517,13 +519,13 @@ class Report extends \Magento\Framework\Model\AbstractModel
                     $last_x_day = 30;
                 }
 
-                $start_day = date('Y-m-d h:i:s', strtotime('-'.$last_x_day.' day', $this->dateTime->gmtTimestamp()));
+                $start_day = date('Y-m-d h:i:s', strtotime('-'.$last_x_day.' day', $this->timezone->scopeTimeStamp()));
                 $end_day = date('Y-m-d h:i:s', strtotime("-1 day"));
 
                 if($group == true)
                 {
                     $collection->addExpressionFieldToSelect('group_id', 'GROUP_CONCAT(entity_id)', 'group_id');
-                    //$collection->getSelect()->group(array('day'));
+                    $collection->getSelect()->group(array('day'));
                 }
 
                 $collection->addExpressionFieldToSelect('month', 'MONTH(updated_at)', 'month');
@@ -534,9 +536,12 @@ class Report extends \Magento\Framework\Model\AbstractModel
             break;
             case self::REPORT_RAGE_CUSTOM:
                 /* Custom range */
-
+                $data['from'] = date('Y-m-d h:i:s', strtotime($data['from']));
+                $data['to'] = date('Y-m-d h:i:s', strtotime($data['to']));
                 if($group == true)
                 {
+                    $collection->addExpressionFieldToSelect('group_id', 'GROUP_CONCAT(entity_id)', 'group_id');
+                    $collection->getSelect()->group(array('day'));
                     $collection->addExpressionFieldToSelect('month', 'MONTH(updated_at)', 'month');
                     $collection->addExpressionFieldToSelect('day', 'DAY(updated_at)', 'day');
                     $collection->addExpressionFieldToSelect('year', 'YEAR(updated_at)', 'year');
@@ -545,7 +550,8 @@ class Report extends \Magento\Framework\Model\AbstractModel
                 }
                 $where = 'CONVERT_TZ(main_table.updated_at, \'+00:00\', \'+'.$this->_calOffsetHourGMT().':00\')';
                 $collection->getSelect()->where($where . ' >= "'.$data['from'].'" AND '. $where . ' <= "'.$data['to'] .'"');
-                //$collection->addFieldToFilter('CONVERT_TZ(main_table.updated_at, \'+00:00\', \'+'.$this->_calOffsetHourGMT().':00\')', array('from' => $data['from'], 'to' => $data['to'], 'datetime' => true));
+//                \Zend_Debug::dump($collection->getSelect()->__toString());
+//                $collection->addFieldToFilter('CONVERT_TZ(main_table.updated_at, \'+00:00\', \'+'.$this->_calOffsetHourGMT().':00\')', array('from' => $data['from'], 'to' => $data['to'], 'datetime' => true));
                 break;
         }
     }
@@ -596,6 +602,7 @@ class Report extends \Magento\Framework\Model\AbstractModel
                 }
                 break;
             case  self::REPORT_RAGE_CUSTOM:
+//                $original_time['from'] = date('m/d/Y h:i:s', strtotime($original_time['from']));
                 $total_days = $this->_dateDiff($original_time['from'], $original_time['to']);
                 if($total_days > 365)
                 {
@@ -619,8 +626,8 @@ class Report extends \Magento\Framework\Model\AbstractModel
 
                     foreach($all_months as $month)
                     {
-                        foreach($all_months as $month)
-                        {
+//                        foreach($all_months as $month)
+//                        {
                             $day_in_month = $this->_days_in_month($month['m'], $month['y']);
                             for($day = ($count == 0 ? $start_day : 1); $day <= $day_in_month; $day++)
                             {
@@ -630,7 +637,7 @@ class Report extends \Magento\Framework\Model\AbstractModel
                                 $data[$month['y']][$month['m']][$day] = $day;
                             }
                             $count++;
-                        }
+//                        }
                     }
                 }
                 break;
@@ -639,7 +646,7 @@ class Report extends \Magento\Framework\Model\AbstractModel
     }
     protected function _days_in_month($month, $year)
     {
-        $year = (!$year) ? date('Y', $this->dateTime->gmtTimestamp()) : $year;
+        $year = (!$year) ? date('Y', $this->timezone->scopeTimeStamp()) : $year;
         return $month == 2 ? ($year % 4 ? 28 : ($year % 100 ? 29 : ($year % 400 ? 28 : 29))) : (($month - 1) % 7 % 2 ? 30 : 31);
     }
     protected function _dateDiff($d1, $d2)
@@ -672,7 +679,7 @@ class Report extends \Magento\Framework\Model\AbstractModel
     }
     protected function getPreviousDateTime($hour)
     {
-        return $this->dateTime->gmtTimestamp() - (3600 * $hour);
+        return $this->timezone->scopeTimeStamp() - (3600 * $hour);
     }
     protected function convertNumberToMOnth($num)
     {
@@ -683,5 +690,16 @@ class Report extends \Magento\Framework\Model\AbstractModel
     protected function _calOffsetHourGMT()
     {
         return $this->dateTime->calculateOffset($this->helperFreeGift->getStoreConfig('general/locale/timezone'))/60/60;
+    }
+
+    public function checkIsGift($item){
+        $productOptions = $item->getProductOptions();
+        if(isset($productOptions['info_buyRequest']['freegift_parent_key']) && isset($productOptions['info_buyRequest']['freegift_rule_data'])){
+            return true;
+        }
+        if(isset($productOptions['info_buyRequest']['free_sales_key']) && isset($productOptions['info_buyRequest']['freegift_rule_data'])){
+            return true;
+        }
+        return false;
     }
 }
