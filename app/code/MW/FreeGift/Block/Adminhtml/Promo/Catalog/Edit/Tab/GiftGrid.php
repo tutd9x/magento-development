@@ -14,7 +14,7 @@ class GiftGrid extends Extended
     protected $moduleManager;
 
     /**
-     * @var \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory]
+     * @var \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory
      */
     protected $_setsFactory;
 
@@ -143,6 +143,9 @@ class GiftGrid extends Extended
             'attribute_set_id'
         )->addAttributeToSelect(
             'type_id'
+        )->addAttributeToFilter(
+            'type_id',
+            ['in' => ['simple', 'virtual', 'configurable']]
         )->setStore(
             $store
         );
@@ -230,9 +233,9 @@ class GiftGrid extends Extended
     public function getTreeSelectedStores()
     {
         $gift_product_ids = $this->getRequest()->getParam('gift_product_ids');
-        if(is_array($gift_product_ids) && !empty($gift_product_ids)){
+        if(is_array($gift_product_ids) && !empty($gift_product_ids)) {
             $ids = $gift_product_ids;
-        }else{
+        } else {
             $ids = $this->_getSelectedProducts();
         }
         return $this->_converter->toTreeArray($ids);
@@ -243,8 +246,9 @@ class GiftGrid extends Extended
         $productIds = '';
         $model = $this->_getRule();
 
-        if(isset($model) && $model->getGiftProductIds())
+        if(isset($model) && $model->getGiftProductIds()) {
             $productIds = $model->getGiftProductIds();
+        }
 
         return explode(',', $productIds);
     }
@@ -499,5 +503,4 @@ class GiftGrid extends Extended
     {
         return "";
     }
-
 }

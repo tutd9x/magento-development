@@ -260,7 +260,7 @@ class ProcessApply implements ObserverInterface
             }
         }
 
-        if($product->getTypeId() == 'simple') {
+        if( $this->availableProductType($product->getTypeId()) ) {
             $additionalOptions = [[
                 'label' => __('Free Gift'),
                 'value' => $rule['name'],
@@ -611,5 +611,20 @@ class ProcessApply implements ObserverInterface
             }
 
         return $this;
+    }
+
+    /**
+     * Check available product type can be add to cart
+     *
+     * @param string $type
+     * @return bool
+     */
+    public function availableProductType($type = '')
+    {
+        $isAllow = false;
+        if (in_array($type, ['simple', 'virtual'])) {
+            $isAllow = true;
+        }
+        return $isAllow;
     }
 }

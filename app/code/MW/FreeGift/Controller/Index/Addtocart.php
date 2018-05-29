@@ -1,13 +1,11 @@
 <?php
 namespace MW\FreeGift\Controller\Index;
 
-
-
-
 use Magento\Checkout\Model\Cart as CustomerCart;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultFactory;
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
 
 class Addtocart extends \Magento\Checkout\Controller\Cart
 {

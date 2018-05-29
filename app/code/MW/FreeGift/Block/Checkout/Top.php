@@ -20,7 +20,6 @@ class Top extends \Magento\Framework\View\Element\Template
     /**
      * @param \Magento\Framework\View\Element\Template\Context $context
      * @param \Magento\Framework\Registry $coreRegistry
-     * @param \Magento\Framework\Session\SessionManagerInterface $sessionManager
      * @param \Magento\Customer\Model\Session $customerSession
      * @param array $data
      */
@@ -54,6 +53,8 @@ class Top extends \Magento\Framework\View\Element\Template
     public function _getBaseUrl()
     {
 //        return $this->_storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA);
-        return $this->_storeManager->getStore()->getBaseUrl();
+        /* @var \Magento\Store\Model\Store $store */
+        $store = $this->_storeManager->getStore();
+        return $store->getBaseUrl();
     }
 }

@@ -50,7 +50,7 @@ class Coupons extends Template implements TabInterface
     {
         return true;
         $model = $this->_coreRegistry->registry('current_promo_sales_rule');
-        if(isset($model) && $model->getId()){
+        if(isset($model) && $model->getId()) {
             return true;
         }
         return false;
