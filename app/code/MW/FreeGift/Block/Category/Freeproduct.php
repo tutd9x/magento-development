@@ -8,7 +8,6 @@
 
 namespace MW\FreeGift\Block\Category;
 
-
 class Freeproduct extends \Magento\Framework\View\Element\Template
 {
     protected $_coreRegistry;
@@ -45,19 +44,18 @@ class Freeproduct extends \Magento\Framework\View\Element\Template
         $customerGroupId = $this->_customerSession->getCustomerGroupId();
         $dateTs = $this->_localeDate->scopeTimeStamp($storeId);
 
-        $freeGiftCatalogData = array();
+        $freeGiftCatalogData = [];
         if ($current_product == null) {
             $current_product = $this->getCurrentProduct();
         }
 
-        if ($additionalOption = $current_product->getCustomOption('mw_free_catalog_gift'))
-        {
-            if($additionalOption->getValue() == 1){
+        if ($additionalOption = $current_product->getCustomOption('mw_free_catalog_gift')) {
+            if ($additionalOption->getValue() == 1) {
                 $ruleData = $this->_resourceRule->getRulesFromProduct($dateTs, $websiteId, $customerGroupId, $current_product->getId());
                 /* Sort array by column sort_order */
                 array_multisort(array_column($ruleData, 'sort_order'), SORT_ASC, $ruleData);
                 $ruleData = $this->_filterByActionStop($ruleData);
-                if(count($ruleData)>0){
+                if (!empty($ruleData)) {
                     $freeGiftCatalogData = $this->helperFreeGift->getGiftDataByRule($ruleData);
                 }
             }
@@ -69,8 +67,9 @@ class Freeproduct extends \Magento\Framework\View\Element\Template
     {
         $product_gift = null;
         $storeId = $this->_storeManager->getStore()->getId();
-        if(isset($productId) && $productId != "")
+        if (isset($productId) && $productId != "") {
             $product_gift = $this->productRepository->getById($productId, false, $storeId);
+        }
         return $product_gift;
     }
 
@@ -82,7 +81,7 @@ class Freeproduct extends \Magento\Framework\View\Element\Template
     private function _filterByActionStop($ruleData)
     {
         $result = [];
-        foreach($ruleData as $data) {
+        foreach ($ruleData as $data) {
             $result[$data['rule_id']] = $data;
             if (isset($data['action_stop']) && $data['action_stop'] == '1') {
                 break;

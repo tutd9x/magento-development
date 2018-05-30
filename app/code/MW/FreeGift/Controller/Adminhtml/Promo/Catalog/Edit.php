@@ -11,7 +11,7 @@ class Edit extends Catalog
     public function execute()
     {
         $id = $this->getRequest()->getParam('id');
-        $model = $this->ruleFactory->create(); // $model = $this->_objectManager->create('MW\FreeGift\Model\Rule');
+        $model = $this->ruleFactory->create();
 
         if ($id) {
             $model->load($id);
@@ -37,7 +37,6 @@ class Edit extends Catalog
         $this->_coreRegistry->register('current_promo_catalog_rule', $model);
 
         $this->_initAction();
-        //$this->_view->getLayout()->getBlock('promo_catalog_edit')->setData('action',$this->getUrl('*/*/save'));
         $this->_view->getPage()->getConfig()->getTitle()->prepend(__('Free Gift Rule'));
         $this->_view->getPage()->getConfig()->getTitle()->prepend(
             $model->getRuleId() ? $model->getName() : __('New Free Gift Rule')

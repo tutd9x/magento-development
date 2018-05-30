@@ -149,11 +149,6 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
 
         $this->setForm($form);
 
-//        $this->_eventManager->dispatch(
-//            'adminhtml_promo_quote_edit_tab_coupons_form_prepare_form',
-//            ['form' => $form]
-//        );
-
         return parent::_prepareForm();
     }
 

@@ -1,5 +1,6 @@
 <?php
 namespace MW\FreeGift\Controller\Adminhtml\Promo\Catalog;
+
 use MW\FreeGift\Controller\Adminhtml\Promo\Catalog;
 
 class Index extends Catalog

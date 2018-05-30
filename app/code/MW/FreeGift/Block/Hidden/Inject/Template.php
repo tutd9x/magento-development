@@ -5,7 +5,9 @@
  * Time: 5:37 PM
  */
 namespace MW\FreeGift\Block\Hidden\Inject;
+
 use Magento\Store\Model\ScopeInterface;
+
 class Template extends \Magento\Framework\View\Element\Template
 {
     protected $checkoutSession;
@@ -16,12 +18,12 @@ class Template extends \Magento\Framework\View\Element\Template
     protected $_resourceRule;
     protected $productRepository;
     protected $salesruleModel;
-    protected $_ruleArr = array();
-    protected $_priceBlock = array();
-    protected $_free_product = array();
+    protected $_ruleArr = [];
+    protected $_priceBlock = [];
+    protected $_free_product = [];
     protected $_block = 'catalog/product_price';
     protected $_priceBlockDefaultTemplate = 'catalog/product/price.phtml';
-    protected $_priceBlockTypes = array();
+    protected $_priceBlockTypes = [];
     /**
      * @var string
      */
@@ -51,8 +53,9 @@ class Template extends \Magento\Framework\View\Element\Template
     }
     public function _toHtml()
     {
-        if (!$this->_scopeConfig->getValue('mw_freegift/group_general/active',ScopeInterface::SCOPE_STORE))
+        if (!$this->_scopeConfig->getValue('mw_freegift/group_general/active', ScopeInterface::SCOPE_STORE)) {
             return '';
+        }
         return $this->fetchView($this->getTemplateFile());
     }
 }

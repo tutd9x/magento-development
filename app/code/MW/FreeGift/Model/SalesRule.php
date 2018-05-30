@@ -279,7 +279,7 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
      */
     public function afterSave()
     {
-        if($this->updateFile == true){
+        if ($this->updateFile == true) {
             $imageName = $this->getData('promotion_banner', null);
             if ($imageName) {
                 try {
@@ -323,7 +323,7 @@ class SalesRule extends \Magento\Rule\Model\AbstractModel
     public function loadPost(array $data)
     {
         parent::loadPost($data);
-        if(isset($data['promotion_banner'])){
+        if (isset($data['promotion_banner'])) {
             $this->updateFile = true;
         }
         if (isset($data['store_labels'])) {

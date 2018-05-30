@@ -13,7 +13,6 @@ class RuleProductIndexer extends AbstractIndexer
     protected function doExecuteList($ids)
     {
         $this->indexBuilder->reindexFull();
-//        $this->getCacheContext()->registerTags($this->getIdentities());
     }
 
     /**

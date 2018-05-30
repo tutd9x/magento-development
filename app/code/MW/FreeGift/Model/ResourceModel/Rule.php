@@ -124,7 +124,6 @@ class Rule extends \Magento\Rule\Model\ResourceModel\AbstractResource
         $this->_logger = $logger;
         $this->dateTime = $dateTime;
         $this->priceCurrency = $priceCurrency;
-//        $this->_associatedEntitiesMap = $this->getAssociatedEntitiesMap();
         parent::__construct($context, $connectionName);
     }
 
@@ -179,7 +178,6 @@ class Rule extends \Magento\Rule\Model\ResourceModel\AbstractResource
      */
     protected function _afterSave(AbstractModel $object)
     {
-//        echo "_afterSave"; exit;
         if ($object->hasWebsiteIds()) {
             $websiteIds = $object->getWebsiteIds();
             if (!is_array($websiteIds)) {
@@ -198,7 +196,6 @@ class Rule extends \Magento\Rule\Model\ResourceModel\AbstractResource
         parent::_afterSave($object);
         return $this;
     }
-
 
     /**
      * Get catalog rules product price for specific date, website and
@@ -276,70 +273,6 @@ class Rule extends \Magento\Rule\Model\ResourceModel\AbstractResource
     }
 
     /**
-     * @param \Magento\Framework\Model\AbstractModel $object
-     * @param mixed $value
-     * @param string $field
-     * @return $this
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-//    public function load(\Magento\Framework\Model\AbstractModel $object, $value, $field = null)
-//    {
-//        $this->getEntityManager()->load($object, $value);
-//        return $this;
-//    }
-
-    /**
-     * @param AbstractModel $object
-     * @return $this
-     * @throws \Exception
-     */
-//    public function save(\Magento\Framework\Model\AbstractModel $object)
-//    {
-//        $this->getEntityManager()->save($object);
-//        return $this;
-//    }
-
-    /**
-     * Delete the object
-     *
-     * @param \Magento\Framework\Model\AbstractModel $object
-     * @return $this
-     * @throws \Exception
-     */
-//    public function delete(AbstractModel $object)
-//    {
-//        $this->getEntityManager()->delete($object);
-//        return $this;
-//    }
-
-    /**
-     * @return array
-     * @deprecated
-     */
-//    private function getAssociatedEntitiesMap()
-//    {
-//        if (!$this->_associatedEntitiesMap) {
-//            $this->_associatedEntitiesMap = \Magento\Framework\App\ObjectManager::getInstance()
-//                ->get('Magento\CatalogRule\Model\ResourceModel\Rule\AssociatedEntityMap')
-//                ->getData();
-//        }
-//        return $this->_associatedEntitiesMap;
-//    }
-
-    /**
-     * @return \Magento\Framework\EntityManager\EntityManager
-     * @deprecated
-     */
-//    private function getEntityManager()
-//    {
-//        if (null === $this->entityManager) {
-//            $this->entityManager = \Magento\Framework\App\ObjectManager::getInstance()
-//                ->get(\Magento\Framework\EntityManager\EntityManager::class);
-//        }
-//        return $this->entityManager;
-//    }
-
-    /**
      * Get active rule data based on few filters
      *
      * @param int|string $date
@@ -348,7 +281,7 @@ class Rule extends \Magento\Rule\Model\ResourceModel\AbstractResource
      * @param int $productId
      * @return array
      */
-    public function getRulesFromProductGift($rule_id, $rule_gift_ids,$website_id = null,$customer_group_id = null, $rule_product_id = null)
+    public function getRulesFromProductGift($rule_id, $rule_gift_ids, $website_id = null, $customer_group_id = null, $rule_product_id = null)
     {
         $connection = $this->getConnection();
         $select = $connection->select()->from(
@@ -361,20 +294,20 @@ class Rule extends \Magento\Rule\Model\ResourceModel\AbstractResource
             $rule_gift_ids
         );
 
-        if(isset($customer_group_id)){
+        if (isset($customer_group_id)) {
             $select = $select->where(
                 'rp.website_id = ?',
                 $website_id
             );
         }
 
-        if(isset($customer_group_id)){
+        if (isset($customer_group_id)) {
             $select = $select->where(
                 'rp.customer_group_id = ?',
                 $customer_group_id
             );
         }
-        if(isset($rule_product_id)){
+        if (isset($rule_product_id)) {
             $select = $select->where(
                 'rp.rule_product_id = ?',
                 $rule_product_id
@@ -389,6 +322,4 @@ class Rule extends \Magento\Rule\Model\ResourceModel\AbstractResource
 
         return $connection->fetchRow($select);
     }
-
-
 }

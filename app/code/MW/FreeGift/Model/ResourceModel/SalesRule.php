@@ -179,7 +179,7 @@ class SalesRule extends AbstractResource
             $this->getProductAttributes(serialize($object->getConditions()->asArray())),
             $this->getProductAttributes(serialize($object->getActions()->asArray()))
         );
-        if (count($ruleProductAttributes)) {
+        if (!empty($ruleProductAttributes)) {
             $this->setActualProductAttributes($object, $ruleProductAttributes);
         }
 
@@ -378,70 +378,4 @@ class SalesRule extends AbstractResource
 
         return $result;
     }
-
-    /**
-     * Load an object
-     *
-     * @param \Magento\SalesRule\Model\Rule|AbstractModel $object
-     * @param mixed $value
-     * @param string $field field to load by (defaults to model id)
-     * @return $this
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-//    public function load(AbstractModel $object, $value, $field = null)
-//    {
-//        $this->getEntityManager()->load($object, $value);
-//        return $this;
-//    }
-
-    /**
-     * @param \Magento\Framework\Model\AbstractModel $object
-     * @return $this
-     * @throws \Exception
-     */
-//    public function save(\Magento\Framework\Model\AbstractModel $object)
-//    {
-//        $this->getEntityManager()->save($object);
-//        return $this;
-//    }
-
-    /**
-     * Delete the object
-     *
-     * @param \Magento\Framework\Model\AbstractModel $object
-     * @return $this
-     * @throws \Exception
-     */
-//    public function delete(AbstractModel $object)
-//    {
-//        $this->getEntityManager()->delete($object);
-//        return $this;
-//    }
-
-    /**
-     * @return array
-     * @deprecated
-     */
-//    private function getAssociatedEntitiesMap()
-//    {
-//        if (!$this->_associatedEntitiesMap) {
-//            $this->_associatedEntitiesMap = \Magento\Framework\App\ObjectManager::getInstance()
-//                ->get('Magento\SalesRule\Model\ResourceModel\Rule\AssociatedEntityMap')
-//                ->getData();
-//        }
-//        return $this->_associatedEntitiesMap;
-//    }
-
-    /**
-     * @return \Magento\Framework\EntityManager\EntityManager
-     * @deprecated
-     */
-//    private function getEntityManager()
-//    {
-//        if (null === $this->entityManager) {
-//            $this->entityManager = \Magento\Framework\App\ObjectManager::getInstance()
-//                ->get(\Magento\Framework\EntityManager\EntityManager::class);
-//        }
-//        return $this->entityManager;
-//    }
 }

@@ -259,8 +259,8 @@ class Rule extends \Magento\Rule\Model\AbstractModel implements \MW\FreeGift\Api
         $website_id = null,
         $customer_group_id = null,
         $rule_product_id = null
-    ){
-        return $this->_getResource()->getRulesFromProductGift($rule_id, $rule_gift_ids,$website_id,$customer_group_id,$rule_product_id);
+    ) {
+        return $this->_getResource()->getRulesFromProductGift($rule_id, $rule_gift_ids, $website_id, $customer_group_id, $rule_product_id);
     }
 
     /**
@@ -368,46 +368,9 @@ class Rule extends \Magento\Rule\Model\AbstractModel implements \MW\FreeGift\Api
     public function validateData(\Magento\Framework\DataObject $dataObject)
     {
         $result = parent::validateData($dataObject);
-//        if ($result === true) {
-//            $result = [];
-//        }
-//
-//        $action = $dataObject->getData('simple_action');
-//        $discount = $dataObject->getData('discount_amount');
-//        $result = array_merge($result, $this->validateDiscount($action, $discount));
-
         return !empty($result) ? $result : true;
     }
 
-    /**
-     * Validate discount based on action
-     *
-     * @param string $action
-     * @param string|int|float $discount
-     *
-     * @return array Validation errors
-     */
-//    protected function validateDiscount($action, $discount)
-//    {
-//        $result = [];
-//        switch ($action) {
-//            case 'by_percent':
-//            case 'to_percent':
-//                if ($discount < 0 || $discount > 100) {
-//                    $result[] = __('Percentage discount should be between 0 and 100.');
-//                };
-//                break;
-//            case 'by_fixed':
-//            case 'to_fixed':
-//                if ($discount < 0) {
-//                    $result[] = __('Discount value should be 0 or greater.');
-//                };
-//                break;
-//            default:
-//                $result[] = __('Unknown action.');
-//        }
-//        return $result;
-//    }
 
     /**
      * Calculate price using catalog price rule of product
@@ -513,7 +476,7 @@ class Rule extends \Magento\Rule\Model\AbstractModel implements \MW\FreeGift\Api
      */
     protected function _invalidateCache()
     {
-        if (count($this->_relatedCacheTypes)) {
+        if (!empty($this->_relatedCacheTypes)) {
             $this->_cacheTypesList->invalidate($this->_relatedCacheTypes);
         }
         return $this;

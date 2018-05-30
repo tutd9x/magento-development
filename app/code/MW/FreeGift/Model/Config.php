@@ -13,9 +13,6 @@ class Config
      */
     const XML_PATH_ENABLED = 'mw_freegift/group_general/active';
     const XML_PATH_REPORT_START_TIME = 'mw_freegift/group_report/report_from';
-//    const XML_PATH_DISPLAY_ACTUAL_PRICE_TYPE = 'sales/msrp/display_price_type';
-//    const XML_PATH_EXPLANATION_MESSAGE = 'sales/msrp/explanation_message';
-//    const XML_PATH_EXPLANATION_MESSAGE_WHATS_THIS = 'sales/msrp/explanation_message_whats_this';
     /**#@-*/
 
     /**
@@ -97,52 +94,4 @@ class Config
             $this->storeId
         );
     }
-//
-//    /**
-//     * Return Msrp display actual type
-//     *
-//     * @return null|string
-//     */
-//    public function getDisplayActualPriceType()
-//    {
-//        return $this->scopeConfig->getValue(
-//            self::XML_PATH_DISPLAY_ACTUAL_PRICE_TYPE,
-//            ScopeInterface::SCOPE_STORE,
-//            $this->storeId
-//        );
-//    }
-//
-//    /**
-//     * Return Msrp explanation message
-//     *
-//     * @return string
-//     */
-//    public function getExplanationMessage()
-//    {
-//        return $this->escaper->escapeHtml(
-//            $this->scopeConfig->getValue(
-//                self::XML_PATH_EXPLANATION_MESSAGE,
-//                ScopeInterface::SCOPE_STORE,
-//                $this->storeId
-//            ),
-//            ['b', 'br', 'strong', 'i', 'u', 'p', 'span']
-//        );
-//    }
-//
-//    /**
-//     * Return Msrp explanation message for "Whats This" window
-//     *
-//     * @return string
-//     */
-//    public function getExplanationMessageWhatsThis()
-//    {
-//        return $this->escaper->escapeHtml(
-//            $this->scopeConfig->getValue(
-//                self::XML_PATH_EXPLANATION_MESSAGE_WHATS_THIS,
-//                ScopeInterface::SCOPE_STORE,
-//                $this->storeId
-//            ),
-//            ['b', 'br', 'strong', 'i', 'u', 'p', 'span']
-//        );
-//    }
 }

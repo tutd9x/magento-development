@@ -1,8 +1,10 @@
 <?php
+//$blockFreeGift= $block->getLayout()->createBlock('MW\FreeGift\Block\Promotionbanner');
 $allActiveRules = $block->getAllActiveRules();
-if (count($allActiveRules)) :?>
+//\Zend_Debug::dump(count($allActiveRules)); die("hhhhhhhh");
+if (sizeof($allActiveRules)) :?>
     <?php
-    $arrShowin = [1,3];
+    $arrShowin = [2,3];
     $showin = $this->helper('MW\FreeGift\Helper\Data')->getStoreConfig('mw_freegift/group_general/showfreegiftpromotion');
     ?>
     <div class="freegift_rules_container">
@@ -15,7 +17,7 @@ if (count($allActiveRules)) :?>
                 }
             endforeach;
 
-            if (!empty($listDescription)) {
+            if (count($listDescription)>0) {
                 ?>
                 <script type="text/javascript">
                     hasPromotionMessage = true;

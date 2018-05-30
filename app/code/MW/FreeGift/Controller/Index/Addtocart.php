@@ -22,8 +22,7 @@ class Addtocart extends \Magento\Checkout\Controller\Cart
         \Magento\Framework\Data\Form\FormKey\Validator $formKeyValidator,
         CustomerCart $cart,
         ProductRepositoryInterface $productRepository
-    )
-    {
+    ) {
         $this->productRepository = $productRepository;
         parent::__construct($context, $scopeConfig, $checkoutSession, $storeManager, $formKeyValidator, $cart);
     }
@@ -47,7 +46,6 @@ class Addtocart extends \Magento\Checkout\Controller\Cart
         return false;
     }
 
-
     /**
      * Dispatch request
      *
@@ -57,12 +55,12 @@ class Addtocart extends \Magento\Checkout\Controller\Cart
     public function execute()
     {
         $result = $this->resultFactory->create(ResultFactory::TYPE_JSON);
-        if(!$this->_formKeyValidator->validate($this->getRequest())){
+        if (!$this->_formKeyValidator->validate($this->getRequest())) {
             $this->resultRedirectFactory->create()->setPath("*/*/");
         };
 
         $params = $this->getRequest()->getParams();
-        try{
+        try {
             if (isset($params['qty'])) {
                 $filter = new \Zend_Filter_LocalizedToNormalized(
                     ['locale' => $this->_objectManager->get('Magento\Framework\Locale\ResolverInterface')->getLocale()]
@@ -72,16 +70,15 @@ class Addtocart extends \Magento\Checkout\Controller\Cart
 
             $product = $this->_initProduct();
 
-            if(!$product){
+            if (!$product) {
                 $result->setData(["status" => "error"]);
                 return $result;
             }
-//            \Zend_Debug::dump($params); die("FFFF");
             $this->cart->addProduct($product, $params);
             $this->cart->save();
             $result->setData(["status" => "success"]);
             return $result;
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             $result->setData(["error" => "Exception"]);
             return $result;
         }

@@ -1,6 +1,7 @@
 <?php
 
 namespace MW\FreeGift\Controller\Adminhtml\Promo\Catalog;
+
 use MW\FreeGift\Controller\Adminhtml\Promo\Catalog;
 
 class GiftsMassUpdate extends Catalog

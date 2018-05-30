@@ -66,7 +66,6 @@ class AfterRemoveItem implements ObserverInterface
         $this->productRepository = $productRepository;
         $this->cart = $cart;
         $this->config = $config;
-
     }
 
     public function execute(\Magento\Framework\Event\Observer $observer)
@@ -90,9 +89,6 @@ class AfterRemoveItem implements ObserverInterface
 
         $this->_processCatalogRule($observer, $items);
         $this->_processSalesRule($observer, $items);
-
-        //$this->resetSession();
-
         return $this;
     }
 
@@ -107,7 +103,7 @@ class AfterRemoveItem implements ObserverInterface
             return $this;
         }
 
-        if ( $item_removed->getOptionByCode('info_buyRequest') && $itemInfo = unserialize($item_removed->getOptionByCode('info_buyRequest')->getValue()) ) {
+        if ($item_removed->getOptionByCode('info_buyRequest') && $itemInfo = unserialize($item_removed->getOptionByCode('info_buyRequest')->getValue())) {
             if (isset($itemInfo['freegift_keys'])) {
                 $parent_key = $itemInfo['freegift_keys'];
                 if (empty($parent_key)) {
@@ -116,10 +112,7 @@ class AfterRemoveItem implements ObserverInterface
             }
         }
 
-        //$current_qty = $this->_countCurrentItemInCart($item_removed, $parent_key);
-
         foreach ($items as $item) {
-
             if ($item->getParentItem()) {
                 $item = $item->getParentItem();
             }
@@ -129,9 +122,9 @@ class AfterRemoveItem implements ObserverInterface
             }
 
             $data = [];
-            if ( $item->getOptionByCode('info_buyRequest') && $data = unserialize($item->getOptionByCode('info_buyRequest')->getValue()) ) {
-                if ( isset($data['freegift_parent_key']) && $freegift_parent_key = $data['freegift_parent_key'] ) {
-                    $result = array_intersect($parent_key,$freegift_parent_key);
+            if ($item->getOptionByCode('info_buyRequest') && $data = unserialize($item->getOptionByCode('info_buyRequest')->getValue())) {
+                if (isset($data['freegift_parent_key']) && $freegift_parent_key = $data['freegift_parent_key']) {
+                    $result = array_intersect($parent_key, $freegift_parent_key);
                     if (empty($result)) {
                         continue;
                     }
@@ -145,11 +138,11 @@ class AfterRemoveItem implements ObserverInterface
                             $quote->removeItem($item->getItemId())->save();
                         } else {
                             $freegift_qty_info = $data['freegift_qty_info'][$key] - $qtyGiftToRemove;
-                            if($freegift_qty_info == 0){
+                            if ($freegift_qty_info == 0) {
                                 unset($data['freegift_parent_key'][$key]);
                                 unset($data['freegift_qty_info'][$key]);
                                 unset($data['freegift_rule_data'][$key]);
-                            }else{
+                            } else {
                                 $data['freegift_qty_info'][$key] = $freegift_qty_info;
                             }
                             $item->getOptionByCode('info_buyRequest')->setValue(serialize($data));
@@ -169,9 +162,7 @@ class AfterRemoveItem implements ObserverInterface
         $salesGiftRemoved = $this->checkoutSession->getSalesGiftRemoved();
 
         if ($this->_isSalesGift($item_removed)) {
-
-            if ( $item_removed->getOptionByCode('info_buyRequest') && $itemInfo = unserialize($item_removed->getOptionByCode('info_buyRequest')->getValue()) ) {
-
+            if ($item_removed->getOptionByCode('info_buyRequest') && $itemInfo = unserialize($item_removed->getOptionByCode('info_buyRequest')->getValue())) {
                 if (isset($itemInfo['free_sales_key'])) {
                     $parent_keys = $itemInfo['free_sales_key'];
                     if (empty($parent_keys)) {
@@ -179,15 +170,14 @@ class AfterRemoveItem implements ObserverInterface
                     }
                 }
 
-                foreach ($parent_keys as $key){
-                    if(array_key_exists($key, $itemInfo['freegift_rule_data'])) {
+                foreach ($parent_keys as $key) {
+                    if (array_key_exists($key, $itemInfo['freegift_rule_data'])) {
                         $freegift_rule_data = $itemInfo['freegift_rule_data'][$key];
                         $freegift_sales_key = $freegift_rule_data['freegift_sales_key'];
                         $salesGiftRemoved[$freegift_sales_key] = $freegift_sales_key;
                         $this->checkoutSession->setSalesGiftRemoved($salesGiftRemoved);
                     }
                 }
-
             }
         }
 
@@ -234,12 +224,11 @@ class AfterRemoveItem implements ObserverInterface
             return true;
         }
 
-        if($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1){
+        if ($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1) {
             return true;
         }
         return false;
     }
-
 
     private function _isSalesGift($item)
     {
@@ -248,7 +237,7 @@ class AfterRemoveItem implements ObserverInterface
             $item = $item->getParentItem();
         }
 
-        if($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1){
+        if ($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1) {
             return true;
         }
 
@@ -264,7 +253,7 @@ class AfterRemoveItem implements ObserverInterface
     {
         $count = 0;
         foreach ($this->getQuote()->getAllItems() as $item) {
-            if($item->getId() == $item_removed->getId()) {
+            if ($item->getId() == $item_removed->getId()) {
                 /* @var $item \Magento\Quote\Model\Quote\Item */
                 if ($item->getParentItem()) {
                     continue;
@@ -272,8 +261,8 @@ class AfterRemoveItem implements ObserverInterface
 
                 if (!$this->_isGift($item)) {
                     $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
-                    $freegift_parent_key = isset($info['freegift_keys']) ? $info['freegift_keys'] : array();
-                    $result = array_intersect($parent_keys,$freegift_parent_key);
+                    $freegift_parent_key = isset($info['freegift_keys']) ? $info['freegift_keys'] : [];
+                    $result = array_intersect($parent_keys, $freegift_parent_key);
                     if (empty($result)) {
                         continue;
                     } else {
@@ -284,5 +273,4 @@ class AfterRemoveItem implements ObserverInterface
         }
         return $count;
     }
-
 }

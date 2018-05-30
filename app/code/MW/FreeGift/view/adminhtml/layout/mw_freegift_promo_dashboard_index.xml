@@ -9,9 +9,6 @@
         <link src="MW_FreeGift::js/head.main.js"/>
     </head>
     <body>
-        <referenceContainer name="page.main.actions">
-            <block class="Magento\Backend\Block\Template" name="refresh_statistics" after="store_switcher" template="Magento_Backend::dashboard/totalbar/refreshstatistics.phtml"/>
-        </referenceContainer>
         <referenceContainer name="content">
             <block class="MW\FreeGift\Block\Adminhtml\Report\Dashboard" name="mw_dashboard"/>
         </referenceContainer>

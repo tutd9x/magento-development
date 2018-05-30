@@ -255,6 +255,7 @@
     text-align: center;
     padding-top: 10px;
     margin-bottom: 10px;
+    margin-top: 10px;
     color: #3D6611;
     -webkit-border-radius:5px;
     -moz-border-radius:5px;
@@ -381,4 +382,7 @@ background-color: #F6F6F6;
     .products-grid .product-item-info:hover, .products-grid .product-item-info.active{
         z-index: 3;
     }
+}
+.disableGift{
+    opacity: 0.2;
 }

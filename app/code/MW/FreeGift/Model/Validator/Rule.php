@@ -2,13 +2,12 @@
 
 namespace MW\FreeGift\Model\Validator;
 
-
 class Rule
 {
     function validate($item)
     {
         $qty = $item->getQty();
-        if($qty %10 != 0){
+        if ($qty %10 != 0) {
             return false;
         }
 

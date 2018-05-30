@@ -93,9 +93,7 @@ class OrderPlaceAfter implements ObserverInterface
         $this->_couponUsage = $couponUsage;
         $this->_collection = $collection;
         $this->config = $config;
-
     }
-
 
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
@@ -114,12 +112,13 @@ class OrderPlaceAfter implements ObserverInterface
             if (!$order) {
                 return $this;
             }
-            $rule_inserted = array();
-            $sales_rule_inserted = array();
+            $rule_inserted = [];
+            $sales_rule_inserted = [];
             $couponSalesRule = null;
             foreach ($items as $item) {
-                if ($item->getParentItem())
+                if ($item->getParentItem()) {
                     continue;
+                }
                 $resource = $this->_resource;
                 $con = $resource->getConnection('core_write');
                 //Catalog rules
@@ -127,45 +126,43 @@ class OrderPlaceAfter implements ObserverInterface
                 // set times_used
                 if (isset($infoRequest['freegift_rule_data']) && isset($infoRequest['free_sales_key'])) {
                     $collection = $this->_ruleFactory->create()->getCollection();
-                    $applied_rules = array();
-                    foreach($infoRequest['freegift_rule_data'] as $ruleData){
+                    $applied_rules = [];
+                    foreach ($infoRequest['freegift_rule_data'] as $ruleData) {
                         $applied_rules[] = $ruleData['rule_id'];
                     }
-                    if (sizeof($applied_rules))
+                    if (count($applied_rules)) {
                         foreach ($applied_rules as $rule_id) {
                             // increase time_used
                             if (!in_array($rule_id, $rule_inserted)) {
-//                                $sql = "UPDATE {$collection->getTable('freegift/rule')} SET times_used=times_used+1 WHERE rule_id={$rule_id}";
-//                                $con->query($sql);
+    //                                $sql = "UPDATE {$collection->getTable('freegift/rule')} SET times_used=times_used+1 WHERE rule_id={$rule_id}";
+    //                                $con->query($sql);
                                 $ruleData = $collection->addFieldToFilter('rule_id', $rule_id)->getFirstItem();
                                 $timeUsed = $ruleData->getTimesUsed();
                                 $collection->getFirstItem()->setTimesUsed($timeUsed + 1)->save();
                                 $rule_inserted[] = $rule_id;
                             }
                         }
+                    }
                 }
                 //Sales Rules
                 if (isset($infoRequest['free_sales_key']) && isset($infoRequest['freegift_rule_data'])) {
                     $collectionSalesRule = $this->_salesruleFactory->create()->getCollection();
-                    $applied_salesrules = array();
-                    foreach($infoRequest['freegift_rule_data'] as $salesruleData){
+                    $applied_salesrules = [];
+                    foreach ($infoRequest['freegift_rule_data'] as $salesruleData) {
                         $applied_salesrules[] = $salesruleData['rule_id'];
                     }
-                    if (sizeof($applied_salesrules)){
+                    if (count($applied_salesrules)) {
                         foreach ($applied_salesrules as $salesrule_id) {
                             // increase time_used
                             if (!in_array($salesrule_id, $sales_rule_inserted)) {
                                 $sql = "UPDATE {$collectionSalesRule->getTable('mw_freegift_salesrule')} SET times_used=times_used+1 WHERE rule_id={$salesrule_id}";
                                 $con->query($sql);
-//                                $ruleData = $collectionSalesRule->addFieldToFilter('rule_id', $salesrule_id)->getFirstItem();
-//                                $timeUsed = $ruleData->getTimesUsed();
-//                                $collectionSalesRule->setTimesUsed($timeUsed + 1)->save();
                                 $sales_rule_inserted[] = $salesrule_id;
                             }
                         }
                     }
 
-                    if(isset($infoRequest['freegift_coupon_code'])){
+                    if (isset($infoRequest['freegift_coupon_code'])) {
                         $couponSalesRule = $infoRequest['freegift_coupon_code'];
                     }
                 }
@@ -199,7 +196,7 @@ class OrderPlaceAfter implements ObserverInterface
             }
 
             $couponCollection = $this->_couponFactory->create()->getCollection();
-            $couponData = $couponCollection->addFieldToFilter('code',$couponSalesRule)->getFirstItem();
+            $couponData = $couponCollection->addFieldToFilter('code', $couponSalesRule)->getFirstItem();
             if ($couponData->getId()) {
                 $couponData->setTimesUsed($couponData->getTimesUsed() + 1);
                 $couponData->save();
@@ -210,7 +207,6 @@ class OrderPlaceAfter implements ObserverInterface
         }
         return $this;
     }
-
 
     protected function resetSession()
     {

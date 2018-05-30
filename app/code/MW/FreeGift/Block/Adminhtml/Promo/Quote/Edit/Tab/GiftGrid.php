@@ -161,7 +161,6 @@ class GiftGrid extends Extended
             );
         }
         if ($store->getId()) {
-            //$collection->setStoreId($store->getId());
             $collection->addStoreFilter($store);
             $collection->joinAttribute(
                 'name',
@@ -233,7 +232,7 @@ class GiftGrid extends Extended
     public function getTreeSelectedStores()
     {
         $gift_product_ids = $this->getRequest()->getParam('gift_product_ids');
-        if(is_array($gift_product_ids) && !empty($gift_product_ids)) {
+        if (is_array($gift_product_ids) && !empty($gift_product_ids)) {
             $ids = $gift_product_ids;
         } else {
             $ids = $this->_getSelectedProducts();
@@ -246,7 +245,7 @@ class GiftGrid extends Extended
         $productIds = '';
         $model = $this->_getRule();
 
-        if(isset($model) && $model->getGiftProductIds()) {
+        if (isset($model) && $model->getGiftProductIds()) {
             $productIds = $model->getGiftProductIds();
         }
 
@@ -298,7 +297,6 @@ class GiftGrid extends Extended
      */
     protected function _prepareColumns()
     {
-//        if (!$this->getCategory()->getProductsReadonly()) {
             $this->addColumn(
                 'product_ids',
                 [
@@ -312,7 +310,6 @@ class GiftGrid extends Extended
 
                 ]
             );
-//        }
 
         $this->addColumn(
             'entity_id',
@@ -441,30 +438,6 @@ class GiftGrid extends Extended
                 ]
             );
         }
-
-//        $this->addColumn(
-//            'edit',
-//            [
-//                'header' => __('Edit'),
-//                'type' => 'action',
-//                'getter' => 'getId',
-//                'actions' => [
-//                    [
-//                        'caption' => __('Edit'),
-//                        'url' => [
-//                            'base' => '*/*/edit',
-//                            'params' => ['store' => $this->getRequest()->getParam('store')]
-//                        ],
-//                        'field' => 'id'
-//                    ]
-//                ],
-//                'filter' => false,
-//                'sortable' => false,
-//                'index' => 'stores',
-//                'header_css_class' => 'col-action',
-//                'column_css_class' => 'col-action'
-//            ]
-//        );
 
         $block = $this->getLayout()->getBlock('grid.bottom.links');
         if ($block) {

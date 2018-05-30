@@ -62,23 +62,19 @@ class ApplySalesrule implements ObserverInterface
 
         $salesruleData = [];
         $gift_sales_product_ids = [];
-        $rule_ids = explode(',',$quote->getFreegiftAppliedRuleIds());
+        $rule_ids = explode(',', $quote->getFreegiftAppliedRuleIds());
 
-        foreach($rule_ids as $rule_id){
+        foreach ($rule_ids as $rule_id) {
             $salesrule = $this->_salesRuleFactory->create()->load($rule_id);
-            if($salesrule->getId()){
+            if ($salesrule->getId()) {
                 $salesruleData[$rule_id] = $salesrule->getData();
             }
         }
         $gift_sales_product_ids = $this->helperFreeGift->getGiftDataBySalesRule($salesruleData);
-
-
         if (!empty($salesruleData)) {
-            if(count($gift_sales_product_ids) > 0){
+            if (!empty($gift_sales_product_ids)) {
                 $this->checkoutSession->setGiftSalesProductIds($gift_sales_product_ids);
             }
         }
     }
-
-
 }

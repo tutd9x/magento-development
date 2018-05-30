@@ -40,13 +40,6 @@
                     </comment>
                 </field>
             </group>
-            <group id="group_report" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label>Report Time</label>
-                <field id="report_from" translate="label" type="date" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Report from date</label>
-                    <frontend_model>MW\FreeGift\Block\Adminhtml\System\Config\Date</frontend_model>
-                </field>
-            </group>
             <group id="group_social" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Social Sharing Setting</label>
                 <field id="facebookid" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">

@@ -1,23 +1,15 @@
 <?php
 $blockFreeGift= $block->getLayout()->createBlock('MW\FreeGift\Block\Category\FreeGifts');
-$ProductGiftData = $blockFreeGift->getProductGiftsDeleted();
-$ProductGiftSalesRuleData = $blockFreeGift->getFreeGiftSalesRuleAvailable(); //cho Shopping cart
-//\Zend_Debug::dump($ProductGiftSalesRuleData); die;
-//\Zend_Debug::dump($blockFreeGift->isAbleSalesRuleGift()); die;
-//\Zend_Debug::dump($ProductGiftSalesRuleData); die();
+$ProductGiftData = $blockFreeGift->getProductGiftsDeleted(); //for catalog Rule
+$ProductGiftSalesRuleData = $blockFreeGift->getFreeGiftSalesRuleAvailable(); //for shopping cart Rule
 if(count($ProductGiftData) > 0 || count($ProductGiftSalesRuleData) > 0):
     ?>
-    <style>
-        .disableGift{
-            opacity: 0.2;
-        }
-    </style>
     <div id="mw-fg-slider-cart">
         <script type="text/javascript">
             hasGiftProduct = true;
         </script>
         <div class="mw-fg-cart-title">
-            <strong><?php echo 'Select your free gift'; ?></strong>
+            <strong><?php echo __('Select your free gift'); ?></strong>
         </div>
 
         <div id="the-carousel" class="bcarousel">
@@ -25,12 +17,12 @@ if(count($ProductGiftData) > 0 || count($ProductGiftSalesRuleData) > 0):
                 <?php foreach($ProductGiftData as $giftData):
 
                     $product = $blockFreeGift->getProductGiftData($giftData['product_gift_id']);
-                    if(($product->getTypeId() != "simple") && ($product->getTypeId() == "configurable")){ ?>
+                    if (($product->getTypeId() != "simple") && ($product->getTypeId() == "configurable")) { ?>
                         <?php
                         $r_id = $giftData['rule_id'];
                         $paramRule = '?freegift=1'.'&rule_id='. $r_id.'&apllied_rule='.$r_id.'&qty='.$giftData['qty'].'&options=cart';
                         $urlAddToCart = $product->getProductUrl().$paramRule;
-                        //\Zend_Debug::dump($giftData); die; ?>
+                        ?>
                         <li class="mw-fg-items">
                             <a id="stay-target-<?php echo $giftData['freegift_parent_key'].'_'.$giftData['product_gift_id']; ?>" href="<?php echo $product->getProductUrl(); ?>" href="<?php echo $product->getProductUrl()?>" title="<?php echo $blockFreeGift->escapeHtml($product->getName()); ?>" class="product-image">
                                 <img src="<?php echo $this->helper('Magento\Catalog\Helper\Image')->init($product, 'category_page_list')->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(TRUE)->resize(140,135)->getUrl(); ?>" width="140" height="135" alt="<?php echo $blockFreeGift->escapeHtml($product->getName()); ?>" />
@@ -85,7 +77,7 @@ if(count($ProductGiftData) > 0 || count($ProductGiftSalesRuleData) > 0):
                             </div>
                         </li>
 
-                    <?php }else{
+                    <?php } else {
                     if($product->isSaleable()) :
                         ?>
 
@@ -140,20 +132,12 @@ if(count($ProductGiftData) > 0 || count($ProductGiftSalesRuleData) > 0):
                 <?php endforeach; ?>
 
                 <?php foreach($ProductGiftSalesRuleData as $giftData):
+
                     $product = $blockFreeGift->getProductGiftData($giftData['rule_gift_ids']);
-
-
-//                    $product->getProductUrl()
                     $r_id = $giftData['rule_id'];
                     $paramRule = '?freegift=1'.'&rule_id='. $r_id.'&apllied_rule='.$r_id.'&options=cart';
                     $urlAddToCart = $product->getProductUrl().$paramRule;
-//                    \Zend_Debug::dump($product->getProductUrl().$arr); die;
-//                        $couponC = $couponCode[$rule->getId()];
-//                        $urlProduct = $product -> getProductUrl() . "?freegift=1&freegift_with_code=1&freegift_coupon_code=$couponC&rule_id=$r_id";
-//                        $attr_data = "data-freegift-code=".$couponC." data-rule-id='".$r_id."' data-ffg-type='coupon'";
-
                     $mw_class_rule = 'mw_rule' . $r_id;
-
 
                     if(($product->getTypeId() != "simple") && ($product->getTypeId() == "configurable")){ ?>
                         <li class="mw-fg-items">
@@ -185,7 +169,7 @@ if(count($ProductGiftData) > 0 || count($ProductGiftSalesRuleData) > 0):
                                     <div class="mw-hidden-product-type" data-product-type-id="<?php echo $product->getTypeId()?>"></div>
                                     <?php
                                     $addToCartUrl =  $blockFreeGift->getAddToCartUrl($product);
-                                    if($giftData['is_able'] == 1){
+                                    if ($giftData['is_able'] == 1) {
                                         ?>
                                     <input type="hidden" name="free_sales_key" value="<?php echo $giftData['rule_id'].'_'.$giftData['gift_id'].'_'.$giftData['number_of_free_gift']; ?>">
                                     <input type="hidden" name="rule_name" value="<?php echo $giftData['rule_name']; ?>">
@@ -241,7 +225,7 @@ if(count($ProductGiftData) > 0 || count($ProductGiftSalesRuleData) > 0):
                                         <div class="mw-hidden-product-type" data-product-type-id="<?php echo $product->getTypeId()?>"></div>
                                         <?php
                                         $addToCartUrl =  $blockFreeGift->getAddToCartUrl($product);
-                                        if($giftData['is_able'] == 1){
+                                        if($giftData['is_able'] == 1) {
                                             ?>
                                             <form data-role="tocart-form" data-product-sku="<?=  /* @NoEscape */ $product->getSku() ?>" action="<?php echo $addToCartUrl ?>" method="post">
                                                 <input type="hidden" name="free_sales_key" value="<?php echo $giftData['rule_id'].'_'.$giftData['gift_id'].'_'.$giftData['number_of_free_gift']; ?>">
@@ -271,3 +255,6 @@ if(count($ProductGiftData) > 0 || count($ProductGiftSalesRuleData) > 0):
     <div id="mw-fg-slider-cart">
     </div>
 <?php endif; ?>
+<script type="text/javascript">
+    var mw_baseUrl = '<?php echo $block->_getBaseUrl() ?>';
+</script>

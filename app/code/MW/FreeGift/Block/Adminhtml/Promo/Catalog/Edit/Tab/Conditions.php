@@ -172,9 +172,9 @@ class Conditions extends Generic implements TabInterface
             ->setRenderer($this->_conditions);
 
         if ($model->getId()) {
-            if($model->getConditionCustomized() != '') {
+            if ($model->getConditionCustomized() != '') {
                 $custom_cdn = unserialize($model->getConditionCustomized());
-                if(isset($custom_cdn['buy_x_get_y'])) {
+                if (isset($custom_cdn['buy_x_get_y'])) {
                     $data['buy_x'] = (isset($custom_cdn['buy_x_get_y']['bx'])) ? $custom_cdn['buy_x_get_y']['bx'] : 1;
                     $data['get_y'] = (isset($custom_cdn['buy_x_get_y']['gy'])) ? $custom_cdn['buy_x_get_y']['gy'] : 1;
                     $model->setBuyX($data['buy_x']);

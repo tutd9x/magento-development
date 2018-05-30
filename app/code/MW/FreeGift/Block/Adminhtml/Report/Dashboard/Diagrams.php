@@ -32,22 +32,6 @@ class Diagrams extends \Magento\Backend\Block\Widget\Tabs
      */
     protected function _prepareLayout()
     {
-//        $this->addTab(
-//            'orders',
-//            [
-//                'label' => __('Orders'),
-//                'content' => $this->getLayout()->createBlock('MW\FreeGift\Block\Adminhtml\Promo\Dashboard\Tab\Orders')->toHtml(),
-//                'active' => true
-//            ]
-//        );
-//
-//        $this->addTab(
-//            'amounts',
-//            [
-//                'label' => __('Amounts'),
-//                'content' => $this->getLayout()->createBlock('MW\FreeGift\Block\Adminhtml\Promo\Dashboard\Tab\Amounts')->toHtml()
-//            ]
-//        );
         return parent::_prepareLayout();
     }
 }

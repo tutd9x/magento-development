@@ -55,14 +55,14 @@ class RulesApplier
         $items = $address->getAllVisibleItems();
         $weight = 0;
         $qty = 0;
-        foreach($items as $it){
+        foreach ($items as $it) {
             $params = unserialize($it->getOptionByCode('info_buyRequest')->getValue());
-            if(!isset($params['freegift']) && !isset($params['free_catalog_gift'])) {
+            if (!isset($params['freegift']) && !isset($params['free_catalog_gift'])) {
                 $weight = $weight + ($it->getWeight() * $it->getQty());
                 $qty = $qty + $it->getQty();
             }
         }
-        $temp_rule = array();
+        $temp_rule = [];
         $this->checkoutSession->setRulegifts($temp_rule);
 
         $appliedRuleIds = [];
@@ -96,9 +96,9 @@ class RulesApplier
             $appliedRuleIds[$rule->getRuleId()] = $rule->getRuleId();
             $freegiftIds = $this->validatorUtility->mergeIds($freegiftIds, $rule->getData('gift_product_ids'));
 
-            if($rule->getData('use_auto_generation') == 1){
+            if ($rule->getData('use_auto_generation') == 1) {
                 $freegiftCode = $rule->getData('code');
-            }else{
+            } else {
                 $freegiftCode = $rule->getData('coupon_code');
             }
             $freegiftCouponCode = $this->validatorUtility->mergeIds($freegiftCouponCode, $freegiftCode);
@@ -108,13 +108,12 @@ class RulesApplier
         }
 
 
-        $myId = array();
+        $myId = [];
         $quoteid = $this->checkoutSession->getQuote();
         $cartItems = $quoteid->getAllVisibleItems();
-        foreach ($cartItems as $item)
-        {
+        foreach ($cartItems as $item) {
             $productId = $item->getProductId();
-            array_push($myId,$productId);
+            array_push($myId, $productId);
         }
         $this->checkoutSession->setProductgiftid($myId);
 
@@ -135,7 +134,7 @@ class RulesApplier
     {
         $address = $item->getAddress();
         $quote = $item->getQuote();
-        if (count($appliedRuleIds) > 0) {
+        if (!empty($appliedRuleIds)) {
             $quote->setFreegiftAppliedRuleIds($this->validatorUtility->mergeIds([], $appliedRuleIds));
             $item->setFreegiftAppliedRuleIds($this->validatorUtility->mergeIds([], $appliedRuleIds));
         } else {

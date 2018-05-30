@@ -84,7 +84,6 @@ class CouponManagementService implements \MW\FreeGift\Api\CouponManagementInterf
                     $couponSpec->getRuleId()
                 );
             }
-//            if (!($rule->getUseAutoGeneration() || $rule->getCouponType() == $rule::COUPON_TYPE_AUTO)) {
             if (!($rule->getUseAutoGeneration() || $rule->getCouponType() == '3')) {
                 throw new \Magento\Framework\Exception\LocalizedException(
                     __('Specified rule does not allow automatic coupon generation')

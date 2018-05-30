@@ -115,7 +115,7 @@ class GiftForm extends Generic implements TabInterface
         $fieldset = $form->addFieldset($fieldsetId, ['legend' => __('Update gift items using following information')]);
 
         $stopRulesProcessing = 0;
-        if(isset($model) && $model->getStopRulesProcessing()) {
+        if (isset($model) && $model->getStopRulesProcessing()) {
             $stopRulesProcessing = $model->getStopRulesProcessing();
         }
 
@@ -132,7 +132,7 @@ class GiftForm extends Generic implements TabInterface
             ]
         );
 
-        if(isset($model)) {
+        if (isset($model)) {
             $form->setValues($model->getData());
         }
         return $form;

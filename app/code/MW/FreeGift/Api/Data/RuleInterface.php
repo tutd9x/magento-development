@@ -155,20 +155,4 @@ interface RuleInterface
      * @return $this
      */
     public function setExtensionAttributes(\Magento\CatalogRule\Api\Data\RuleExtensionInterface $extensionAttributes);
-
-    /**
-     * Set is buy_x
-     *
-     * @param int|string $buy_x
-     * @return $this
-     */
-//    public function setBuyX($buyX);
-
-    /**
-     * Set is get_y
-     *
-     * @param int|string $get_y
-     * @return $this
-     */
-//    public function setGetY($getY);
 }

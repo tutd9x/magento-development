@@ -141,15 +141,9 @@ class Utility
          * check rule with social sharing
          * */
         $temp_rule = $this->checkoutSession->getRulegifts();
-        if($rule->getEnableSocial() == '1'){
-
-            array_push($temp_rule,$rule->getData());
+        if ($rule->getEnableSocial() == '1') {
+            array_push($temp_rule, $rule->getData());
             $this->checkoutSession->setRulegifts($temp_rule);
-
-//            $google_plus    = $rule->getGooglePlus();
-//            $like_fb        = $rule->getLikeFb();
-//            $share_fb       = $rule->getShareFb();
-//            $twitter        = $rule->getTwitter();
 
             // check trang thai cua action share social, neu dung thi hien thi free gift, neu sai thi khong hien thi.
             $google_plus    = $this->checkoutSession->getGooglePlus();
@@ -157,8 +151,8 @@ class Utility
             $share_fb       = $this->checkoutSession->getShareFb();
             $twitter        = $this->checkoutSession->getTwitter();
 
-            if( $google_plus == true || $like_fb == true || $share_fb == true || $twitter == true ){
-            }else{
+            if ($google_plus == true || $like_fb == true || $share_fb == true || $twitter == true) {
+            } else {
                 $rule->setIsValidForAddress($address, false);
                 return false;
             }
@@ -178,92 +172,6 @@ class Utility
         $rule->setIsValidForAddress($address, true);
         return true;
     }
-
-    /**
-     * @param \MW\FreeGift\Model\SalesRule\Action\Discount\Data $discountData
-     * @param \Magento\Quote\Model\Quote\Item\AbstractItem $item
-     * @param float $qty
-     * @return void
-     */
-//    public function minFix(
-//        \MW\FreeGift\Model\SalesRule\Action\Discount\Data $discountData,
-//        \Magento\Quote\Model\Quote\Item\AbstractItem $item,
-//        $qty
-//    ) {
-//        $itemPrice = $this->getItemPrice($item);
-//        $baseItemPrice = $this->getItemBasePrice($item);
-//
-//        $itemDiscountAmount = $item->getDiscountAmount();
-//        $itemBaseDiscountAmount = $item->getBaseDiscountAmount();
-//
-//        $discountAmount = min($itemDiscountAmount + $discountData->getAmount(), $itemPrice * $qty);
-//        $baseDiscountAmount = min($itemBaseDiscountAmount + $discountData->getBaseAmount(), $baseItemPrice * $qty);
-//
-//        $discountData->setAmount($discountAmount);
-//        $discountData->setBaseAmount($baseDiscountAmount);
-//    }
-
-    /**
-     * Process "delta" rounding
-     *
-     * @param \MW\FreeGift\Model\SalesRule\Action\Discount\Data $discountData
-     * @param \Magento\Quote\Model\Quote\Item\AbstractItem $item
-     * @return $this
-     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
-     */
-//    public function deltaRoundingFix(
-//        \MW\FreeGift\Model\SalesRule\Action\Discount\Data $discountData,
-//        \Magento\Quote\Model\Quote\Item\AbstractItem $item
-//    ) {
-//        $store = $item->getQuote()->getStore();
-//        $discountAmount = $discountData->getAmount();
-//        $baseDiscountAmount = $discountData->getBaseAmount();
-//
-//        //TODO Seems \Magento\Quote\Model\Quote\Item\AbstractItem::getDiscountPercent() returns float value
-//        //that can not be used as array index
-//        $percentKey = $item->getDiscountPercent();
-//        if ($percentKey) {
-//            $delta = isset($this->_roundingDeltas[$percentKey]) ? $this->_roundingDeltas[$percentKey] : 0;
-//            $baseDelta = isset($this->_baseRoundingDeltas[$percentKey]) ? $this->_baseRoundingDeltas[$percentKey] : 0;
-//
-//            $discountAmount += $delta;
-//            $baseDiscountAmount += $baseDelta;
-//
-//            $this->_roundingDeltas[$percentKey] = $discountAmount - $this->priceCurrency->round($discountAmount);
-//            $this->_baseRoundingDeltas[$percentKey] = $baseDiscountAmount
-//                - $this->priceCurrency->round($baseDiscountAmount);
-//        }
-//
-//        $discountData->setAmount($this->priceCurrency->round($discountAmount));
-//        $discountData->setBaseAmount($this->priceCurrency->round($baseDiscountAmount));
-//
-//        return $this;
-//    }
-
-    /**
-     * Return item price
-     *
-     * @param \Magento\Quote\Model\Quote\Item\AbstractItem $item
-     * @return float
-     */
-//    public function getItemPrice($item)
-//    {
-//        $price = $item->getDiscountCalculationPrice();
-//        $calcPrice = $item->getCalculationPrice();
-//        return $price === null ? $calcPrice : $price;
-//    }
-
-    /**
-     * Return item base price
-     *
-     * @param \Magento\Quote\Model\Quote\Item\AbstractItem $item
-     * @return float
-     */
-//    public function getItemBasePrice($item)
-//    {
-//        $price = $item->getDiscountCalculationPrice();
-//        return $price !== null ? $item->getBaseDiscountCalculationPrice() : $item->getBaseCalculationPrice();
-//    }
 
     /**
      * Return discount item qty

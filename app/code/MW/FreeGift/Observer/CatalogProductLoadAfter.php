@@ -50,8 +50,9 @@ class CatalogProductLoadAfter implements ObserverInterface
      */
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        if (!$this->helperFreeGift->getStoreConfig('mw_freegift/group_general/active'))
+        if (!$this->helperFreeGift->getStoreConfig('mw_freegift/group_general/active')) {
             return;
+        }
 
         $product = $observer->getProduct();
         $storeId = $product->getStoreId();
@@ -69,31 +70,16 @@ class CatalogProductLoadAfter implements ObserverInterface
         if (empty($ruleData)) {
             return;
         }
-        $gift_product_ids = $this->helperFreeGift->getGiftDataByRule($ruleData, TRUE);
-        if (count($gift_product_ids) > 0) {
+        $gift_product_ids = $this->helperFreeGift->getGiftDataByRule($ruleData, true);
+        if (!empty($gift_product_ids)) {
             $product->addCustomOption('mw_free_catalog_gift', 1);
 
             // fix for bundle product at model type
             if (!$product->getCustomOption('bundle_selection_ids')) {
-                $product->addCustomOption('bundle_selection_ids', serialize(array()));
+                $product->addCustomOption('bundle_selection_ids', serialize([]));
             }
         }
 
         return;
-    }
-
-    /**
-     * Generate content to log file debug.log By Hattetek.Com
-     *
-     * @param  $message string|array
-     * @return void
-     */
-    function xlog($message = 'null')
-    {
-        $log = print_r($message, true);
-        \Magento\Framework\App\ObjectManager::getInstance()
-            ->get('Psr\Log\LoggerInterface')
-            ->debug($log)
-        ;
     }
 }

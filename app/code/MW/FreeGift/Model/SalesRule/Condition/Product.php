@@ -30,7 +30,6 @@ class Product extends \Magento\Rule\Model\Condition\Product\AbstractProduct
      */
     public function validate(\Magento\Framework\Model\AbstractModel $model)
     {
-        //@todo reimplement this method when is fixed MAGETWO-5713
         /** @var \Magento\Catalog\Model\Product $product */
         $product = $model->getProduct();
         if (!$product instanceof \Magento\Catalog\Model\Product) {

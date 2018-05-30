@@ -21,10 +21,10 @@ class Save extends Quote
                 $model = $this->salesruleFactory->create();
                 $data = $this->getRequest()->getPostValue();
 
-                if( isset($data['rule_information']) ) {
+                if (isset($data['rule_information'])) {
                     $rule_information = ( isset($data['rule_information']) ? $data['rule_information'] : []);
                     unset($data['rule_information']);
-                    $data = array_merge($rule_information,$data);
+                    $data = array_merge($rule_information, $data);
                 }
 
                 $inputFilter = new \Zend_Filter_Input(
@@ -71,10 +71,10 @@ class Save extends Quote
 
                 unset($data['rule']);
 
-                if(isset($data['product_ids']) && $data['product_ids'] != ""){
-                    $selected_product_ids = str_replace("&on","",$data['product_ids']);
-                    $selected_product_ids = str_replace("&",",",$selected_product_ids);
-                    $selected_product_ids = rtrim($selected_product_ids,",");
+                if (isset($data['product_ids']) && $data['product_ids'] != "") {
+                    $selected_product_ids = str_replace("&on", "", $data['product_ids']);
+                    $selected_product_ids = str_replace("&", ",", $selected_product_ids);
+                    $selected_product_ids = rtrim($selected_product_ids, ",");
 
                     $data['gift_product_ids'] = $selected_product_ids;
                     unset($data['product_ids']);
@@ -94,7 +94,7 @@ class Save extends Quote
                     $data['promotion_banner'] = null;
                 }
 
-                if( isset($data['promotion_banner']) && $model->getData('promotion_banner') == $data['promotion_banner'] ) {
+                if (isset($data['promotion_banner']) && $model->getData('promotion_banner') == $data['promotion_banner']) {
                     unset($data['promotion_banner']);
                 }
 
@@ -114,7 +114,6 @@ class Save extends Quote
                 }
                 $this->_redirect('*/*/');
                 return;
-
             } catch (\Magento\Framework\Exception\LocalizedException $e) {
                 $this->messageManager->addError($e->getMessage());
                 if (!empty($id)) {

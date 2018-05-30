@@ -47,17 +47,13 @@ class Save extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
     {
         if ($this->getRequest()->getPostValue()) {
             /** @var \MW\FreeGift\Model\Rule $model */
-            $model = $this->ruleFactory->create(); //$this->_objectManager->create('MW\FreeGift\Model\Rule');
+            $model = $this->ruleFactory->create();
             try {
-//                $this->_eventManager->dispatch(
-//                    'adminhtml_controller_catalogrule_prepare_save',
-//                    ['request' => $this->getRequest()]
-//                );
                 $data = $this->getRequest()->getPostValue();
-                if( isset($data['rule_information']) ){
+                if (isset($data['rule_information'])) {
                     $rule_information = ( isset($data['rule_information']) ? $data['rule_information'] : []);
                     unset($data['rule_information']);
-                    $data = array_merge($rule_information,$data);
+                    $data = array_merge($rule_information, $data);
                 }
 
                 $inputFilter = new \Zend_Filter_Input(
@@ -73,7 +69,7 @@ class Save extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
                     if ($id != $model->getId()) {
                         throw new LocalizedException(__('Wrong rule specified.'));
                     }
-                }else{
+                } else {
                     unset($data['rule_id']);
                 }
 
@@ -90,7 +86,7 @@ class Save extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
                 }
 
                 /* [bX-gY] */
-                if(isset($data['buy_x'])){
+                if (isset($data['buy_x'])) {
                     $custom_cdn['buy_x_get_y']['bx'] = ( isset($data['buy_x']) ? (int)$data['buy_x'] : 1);
                     $custom_cdn['buy_x_get_y']['gy'] = ( isset($data['get_y']) ? (int)$data['get_y'] : 1);
                     $custom_cdn = serialize($custom_cdn);
@@ -98,23 +94,20 @@ class Save extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
                 }
                 /* [bX-gY] */
 
-
-                if( isset($data['rule']) ){
+                if (isset($data['rule'])) {
                     $data['conditions'] = ( isset($data['rule']['conditions']) ? $data['rule']['conditions'] : []);
                     unset($data['rule']);
                 }
-                if(isset($data['product_ids']) && $data['product_ids'] != ""){
-
-                    $selected_product_ids = str_replace("&on","",$data['product_ids']);
-                    $selected_product_ids = str_replace("&",",",$selected_product_ids);
-                    $selected_product_ids = rtrim($selected_product_ids,",");
+                if (isset($data['product_ids']) && $data['product_ids'] != "") {
+                    $selected_product_ids = str_replace("&on", "", $data['product_ids']);
+                    $selected_product_ids = str_replace("&", ",", $selected_product_ids);
+                    $selected_product_ids = rtrim($selected_product_ids, ",");
 
                     $data['gift_product_ids'] = $selected_product_ids;
                     unset($data['product_ids']);
                 }
 
                 $model->loadPost($data);
-                //$model->setData('condition_customized', $custom_cdn);
                 $this->_objectManager->get('Magento\Backend\Model\Session')->setPageData($model->getData());
                 $this->dataPersistor->set('catalog_rule', $data);
 

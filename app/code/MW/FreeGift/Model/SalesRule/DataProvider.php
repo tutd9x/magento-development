@@ -100,10 +100,8 @@ class DataProvider extends \Magento\Ui\DataProvider\AbstractDataProvider
         /** @var SalesRule $rule */
         foreach ($items as $rule) {
             $rule->load($rule->getId());
-//            $rule->setDiscountAmount($rule->getDiscountAmount() * 1);
-//            $rule->setDiscountQty($rule->getDiscountQty() * 1);
 
-            if ($rule['promotion_banner']):
+            if ($rule['promotion_banner']) :
                 $img = [];
                 $img[0]['tmp_name'] = $rule['promotion_banner'];
                 $img[0]['name'] = $rule['promotion_banner'];

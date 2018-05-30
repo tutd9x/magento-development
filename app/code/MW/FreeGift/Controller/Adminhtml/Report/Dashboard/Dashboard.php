@@ -32,16 +32,14 @@ class Dashboard extends \MW\FreeGift\Controller\Adminhtml\Promo\Dashboard
     public function execute()
     {
         /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
-        if($this->getRequest()->getPost('ajax') == 'true'){
+        if ($this->getRequest()->getPost('ajax') == 'true') {
             $data = $this->getRequest()->getPostValue();
-            switch($this->getRequest()->getPost('type'))
-            {
+            switch ($this->getRequest()->getPost('type')) {
                 case 'dashboard':
                     $dataReport = $this->_objectManager->create('MW\FreeGift\Model\Report')->prepareCollection($data);
                     return $this->getResponse()->setBody($dataReport);
                     break;
             }
-            exit;
         }
         return $this->getResponse()->setBody([]);
     }

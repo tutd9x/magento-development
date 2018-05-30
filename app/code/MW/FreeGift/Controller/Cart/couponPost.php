@@ -17,13 +17,6 @@ class CouponPost extends \Magento\Checkout\Controller\Cart
      */
     protected $couponFactory;
 
-//    /**
-//     * Core event manager proxy
-//     *
-//     * @var \Magento\Framework\Event\ManagerInterface
-//     */
-//    protected $_eventManager = null;
-
     /**
      * @param \Magento\Framework\App\Action\Context $context
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
@@ -44,7 +37,6 @@ class CouponPost extends \Magento\Checkout\Controller\Cart
         \Magento\Checkout\Model\Cart $cart,
         \MW\FreeGift\Model\CouponFactory $couponFactory,
         \Magento\Quote\Api\CartRepositoryInterface $quoteRepository
-//        \Magento\Framework\Event\ManagerInterface $eventManager
     ) {
         parent::__construct(
             $context,
@@ -56,7 +48,6 @@ class CouponPost extends \Magento\Checkout\Controller\Cart
         );
         $this->couponFactory = $couponFactory;
         $this->quoteRepository = $quoteRepository;
-//        $this->_eventManager = $eventManager;
     }
 
     /**
@@ -119,7 +110,7 @@ class CouponPost extends \Magento\Checkout\Controller\Cart
                                 $escaper->escapeHtml($couponCode)
                             )
                         );
-                    } else if($isCodeLengthValid && $couponCode == $cartQuote->getFreegiftCouponCode()){
+                    } elseif ($isCodeLengthValid && $couponCode == $cartQuote->getFreegiftCouponCode()) {
                         $this->messageManager->addSuccess(
                             __(
                                 'You used free gift code "%1".',

@@ -1,14 +1,12 @@
 <?php
 namespace MW\FreeGift\Block;
+
 use Magento\Store\Model\ScopeInterface;
+
 class Quote extends \Magento\Framework\View\Element\Template
 {
     protected $checkoutSession;
     protected $sessionManager;
-//    protected $_coreRegistry;
-//    protected $helperFreeGift;
-//    protected $_resourceRule;
-//    protected $productRepository;
     protected $_scopeConfig;
     protected $salesruleModel;
     /**
@@ -40,40 +38,37 @@ class Quote extends \Magento\Framework\View\Element\Template
         $quote           = $this->checkoutSession->getQuote();
         $store           = $this->_storeManager->getStore($quote->getStoreId());
         $websiteId       = $store->getWebsiteId();
-        //$websiteId       = Mage::app()->getStore($quote->getStoreId())->getWebsiteId();
         $customerGroupId = $quote->getCustomerGroupId() ? $quote->getCustomerGroupId() : 0;
         $flagRule            = $this->_session->getFlagRule();
 
-        $arrRule = explode(",",$flagRule);
+        $arrRule = explode(",", $flagRule);
         $allowRule = $arrRule;
         $collection = $this->_salesruleCollectionFactory->create()->setValidationFilter($websiteId, $customerGroupId);
 
         $aplliedRuleIds = $this->checkoutSession->getQuote()->getFreegiftAppliedRuleIds();
-        $arrRuleApllieds = explode(',',$aplliedRuleIds);
+        $arrRuleApllieds = explode(',', $aplliedRuleIds);
 
-//        $collection->getSelect()->where('((discount_qty > times_used) or (discount_qty=0))');
         $collectionSaleRule = $this->_salesruleCollectionFactory->create()->setOrder("sort_order", "ASC");
         $collectionSaleRule->getSelect()->where('is_active = 1');
-        $listSaleRule = array();
+        $listSaleRule = [];
         foreach ($collectionSaleRule as $saleRule) {
-            if(in_array($saleRule->getId(),$arrRuleApllieds)){
-                if($saleRule->getStopRulesProcessing()){
+            if (in_array($saleRule->getId(), $arrRuleApllieds)) {
+                if ($saleRule->getStopRulesProcessing()) {
                     $listSaleRule[] = $saleRule->getId();
                     break;
                 }
             }
             $listSaleRule[] = $saleRule->getId();
         }
-        $collection->addFieldToFilter('rule_id', array(
+        $collection->addFieldToFilter('rule_id', [
             'in' => $listSaleRule
-        ));
+        ]);
 
-        if (sizeof($arrRuleApllieds)){
-            $collection->addFieldToFilter('rule_id', array(
+        if (sizeof($arrRuleApllieds)) {
+            $collection->addFieldToFilter('rule_id', [
                 'nin' => $arrRuleApllieds
-            ));
+            ]);
         }
-        //$this->xlog(serialize($collection->getData()));
         return $collection;
     }
     public function getRandomRule()
@@ -85,17 +80,20 @@ class Quote extends \Magento\Framework\View\Element\Template
 
     public function _toHtml()
     {
-        if (!$this->_scopeConfig->getValue('mw_freegift/group_general/active',ScopeInterface::SCOPE_STORE))
+        if (!$this->_scopeConfig->getValue('mw_freegift/group_general/active', ScopeInterface::SCOPE_STORE)) {
             return '<div class="freegift_rules_container"></div>';
-        if (!sizeof($this->getAllActiveRules()))
+        }
+        if (!count($this->getAllActiveRules())) {
             return '<div class="freegift_rules_container"></div>';
+        }
 
         return $this->fetchView($this->getTemplateFile());
     }
-    function xlog($message = 'null'){
-        \Magento\Framework\App\ObjectManager::getInstance()
-            ->get('Psr\Log\LoggerInterface')
-            ->debug($message)
-        ;
+
+    public function _getBaseUrl()
+    {
+        /* @var \Magento\Store\Model\Store $store */
+        $store = $this->_storeManager->getStore();
+        return $store->getBaseUrl();
     }
 }

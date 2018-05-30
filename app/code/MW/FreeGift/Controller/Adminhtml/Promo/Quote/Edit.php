@@ -48,7 +48,6 @@ class Edit extends Quote
 
         $this->_coreRegistry->register('current_promo_sales_rule', $model);
 
-//        $resultPage = $this->resultPageFactory->create();
         if ($id) {
             $model->load($id);
             if (!$model->getRuleId()) {
@@ -60,12 +59,6 @@ class Edit extends Quote
             $model->getConditions()->setJsFormObject(
                 $model->getConditionsFieldSetId($model->getConditions()->getFormName())
             );
-//            $model->getActions()->setFormName('sales_rule_form');
-//            $model->getActions()->setJsFormObject(
-//                $model->getActionsFieldSetId($model->getActions()->getFormName())
-//            );
-
-//            $resultPage->getLayout()->getBlock('promo_sales_rule_edit_tab_coupons')->setCanShow(true);
         }
 
         // set entered data if was error when we do save

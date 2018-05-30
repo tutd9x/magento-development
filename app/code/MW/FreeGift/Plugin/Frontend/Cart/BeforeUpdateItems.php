@@ -46,7 +46,7 @@ class BeforeUpdateItems
         }
 
         $infoDataObject = new \Magento\Framework\DataObject($data);
-        if($infoDataObject) {
+        if ($infoDataObject) {
             foreach ($infoDataObject->getData() as $itemId => $itemInfo) {
                 $item = $this->getQuote()->getItemById($itemId);
                 if ($this->_isSalesGift($item)) {
@@ -78,13 +78,12 @@ class BeforeUpdateItems
             $item = $item->getParentItem();
         }
 
-        if($item->getOptionByCode('free_catalog_gift') && $item->getOptionByCode('free_catalog_gift')->getValue() == 1){
+        if ($item->getOptionByCode('free_catalog_gift') && $item->getOptionByCode('free_catalog_gift')->getValue() == 1) {
             return true;
         }
 
         return false;
     }
-
 
     private function _isSalesGift($item)
     {
@@ -93,7 +92,7 @@ class BeforeUpdateItems
             $item = $item->getParentItem();
         }
 
-        if($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1){
+        if ($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1) {
             return true;
         }
 

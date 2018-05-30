@@ -95,7 +95,7 @@ class AfterUpdateItems implements ObserverInterface
 
         $data = $observer->getEvent()->getInfo();
         $dataUpdate = [];
-        if($data) {
+        if ($data) {
             foreach ($data->getData() as $itemId => $itemInfo) {
                 $item = $this->getQuote()->getItemById($itemId);
                 if (!$item) {
@@ -116,9 +116,8 @@ class AfterUpdateItems implements ObserverInterface
      */
     private function _processCatalogRule(\Magento\Quote\Model\Quote\Item $itemGift)
     {
-        if($itemGift->getOptionByCode('free_catalog_gift') && $itemGift->getOptionByCode('free_catalog_gift')->getValue() == 1) {
+        if ($itemGift->getOptionByCode('free_catalog_gift') && $itemGift->getOptionByCode('free_catalog_gift')->getValue() == 1) {
             if ($itemGift->getOptionByCode('info_buyRequest') && $infoGift = unserialize($itemGift->getOptionByCode('info_buyRequest')->getValue())) {
-
                 $freegift_parent_key = $infoGift['freegift_parent_key'];
                 $qtyToUpdate = 0;
                 foreach ($this->getQuote()->getAllItems() as $item) {
@@ -137,14 +136,11 @@ class AfterUpdateItems implements ObserverInterface
                         }
 
                         foreach ($result as $key) {
-
                             $ruleData = $infoGift['freegift_rule_data'][$key];
                             $buy_x = $ruleData['buy_x'];
                             $infoGift['freegift_qty_info'][$key] = ($buy_x * $item->getQty());
                             $qtyToUpdate += ($buy_x * $item->getQty());
                         }
-
-
                     }
                 }
 
@@ -176,13 +172,12 @@ class AfterUpdateItems implements ObserverInterface
             $item = $item->getParentItem();
         }
 
-        if($item->getOptionByCode('free_catalog_gift') && $item->getOptionByCode('free_catalog_gift')->getValue() == 1){
+        if ($item->getOptionByCode('free_catalog_gift') && $item->getOptionByCode('free_catalog_gift')->getValue() == 1) {
             return true;
         }
 
         return false;
     }
-
 
     private function _isSalesGift($item)
     {
@@ -191,11 +186,10 @@ class AfterUpdateItems implements ObserverInterface
             $item = $item->getParentItem();
         }
 
-        if($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1){
+        if ($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1) {
             return true;
         }
 
         return false;
     }
-
 }

@@ -50,12 +50,13 @@ class CatalogCategoryProductLoadBefore implements ObserverInterface
      */
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        if (!$this->helperFreeGift->getStoreConfig('mw_freegift/group_general/active'))
+        if (!$this->helperFreeGift->getStoreConfig('mw_freegift/group_general/active')) {
             return;
+        }
         $productIds = [];
         $collection = $observer->getCollection();
 
-        foreach($collection as $product){
+        foreach ($collection as $product) {
             $productIds[] = $product->getId();
 
             $storeId = $product->getStoreId();
@@ -69,29 +70,13 @@ class CatalogCategoryProductLoadBefore implements ObserverInterface
 
             $dateTs = $this->_localeDate->scopeTimeStamp($storeId);
             $ruleData = $this->_resourceRule->getRulesFromProduct($dateTs, $websiteId, $customerGroupId, $product->getId());
-            if(empty($ruleData)){
+            if (empty($ruleData)) {
                 continue;
             }
-            $gift_product_ids = $this->helperFreeGift->getGiftDataByRule($ruleData, TRUE);
-            if(count($gift_product_ids) > 0){
+            $gift_product_ids = $this->helperFreeGift->getGiftDataByRule($ruleData, true);
+            if (!empty($gift_product_ids)) {
                 $product->addCustomOption('mw_free_catalog_gift', '1');
             }
         }
     }
-
-    /**
-     * Generate content to log file debug.log By Hattetek.Com
-     *
-     * @param  $message string|array
-     * @return void
-     */
-    function xlog($message = 'null')
-    {
-        $log = print_r($message, true);
-        \Magento\Framework\App\ObjectManager::getInstance()
-            ->get('Psr\Log\LoggerInterface')
-            ->debug($log)
-        ;
-    }
-
 }

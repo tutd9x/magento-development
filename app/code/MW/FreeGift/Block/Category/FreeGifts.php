@@ -8,7 +8,6 @@
 
 namespace MW\FreeGift\Block\Category;
 
-
 class FreeGifts extends \Magento\Framework\View\Element\Template
 {
     protected $_coreRegistry;
@@ -23,7 +22,6 @@ class FreeGifts extends \Magento\Framework\View\Element\Template
 
     /** @var CheckoutSession */
     protected $_checkoutSession;
-
 
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
@@ -52,20 +50,15 @@ class FreeGifts extends \Magento\Framework\View\Element\Template
         $websiteId = $this->_storeManager->getStore($storeId)->getWebsiteId();
         $customerGroupId = $this->_customerSession->getCustomerGroupId();
         $dateTs = $this->_localeDate->scopeTimeStamp($storeId);
-        $freeGiftCatalogData = array();
+        $freeGiftCatalogData = [];
 
         if ($current_product == null) {
             $current_product = $this->getCurrentProduct();
         }
-//        if ($additionalOption = $current_product->getCustomOption('mw_free_catalog_gift'))
-//        {
-//            if($additionalOption->getValue() == 1){
-                $ruleGift = $this->_resourceRule->getRulesFromProduct($dateTs, $websiteId, $customerGroupId, $current_product->getProductId());
-                if(count($ruleGift)>0){
-                    $freeGiftCatalogData = $this->helperFreeGift->getGiftDataByRule($ruleGift);
-                }
-//            }
-//        }
+        $ruleGift = $this->_resourceRule->getRulesFromProduct($dateTs, $websiteId, $customerGroupId, $current_product->getProductId());
+        if (count($ruleGift)>0) {
+            $freeGiftCatalogData = $this->helperFreeGift->getGiftDataByRule($ruleGift);
+        }
         return $freeGiftCatalogData;
     }
 
@@ -73,8 +66,9 @@ class FreeGifts extends \Magento\Framework\View\Element\Template
     {
         $product_gift = null;
         $storeId = $this->_storeManager->getStore()->getId();
-        if(isset($productId) && $productId != "")
+        if (isset($productId) && $productId != "") {
             $product_gift = $this->productRepository->getById($productId, false, $storeId);
+        }
         return $product_gift;
     }
 
@@ -84,31 +78,40 @@ class FreeGifts extends \Magento\Framework\View\Element\Template
     }
 
     /* Get product thoa man cac rule*/
-    public function getProductGift(){
-        // @TODO
+    public function getProductGift()
+    {
         /** @var \Magento\Quote\Model\Quote  */
         $quote = $this->_checkoutSession->getQuote();
         $items = $quote->getAllVisibleItems();
-//        \Zend_Debug::dump(count($items)); die("items");
-        foreach($items as $item){
-            if($item->getOptionByCode('mw_free_catalog_gift') && $item->getOptionByCode('mw_free_catalog_gift')->getValue() == 1){
+        foreach ($items as $item) {
+            if ($item->getOptionByCode('mw_free_catalog_gift') && $item->getOptionByCode('mw_free_catalog_gift')->getValue() == 1) {
                 return $this->getFreeGiftCatalog($item);
             }
         }
-        return array();
+        return [];
     }
 
-    public function getProductGiftsDeleted(){
+    public function getProductGiftsDeleted()
+    {
         $productGiftsDeleted = $this->helperFreeGift->getProductGiftAvailable();
         return $productGiftsDeleted;
     }
 
-    public function getAddToCartUrl($product){
+    public function getAddToCartUrl($product)
+    {
         return $this->_listProduct->getAddToCartUrl($product);
     }
 
-    public function getFreeGiftSalesRuleAvailable(){
+    public function getFreeGiftSalesRuleAvailable()
+    {
         $productGiftsDeleted = $this->helperFreeGift->getProductGiftSalesRuleAvailable();
         return $productGiftsDeleted;
+    }
+
+    public function _getBaseUrl()
+    {
+        /* @var \Magento\Store\Model\Store $store */
+        $store = $this->_storeManager->getStore();
+        return $store->getBaseUrl();
     }
 }

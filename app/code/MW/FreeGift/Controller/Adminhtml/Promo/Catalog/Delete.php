@@ -35,5 +35,4 @@ class Delete extends \MW\FreeGift\Controller\Adminhtml\Promo\Catalog
         $this->messageManager->addError(__('We can\'t find a rule to delete.'));
         $this->_redirect('mw_freegift/*/');
     }
-
 }

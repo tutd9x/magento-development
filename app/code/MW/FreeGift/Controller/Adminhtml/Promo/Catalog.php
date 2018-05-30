@@ -7,8 +7,6 @@ use Magento\Framework\Registry;
 use Magento\Framework\Stdlib\DateTime\Filter\Date;
 use MW\FreeGift\Model\RuleFactory;
 
-//use Magento\Catalog\Controller\Product\View\ViewInterface;
-
 abstract class Catalog extends Action
 {
     /**
@@ -130,21 +128,4 @@ abstract class Catalog extends Action
         );
         return $this->_dirtyRulesNoticeMessage ? $this->_dirtyRulesNoticeMessage : $defaultMessage;
     }
-    /**
-     * Initialize requested product object
-     *
-//     * @return ModelProduct
-     */
-//    protected function _initProduct()
-//    {
-//        $categoryId = (int)$this->getRequest()->getParam('category', false);
-//        $productId = (int)$this->getRequest()->getParam('id');
-//
-//        $params = new \Magento\Framework\DataObject();
-//        $params->setCategoryId($categoryId);
-//
-//        /** @var \Magento\Catalog\Helper\Product $product */
-//        $product = $this->_objectManager->get('Magento\Catalog\Helper\Product');
-//        return $product->initProduct($productId, $this, $params);
-//    }
 }

@@ -1,9 +1,9 @@
 <?php
 namespace MW\FreeGift\Controller\Cart;
+
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Checkout\Model\Cart as CustomerCart;
 use Magento\Framework\Exception\NoSuchEntityException;
-
 
 class Index extends \Magento\Checkout\Controller\Cart
 {
@@ -51,8 +51,6 @@ class Index extends \Magento\Checkout\Controller\Cart
         $this->_ruleFactory = $ruleFactory;
     }
 
-
-
     /**
      * Add product to shopping cart action
      *
@@ -95,5 +93,4 @@ class Index extends \Magento\Checkout\Controller\Cart
             $this->_objectManager->get('Magento\Framework\Json\Helper\Data')->jsonEncode($result)
         );
     }
-
 }

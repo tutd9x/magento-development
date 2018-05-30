@@ -20,11 +20,6 @@ class Conditions extends Generic implements TabInterface
     protected $_conditions;
 
     /**
-     * @var string
-     */
-//    protected $_nameInLayout = 'conditions_apply_to';
-
-    /**
      * @var \MW\FreeGift\Model\SalesRuleFactory
      */
     private $ruleFactory;

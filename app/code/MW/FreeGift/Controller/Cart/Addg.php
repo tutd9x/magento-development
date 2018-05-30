@@ -1,9 +1,9 @@
 <?php
 namespace MW\FreeGift\Controller\Cart;
+
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Checkout\Model\Cart as CustomerCart;
 use Magento\Framework\Exception\NoSuchEntityException;
-
 
 class Addg extends \Magento\Checkout\Controller\Cart
 {
@@ -80,14 +80,15 @@ class Addg extends \Magento\Checkout\Controller\Cart
 
         $params = $this->getRequest()->getParams();
         try {
-            if($params['data_ffg_type'] == 'sale'){
+            if ($params['data_ffg_type'] == 'sale') {
                 $params['qty'] = 1;
-            }elseif($params['data_ffg_type'] == 'catalog'){
-                if(!$params['qty']) $params['qty'] = 1;
-            }else{
+            } elseif ($params['data_ffg_type'] == 'catalog') {
+                if (!$params['qty']) {
+                    $params['qty'] = 1;
+                }
+            } else {
                 $params['qty'] = 1;
             }
-
 
             $product = $this->_initProduct();
             $related = $this->getRequest()->getParam('related_product');
@@ -106,9 +107,6 @@ class Addg extends \Magento\Checkout\Controller\Cart
 
             $this->cart->save();
 
-            /**
-             * @todo remove wishlist observer \Magento\Wishlist\Observer\AddToCart
-             */
             $this->_eventManager->dispatch(
                 'checkout_cart_add_product_complete',
                 ['product' => $product, 'request' => $this->getRequest(), 'response' => $this->getResponse()]
@@ -146,7 +144,6 @@ class Addg extends \Magento\Checkout\Controller\Cart
             }
 
             return $url;
-
         } catch (\Exception $e) {
             $this->messageManager->addException($e, __('We can\'t add this item to your shopping cart right now.'));
             $this->_objectManager->get('Psr\Log\LoggerInterface')->critical($e);
@@ -183,5 +180,4 @@ class Addg extends \Magento\Checkout\Controller\Cart
             $this->_objectManager->get('Magento\Framework\Json\Helper\Data')->jsonEncode($result)
         );
     }
-
 }

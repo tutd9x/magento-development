@@ -5,6 +5,7 @@
  * Time: 3:18 PM
  */
 namespace MW\FreeGift\Block\Hidden\Inject\Checkout\Cart;
+
 class Init extends \Magento\Framework\View\Element\Template
 {
     protected $checkoutSession;
@@ -13,15 +14,14 @@ class Init extends \Magento\Framework\View\Element\Template
     protected $helperFreeGift;
     protected $helperCart;
     protected $_resourceRule;
-//    protected $productRepository;
     protected $productFactory;
     protected $salesruleModel;
-    protected $_ruleArr = array();
-    protected $_priceBlock = array();
-    protected $_free_product = array();
+    protected $_ruleArr = [];
+    protected $_priceBlock = [];
+    protected $_free_product = [];
     protected $_block = 'catalog/product_price';
     protected $_priceBlockDefaultTemplate = 'catalog/product/price.phtml';
-    protected $_priceBlockTypes = array();
+    protected $_priceBlockTypes = [];
     protected $helperImage;
 
     /**
@@ -38,7 +38,6 @@ class Init extends \Magento\Framework\View\Element\Template
         \Magento\Framework\Registry $coreRegistry,
         \MW\FreeGift\Model\ResourceModel\Rule $resourceRule,
         \MW\FreeGift\Model\SalesRule $salesruleModel,
-//        \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Magento\Catalog\Helper\Image $helperImage,
         array $data = []
@@ -49,26 +48,26 @@ class Init extends \Magento\Framework\View\Element\Template
         $this->helperCart = $helperCart;
         $this->_coreRegistry = $coreRegistry;
         $this->_resourceRule = $resourceRule;
-//        $this->productRepository = $productRepository;
         $this->productFactory = $productFactory;
         $this->salesruleModel = $salesruleModel;
         $this->helperImage = $helperImage;
         parent::__construct($context, $data);
     }
-    public function init(){
+    public function init()
+    {
         $items = $this->checkoutSession->getQuote()->getAllVisibleItems();
-        if(count($items) > 0){
-            $init = array();
-            foreach($items as $item){
+        if (!empty($items)) {
+            $init = [];
+            foreach ($items as $item) {
                 $product = $this->productFactory->create()->load($item->getProduct()->getId());
                 $product_name = str_replace("'", "", $product->getName());
-                $init[$item->getItemId()] = array(
+                $init[$item->getItemId()] = [
                     'product_id'                =>  $product->getId(),
                     'product_name'              =>  $product_name,
-                    'product_image'             =>  $this->helperImage->init($product, 'category_page_list')->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(TRUE)->resize(265,265)->getUrl(),
+                    'product_image'             =>  $this->helperImage->init($product, 'category_page_list')->constrainOnly(true)->keepAspectRatio(true)->keepFrame(true)->resize(265, 265)->getUrl(),
                     'product_has_options'       =>  ($product->getOptions() ? "1" : "0"),
                     'product_type'              =>  $product->getTypeId(),
-                );
+                ];
             }
 
             return json_encode($init);

@@ -61,7 +61,7 @@ class ProcessApply implements ObserverInterface
         \MW\FreeGift\Model\SalesRuleFactory $salesRuleFactory,
         \MW\FreeGift\Helper\Data $helper,
         CustomerCart $cart,
-//        \Magento\Catalog\Api\ProductRepositoryInterface $productRepository
+        //        \Magento\Catalog\Api\ProductRepositoryInterface $productRepository
         \Magento\Catalog\Model\ProductFactory $productFactory
     ) {
         $this->config = $config;
@@ -110,7 +110,7 @@ class ProcessApply implements ObserverInterface
     private function _processShoppingCartRule(\Magento\Framework\Event\Observer $observer)
     {
         $item = $observer->getEvent()->getItem();
-        if($this->_isGift($item)) {
+        if ($this->_isGift($item)) {
             return $this->_prepareRuleGift($observer);
         }
 
@@ -130,7 +130,6 @@ class ProcessApply implements ObserverInterface
         }
 
         if (!empty($ruleData)) {
-
             /* Sort array by column sort_order */
             array_multisort(array_column($ruleData, 'sort_order'), SORT_ASC, $ruleData);
             $ruleData = $this->_filterByActionStop($ruleData);
@@ -167,7 +166,7 @@ class ProcessApply implements ObserverInterface
     private function _filterByActionStop($ruleData)
     {
         $result = [];
-        foreach($ruleData as $data) {
+        foreach ($ruleData as $data) {
             $result[$data['rule_id']] = $data;
             if (isset($data['stop_rules_processing']) && $data['stop_rules_processing'] == '1') {
                 break;
@@ -180,7 +179,7 @@ class ProcessApply implements ObserverInterface
     {
         $product = $this->productFactory->create()->load($rule['gift_id']);
 
-        if(!$product){
+        if (!$product) {
             return $this;
         }
 
@@ -193,18 +192,18 @@ class ProcessApply implements ObserverInterface
         $params['freegift_rule_data'][$parentKey] = $rule;
 
         $freegift_coupon_code = $this->getQuote()->getFreegiftCouponCode();
-        if($freegift_coupon_code){
+        if ($freegift_coupon_code) {
             $params['freegift_with_code'] = 1;
             $params['freegift_coupon_code'] = $freegift_coupon_code;
         }
 
-        if ( $this->availableProductType($product->getTypeId()) && (!in_array($product->getId(), $this->itemProductInCart)) ) {
+        if ($this->availableProductType($product->getTypeId()) && (!in_array($product->getId(), $this->itemProductInCart))) {
             $additionalOptions = [[
                 'label' => __('Free Gift'),
                 'value' => $rule['name'],
                 'print_value' => $rule['name'],
                 'option_type' => 'text',
-                'custom_view' => TRUE,
+                'custom_view' => true,
                 'rule_id' => $rule['rule_id']
             ]];
             // add the additional options array with the option code additional_options
@@ -236,7 +235,7 @@ class ProcessApply implements ObserverInterface
             if ($this->_isGift($item)) {
                 $info = unserialize($item->getOptionByCode('info_buyRequest')->getValue());
                 $free_sales_key = $info['free_sales_key'];
-                if(array_key_exists($gift['rule_id'], $parentsKey)) {
+                if (array_key_exists($gift['rule_id'], $parentsKey)) {
                     foreach ($free_sales_key as $key) {
                         if (in_array($key, $parentsKey[$gift['rule_id']])) {
                             $itemProductInCart[] = $item->getProductId();
@@ -283,7 +282,7 @@ class ProcessApply implements ObserverInterface
             $item = $item->getParentItem();
         }
 
-        if($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1){
+        if ($item->getOptionByCode('free_sales_gift') && $item->getOptionByCode('free_sales_gift')->getValue() == 1) {
             return true;
         }
 
@@ -319,13 +318,13 @@ class ProcessApply implements ObserverInterface
 
         $compare_keys = [];
         $giftData = $this->checkoutSession->getGiftSalesProductIds();
-        if(!empty($giftData)){
+        if (!empty($giftData)) {
             foreach ($giftData as $gift) {
                 $parentKey = $gift['rule_id'] .'_'. $gift['gift_id'] .'_'. $gift['number_of_free_gift'];
                 $compare_keys[$parentKey] = $parentKey;
             }
 
-            $result = array_intersect($compare_keys,$free_sales_key);
+            $result = array_intersect($compare_keys, $free_sales_key);
             if (empty($result)) {
                 $quote->removeItem($item->getItemId());
                 return $this;

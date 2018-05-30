@@ -74,7 +74,6 @@ class Combine extends \Magento\Rule\Model\Condition\Combine
         );
 
         $additional = new \Magento\Framework\DataObject();
-//        $this->_eventManager->dispatch('salesrule_rule_condition_combine', ['additional' => $additional]);
         $additionalConditions = $additional->getConditions();
         if ($additionalConditions) {
             $conditions = array_merge_recursive($conditions, $additionalConditions);

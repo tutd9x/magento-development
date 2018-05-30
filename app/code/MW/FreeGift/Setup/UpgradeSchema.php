@@ -24,7 +24,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
             /**
              * Update 'mw_freegift_rule' table.
              */
-            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_rule'),'times_limit')) {
+            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_rule'), 'times_limit')) {
                 $setup->getConnection()
                     ->addColumn(
                         $setup->getTable('mw_freegift_rule'),
@@ -38,7 +38,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                         ]
                     );
             }
-            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_rule'),'times_used')) {
+            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_rule'), 'times_used')) {
                 $setup->getConnection()
                     ->addColumn(
                         $setup->getTable('mw_freegift_rule'),
@@ -52,7 +52,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                         ]
                     );
             }
-            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_rule'),'gift_product_ids')) {
+            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_rule'), 'gift_product_ids')) {
                 $setup->getConnection()
                     ->addColumn(
                         $setup->getTable('mw_freegift_rule'),
@@ -65,7 +65,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                         ]
                     );
             }
-            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_salesrule'),'gift_product_ids')) {
+            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_salesrule'), 'gift_product_ids')) {
                 $setup->getConnection()
                     ->addColumn(
                         $setup->getTable('mw_freegift_salesrule'),
@@ -79,7 +79,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                     );
             }
 
-            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_salesrule'),'promotion_message')) {
+            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_salesrule'), 'promotion_message')) {
                 $setup->getConnection()->addColumn(
                     $setup->getTable('mw_freegift_salesrule'),
                     'promotion_message',
@@ -92,7 +92,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 );
             }
 
-            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_salesrule'),'number_of_free_gift')) {
+            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_salesrule'), 'number_of_free_gift')) {
                 $setup->getConnection()
                     ->addColumn(
                         $setup->getTable('mw_freegift_salesrule'),
@@ -106,7 +106,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                         ]
                     );
             }
-            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_salesrule'),'promotion_banner')) {
+            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_salesrule'), 'promotion_banner')) {
                 $setup->getConnection()
                     ->addColumn(
                         $setup->getTable('mw_freegift_salesrule'),
@@ -120,7 +120,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                     );
             }
 
-            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_salesrule'),'enable_social')) {
+            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_salesrule'), 'enable_social')) {
                 $setup->getConnection()
                     ->addColumn(
                         $setup->getTable('mw_freegift_salesrule'),
@@ -135,7 +135,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                     );
             }
 
-            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_salesrule'),'google_plus')) {
+            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_salesrule'), 'google_plus')) {
                 $setup->getConnection()
                     ->addColumn(
                         $setup->getTable('mw_freegift_salesrule'),
@@ -150,7 +150,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                     );
             }
 
-            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_salesrule'),'like_fb')) {
+            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_salesrule'), 'like_fb')) {
                 $setup->getConnection()
                     ->addColumn(
                         $setup->getTable('mw_freegift_salesrule'),
@@ -165,7 +165,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                     );
             }
 
-            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_salesrule'),'share_fb')) {
+            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_salesrule'), 'share_fb')) {
                 $setup->getConnection()
                     ->addColumn(
                         $setup->getTable('mw_freegift_salesrule'),
@@ -180,7 +180,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                     );
             }
 
-            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_salesrule'),'twitter')) {
+            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_salesrule'), 'twitter')) {
                 $setup->getConnection()
                     ->addColumn(
                         $setup->getTable('mw_freegift_salesrule'),
@@ -195,7 +195,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                     );
             }
 
-            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_salesrule'),'default_message')) {
+            if (!$setup->getConnection()->tableColumnExists($setup->getTable('mw_freegift_salesrule'), 'default_message')) {
                 $setup->getConnection()
                     ->addColumn(
                         $setup->getTable('mw_freegift_salesrule'),
@@ -212,7 +212,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
             /**
              * Update 'sales_flat_quote' table.
              */
-            if (!$setup->getConnection()->tableColumnExists($setup->getTable('quote'),'freegift_ids')) {
+            if (!$setup->getConnection()->tableColumnExists($setup->getTable('quote'), 'freegift_ids')) {
                 $setup->getConnection()
                     ->addColumn(
                         $setup->getTable('quote'),
@@ -225,7 +225,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                         ]
                     );
             }
-            if (!$setup->getConnection()->tableColumnExists($setup->getTable('quote'),'freegift_applied_rule_ids')) {
+            if (!$setup->getConnection()->tableColumnExists($setup->getTable('quote'), 'freegift_applied_rule_ids')) {
                 $setup->getConnection()->addColumn(
                     $setup->getTable('quote'),
                     'freegift_applied_rule_ids',
@@ -237,7 +237,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
                     ]
                 );
             }
-            if (!$setup->getConnection()->tableColumnExists($setup->getTable('quote'),'freegift_coupon_code')) {
+            if (!$setup->getConnection()->tableColumnExists($setup->getTable('quote'), 'freegift_coupon_code')) {
                 $setup->getConnection()->addColumn(
                     $setup->getTable('quote'),
                     'freegift_coupon_code',
@@ -252,7 +252,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
         }
 
         if (version_compare($context->getVersion(), '0.0.6') <= 0) {
-            if (!$setup->getConnection()->tableColumnExists($setup->getTable('quote_item'),'freegift_applied_rule_ids')) {
+            if (!$setup->getConnection()->tableColumnExists($setup->getTable('quote_item'), 'freegift_applied_rule_ids')) {
                 $setup->getConnection()->addColumn(
                     $setup->getTable('quote_item'),
                     'freegift_applied_rule_ids',

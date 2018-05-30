@@ -3,12 +3,8 @@ namespace MW\FreeGift\Model\Indexer;
 
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Model\Product;
-//use Magento\CatalogRule\Model\ResourceModel\Rule\CollectionFactory as RuleCollectionFactory;
-//use Magento\CatalogRule\Model\Rule;
-
 use MW\FreeGift\Model\ResourceModel\Rule\CollectionFactory as RuleCollectionFactory;
 use MW\FreeGift\Model\Rule;
-
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\EntityManager\MetadataPool;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
@@ -393,7 +389,7 @@ class IndexBuilder
                     continue;
                 }
                 foreach ($customerGroupIds as $customerGroupId) {
-                    if($ruleGiftIds != ""):
+                    if ($ruleGiftIds != "") :
                         $rows[] = [
                             'rule_id' => $ruleId,
                             'from_time' => $fromTime,
@@ -465,9 +461,6 @@ class IndexBuilder
                         $dayPrices = [];
                     }
                 }
-
-//                $ruleData['from_time'] = $this->roundTime($ruleData['from_time']);
-//                $ruleData['to_time'] = $this->roundTime($ruleData['to_time']);
 
                 /**
                  * Build prices for each day
@@ -570,7 +563,7 @@ class IndexBuilder
      */
     protected function calcRuleProductGifts($ruleData = null, $productData = null)
     {
-        if($ruleData['rule_gift_ids']){
+        if ($ruleData['rule_gift_ids']) {
             return $ruleData['rule_gift_ids'];
         }
         return '';
@@ -583,36 +576,11 @@ class IndexBuilder
      */
     protected function calcRuleProductPrice($ruleData, $productData = null)
     {
-        if($ruleData['rule_id']){
+        if ($ruleData['rule_id']) {
             return $ruleData['rule_id'];
-        }else{
+        } else {
             return 0;
         }
-
-//        if ($productData !== null && isset($productData['rule_price'])) {
-//            $productPrice = $productData['rule_price'];
-//        } else {
-//            $productPrice = $ruleData['default_price'];
-//        }
-//
-//        switch ($ruleData['action_operator']) {
-//            case 'to_fixed':
-//                $productPrice = min($ruleData['action_amount'], $productPrice);
-//                break;
-//            case 'to_percent':
-//                $productPrice = $productPrice * $ruleData['action_amount'] / 100;
-//                break;
-//            case 'by_fixed':
-//                $productPrice = max(0, $productPrice - $ruleData['action_amount']);
-//                break;
-//            case 'by_percent':
-//                $productPrice = $productPrice * (1 - $ruleData['action_amount'] / 100);
-//                break;
-//            default:
-//                $productPrice = 0;
-//        }
-//
-//        return $this->priceCurrency->round($productPrice);
     }
 
     /**
@@ -724,7 +692,6 @@ class IndexBuilder
         return $this;
     }
 
-
     /**
      * Get active rule by rule_id
      *
@@ -790,16 +757,4 @@ class IndexBuilder
 
         return $timeStamp;
     }
-
-    /**
-     * @return MetadataPool
-     */
-//    private function getMetadataPool()
-//    {
-//        if (null === $this->metadataPool) {
-//            $this->metadataPool = \Magento\Framework\App\ObjectManager::getInstance()
-//                ->get('Magento\Framework\EntityManager\MetadataPool');
-//        }
-//        return $this->metadataPool;
-//    }
 }

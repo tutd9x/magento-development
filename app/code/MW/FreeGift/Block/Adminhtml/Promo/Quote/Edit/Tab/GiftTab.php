@@ -52,11 +52,6 @@ class GiftTab extends Template implements TabInterface
     public function canShowTab()
     {
         return true;
-//        $model = $this->_coreRegistry->registry('current_promo_catalog_rule');
-//        if(isset($model) && $model->getId()){
-//            return true;
-//        }
-//        return false;
     }
 
     /**
@@ -75,16 +70,6 @@ class GiftTab extends Template implements TabInterface
     {
         $this->_data['config']['canShow'] = $canShow;
     }
-
-    /**
-     * Return URL link to Tab content
-     *
-     * @return string
-     */
-//    public function getTabUrl()
-//    {
-//        return $this->getUrl('mw_freegift/*/gifttab', ['_current' => true]);
-//    }
 
     /**
      * Tab should be loaded trough Ajax call

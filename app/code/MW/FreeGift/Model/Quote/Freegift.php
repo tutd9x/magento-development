@@ -65,7 +65,7 @@ class Freegift extends \Magento\Quote\Model\Quote\Address\Total\AbstractTotal
         $store = $this->storeManager->getStore($quote->getStoreId());
 
         $items = $shippingAssignment->getItems();
-        if (!count($items)) {
+        if (empty($items)) {
             return $this;
         }
 
@@ -93,8 +93,6 @@ class Freegift extends \Magento\Quote\Model\Quote\Address\Total\AbstractTotal
                     $eventArgs['item'] = $child;
                     $this->eventManager->dispatch('freegift_quote_address_freegift_item', $eventArgs);
                 }
-//            } else {
-                //$this->calculator->process($item);
             }
         }
         return $this;
