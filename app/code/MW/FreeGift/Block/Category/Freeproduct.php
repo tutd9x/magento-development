@@ -19,6 +19,11 @@ class Freeproduct extends \Magento\Framework\View\Element\Template
      * @var \Magento\Customer\Model\Session
      */
     protected $_customerSession;
+    /**
+     * @var \Magento\ConfigurableProduct\Model\Product\Type\Configurable
+     */
+    protected $configurable;
+    protected $_productRepository;
 
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
@@ -27,6 +32,9 @@ class Freeproduct extends \Magento\Framework\View\Element\Template
         \MW\FreeGift\Model\ResourceModel\Rule $resourceRule,
         \Magento\Catalog\Api\ProductRepositoryInterface $productRepository,
         \Magento\Customer\Model\Session $customerSession,
+        \MW\FreeGift\Model\Config $config,
+        \Magento\ConfigurableProduct\Model\Product\Type\Configurable $configurable,
+        \Magento\Catalog\Model\ProductRepository $productModelRepository,
         array $data = []
     ) {
         $this->helperFreeGift = $helperFreeGift;
@@ -34,6 +42,9 @@ class Freeproduct extends \Magento\Framework\View\Element\Template
         $this->_resourceRule = $resourceRule;
         $this->productRepository = $productRepository;
         $this->_customerSession = $customerSession;
+        $this->config = $config;
+        $this->configurable = $configurable;
+        $this->_productRepository = $productModelRepository;
         parent::__construct($context, $data);
     }
 
@@ -88,5 +99,34 @@ class Freeproduct extends \Magento\Framework\View\Element\Template
             }
         }
         return $result;
+    }
+
+    public function getUrlFreeGiftImage(){
+        $url_image = $this->config->getImageFreeGift();
+        if($url_image){
+            return $this->_storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA).'catalog/product/placeholder/'.$url_image;
+        }else{
+            return $this->getViewFileUrl('MW_FreeGift::images/freegift_50.png');
+        }
+    }
+
+    public function _getBaseUrl()
+    {
+        /* @var \Magento\Store\Model\Store $store */
+        $store = $this->_storeManager->getStore();
+        return $store->getBaseUrl();
+    }
+
+    public function getFreeGiftProductUrl($productId)
+    {
+        $parentIds = $this->configurable->getParentIdsByChild($productId);
+        $parentId = array_shift($parentIds);
+        if(!empty($parentId)){
+            $product = $this->_productRepository->getById($parentId);
+            return $product->getUrlModel()->getUrl($product);
+        }else{
+            $product = $this->getProductGiftData($productId);
+            return $product->getProductUrl();
+        }
     }
 }

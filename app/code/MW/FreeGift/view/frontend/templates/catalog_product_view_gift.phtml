@@ -23,10 +23,11 @@ if (!empty($ProductGiftData)) :
                     <?php foreach ($ProductGiftData as $giftData) :
                         if ($giftData['gift_id'] != "") :
                             $product = $block->getProductGiftData($giftData['gift_id']);
+                            $giftUrl = $block->getFreeGiftProductUrl($giftData['gift_id']);
                             if ($product->isSaleable()) :
                                 ?>
                                 <li class="mw-fg-items">
-                                    <a id="stay-target-<?php /* @noEscape */ echo $giftData['rule_id'].'_'.$block->getCurrentProduct()->getId().'_'.$giftData['gift_id']; ?>" href="<?php /* @noEscape */ echo $product->getProductUrl(); ?>" title="<?php /* @noEscape */ echo $block->escapeHtml($product->getName()); ?>" class="product-image">
+                                    <a id="stay-target-<?php /* @noEscape */ echo $giftData['rule_id'].'_'.$block->getCurrentProduct()->getId().'_'.$giftData['gift_id']; ?>" href="<?php /* @noEscape */ echo $giftUrl; ?>" title="<?php /* @noEscape */ echo $block->escapeHtml($product->getName()); ?>" class="product-image">
                                         <img src="<?php /* @noEscape */ echo $this->helper('Magento\Catalog\Helper\Image')->init($product, 'category_page_list')->constrainOnly(true)->keepAspectRatio(true)->keepFrame(true)->resize(75, 75)->getUrl(); ?>" alt="" height="75" width="75">
                                     </a>
                                     <div style="display: none;" id="stay-content-<?php /* @noEscape */ echo $giftData['rule_id'].'_'.$block->getCurrentProduct()->getId().'_'.$giftData['gift_id']; ?>" class="mw-fg-item">

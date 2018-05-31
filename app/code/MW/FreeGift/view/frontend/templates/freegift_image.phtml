@@ -1,6 +1,10 @@
 <?php
 $ProductGiftData = $block->getFreeGiftCatalog();
+$urlFreeGiftImage = $block->getUrlFreeGiftImage();
 if (!empty($ProductGiftData)) :
 ?>
-<img src="<?php echo $this->getViewFileUrl('MW_FreeGift::images/freegift_50.png')?>" alt="" class="label-freegift">
+<img src="<?php echo $urlFreeGiftImage;?>" alt="" class="label-freegift">
+<script type="text/javascript">
+    var mw_baseUrl = '<?php echo $block->_getBaseUrl() ?>';
+</script>
 <?php endif; ?>
