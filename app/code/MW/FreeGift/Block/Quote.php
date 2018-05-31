@@ -89,11 +89,4 @@ class Quote extends \Magento\Framework\View\Element\Template
 
         return $this->fetchView($this->getTemplateFile());
     }
-
-    public function _getBaseUrl()
-    {
-        /* @var \Magento\Store\Model\Store $store */
-        $store = $this->_storeManager->getStore();
-        return $store->getBaseUrl();
-    }
 }

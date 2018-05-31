@@ -110,13 +110,6 @@ class Freeproduct extends \Magento\Framework\View\Element\Template
         }
     }
 
-    public function _getBaseUrl()
-    {
-        /* @var \Magento\Store\Model\Store $store */
-        $store = $this->_storeManager->getStore();
-        return $store->getBaseUrl();
-    }
-
     public function getFreeGiftProductUrl($productId)
     {
         $parentIds = $this->configurable->getParentIdsByChild($productId);

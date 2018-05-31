@@ -107,11 +107,4 @@ class FreeGifts extends \Magento\Framework\View\Element\Template
         $productGiftsDeleted = $this->helperFreeGift->getProductGiftSalesRuleAvailable();
         return $productGiftsDeleted;
     }
-
-    public function _getBaseUrl()
-    {
-        /* @var \Magento\Store\Model\Store $store */
-        $store = $this->_storeManager->getStore();
-        return $store->getBaseUrl();
-    }
 }
