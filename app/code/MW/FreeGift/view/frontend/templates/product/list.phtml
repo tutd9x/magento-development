@@ -51,6 +51,7 @@ $_helper = $this->helper('Magento\Catalog\Helper\Output');
                 <?php
                     $blockFreeGift= $block->getLayout()->createBlock('MW\FreeGift\Block\Category\Freeproduct');
                     $ProductGiftData = $blockFreeGift->getFreeGiftCatalog($_product);
+                    $urlFreeGiftImage = $blockFreeGift->getUrlFreeGiftImage();
                 ?>
                 <!--                        freegift-->
                 <?= /* @escapeNotVerified */ ($iterator++ == 1) ? '<li class="item product product-item">' : '</li><li class="item product product-item">' ?>
@@ -66,7 +67,7 @@ $_helper = $this->helper('Magento\Catalog\Helper\Output');
                     <a href="<?= /* @escapeNotVerified */ $_product->getProductUrl() ?>" class="product photo product-item-photo" tabindex="-1">
 <!--                        freegift-->
                         <?php if(count($ProductGiftData) > 0): ?>
-                        <img src="http://demo.mage-world.com/190s5/skin/frontend/rwd/default/mw_freegift/images/freegift_50.png" alt="" class="label-freegift">
+                        <img src="<?php echo $urlFreeGiftImage;?>" alt="" class="label-freegift">
                         <?php endif; ?>
 <!--                        freegift-->
                         <?= $productImage->toHtml() ?>
@@ -128,8 +129,8 @@ $_helper = $this->helper('Magento\Catalog\Helper\Output');
 //                            $ProductGiftData = $blockFreeGift->getFreeGiftCatalog($_product);
                             if(count($ProductGiftData) > 0):
                             ?>
-
                             <script type="text/javascript">
+                                var mw_baseUrl = '<?php echo $blockFreeGift->_getBaseUrl() ?>';
                                 hasGiftProduct = false;
                             </script>
 
@@ -144,10 +145,11 @@ $_helper = $this->helper('Magento\Catalog\Helper\Output');
                                             <?php foreach($ProductGiftData as $giftData):
                                                 if($giftData['gift_id'] != ""):
                                                     $product = $blockFreeGift->getProductGiftData($giftData['gift_id']);
+                                                    $giftUrl = $blockFreeGift->getFreeGiftProductUrl($giftData['gift_id']);
                                                     if($product->isSaleable()) :
                                                         ?>
                                                         <li class="mw-fg-items">
-                                                            <a id="stay-target-<?php echo $giftData['rule_id'].'_'.$_product->getId().'_'.$giftData['gift_id']; ?>" href="<?php echo $product->getProductUrl(); ?>" title="<?php echo $blockFreeGift->escapeHtml($product->getName()); ?>" class="product-image">
+                                                            <a id="stay-target-<?php echo $giftData['rule_id'].'_'.$_product->getId().'_'.$giftData['gift_id']; ?>" href="<?php echo $giftUrl; ?>" title="<?php echo $blockFreeGift->escapeHtml($product->getName()); ?>" class="product-image">
                                                                 <img src="<?php echo $this->helper('Magento\Catalog\Helper\Image')->init($product, 'category_page_list')->constrainOnly(TRUE)->keepAspectRatio(TRUE)->keepFrame(TRUE)->resize(75,75)->getUrl(); ?>" alt="" height="75" width="75">
                                                             </a>
                                                             <div style="display: none;" id="stay-content-<?php echo $giftData['rule_id'].'_'.$_product->getId().'_'.$giftData['gift_id']; ?>" class="mw-fg-item">

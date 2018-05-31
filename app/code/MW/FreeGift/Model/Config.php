@@ -12,7 +12,7 @@ class Config
      * Minimum advertise price constants
      */
     const XML_PATH_ENABLED = 'mw_freegift/group_general/active';
-    const XML_PATH_REPORT_START_TIME = 'mw_freegift/group_report/report_from';
+    const XML_PATH_FREE_GIFT_IMAGE = 'mw_freegift/group_general/showfreegiftlabel';
     /**#@-*/
 
     /**
@@ -77,10 +77,10 @@ class Config
         );
     }
 
-    public function getReportTimeStart()
+    public function getImageFreeGift()
     {
         return $this->scopeConfig->getValue(
-            self::XML_PATH_REPORT_START_TIME,
+            self::XML_PATH_FREE_GIFT_IMAGE,
             ScopeInterface::SCOPE_STORE,
             $this->storeId
         );
