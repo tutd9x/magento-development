@@ -116,6 +116,7 @@ class AfterUpdateItems implements ObserverInterface
      */
     private function _processCatalogRule(\Magento\Quote\Model\Quote\Item $itemGift)
     {
+        $quote = $this->getQuote();
         if ($itemGift->getOptionByCode('free_catalog_gift') && $itemGift->getOptionByCode('free_catalog_gift')->getValue() == 1) {
             if ($itemGift->getOptionByCode('info_buyRequest') && $infoGift = unserialize($itemGift->getOptionByCode('info_buyRequest')->getValue())) {
                 $freegift_parent_key = $infoGift['freegift_parent_key'];
@@ -146,6 +147,10 @@ class AfterUpdateItems implements ObserverInterface
                                 $current_qty = ((int)($current_qty / $buy_x)) * $buy_x;
                             }
 
+                            if ($current_qty < $buy_x) {
+                                continue;
+                            }
+
                             $qty_for_gift = (int)($current_qty * $get_y / $buy_x);
                             $infoGift['freegift_qty_info'][$key] = $qty_for_gift;
                             $qtyToUpdate += $qty_for_gift;
@@ -153,9 +158,13 @@ class AfterUpdateItems implements ObserverInterface
                     }
                 }
 
-                $infoGift['qty'] = $qtyToUpdate;
-                $itemGift->getOptionByCode('info_buyRequest')->setValue(serialize($infoGift));
-                $itemGift->setQty($qtyToUpdate);
+                if ($qtyToUpdate == 0) {
+                    $quote->removeItem($itemGift->getItemId())->save();
+                } else {
+                    $infoGift['qty'] = $qtyToUpdate;
+                    $itemGift->getOptionByCode('info_buyRequest')->setValue(serialize($infoGift));
+                    $itemGift->setQty($qtyToUpdate);
+                }
             }
         }
         return $this;

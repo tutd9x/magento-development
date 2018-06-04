@@ -180,6 +180,10 @@ class ProcessApply implements ObserverInterface
                             $current_qty = ((int)$current_qty / $buy_x) * $buy_x;
                         }
 
+                        if ($current_qty < $buy_x) {
+                            continue;
+                        }
+
                         $current_qty_gift = $this->_countGiftInCart($gift, $freegift_keys);
                         $qty_for_gift = (int)($current_qty * $get_y / $buy_x) - $current_qty_gift;
                         if ($qty_for_gift <= 0) {
