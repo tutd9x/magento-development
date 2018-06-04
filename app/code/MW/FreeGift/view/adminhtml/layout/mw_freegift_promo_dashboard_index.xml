@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="styles" />
+    <head>
+        <link src="MW_FreeGift::js/prototype-adapter.js"/>
+        <link src="MW_FreeGift::js/highcharts.js"/>
+        <link src="MW_FreeGift::js/exporting.js"/>
+        <link src="MW_FreeGift::js/validate.js"/>
+        <link src="MW_FreeGift::js/head.main.js"/>
+    </head>
+    <body>
+        <referenceContainer name="content">
+            <block class="MW\FreeGift\Block\Adminhtml\Report\Dashboard" name="mw_dashboard"/>
+        </referenceContainer>
+    </body>
+</page>

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="MW_FreeGift::css/skin.css"/>
+        <link src="MW_FreeGift::js/mw_freegift_js.js"/>
+    </head>
+    <body>
+        <referenceBlock name="category.products.list">
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">MW_FreeGift::product/list.phtml</argument>
+            </action>
+        </referenceBlock>
+    </body>
+</page>
+
+

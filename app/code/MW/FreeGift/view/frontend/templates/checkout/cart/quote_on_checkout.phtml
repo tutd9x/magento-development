@@ -1,0 +1,37 @@
+<?php
+//$blockFreeGift= $block->getLayout()->createBlock('MW\FreeGift\Block\Promotionbanner');
+$allActiveRules = $block->getAllActiveRules();
+//\Zend_Debug::dump(count($allActiveRules)); die("hhhhhhhh");
+if (sizeof($allActiveRules)) :?>
+    <?php
+    $arrShowin = [2,3];
+    $showin = $this->helper('MW\FreeGift\Helper\Data')->getStoreConfig('mw_freegift/group_general/showfreegiftpromotion');
+    ?>
+    <div class="freegift_rules_container">
+        <?php
+        if (in_array($showin, $arrShowin)) {
+            $listDescription = [];
+            foreach ($allActiveRules as $rule) :
+                if ($rule->getData('promotion_message') != "") {
+                    $listDescription[] = $rule->getData('promotion_message');
+                }
+            endforeach;
+
+            if (count($listDescription)>0) {
+                ?>
+                <script type="text/javascript">
+                    hasPromotionMessage = true;
+                </script>
+                <div id="freegift_rules" class="mw_jcarousel">
+                    <ul>
+                        <?php foreach ($listDescription as $description) :?>
+                            <li><?php echo $description;?></li>
+                        <?php endforeach;?>
+                    </ul>
+                </div>
+                <?php
+            }
+        }
+        ?>
+    </div>
+<?php endif;?>

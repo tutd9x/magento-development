@@ -1,0 +1,57 @@
+<?php
+/**
+ * Copyright � 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+$ProductGiftData = $block->getFreeGiftCatalog();
+if (!empty($ProductGiftData)) :
+    ?>
+
+    <script type="text/javascript">
+        hasGiftProduct = false;
+    </script>
+
+    <div class="mw-fg-catalog-list mw-fg-catalog-product fieldset">
+        <div class="field">
+            <label class="label">
+                <span>Free Gift</span>
+            </label>
+
+            <div class="freegift_catalog_container clearer control">
+                <ul id="freegift">
+                    <?php foreach ($ProductGiftData as $giftData) :
+                        if ($giftData['gift_id'] != "") :
+                            $product = $block->getProductGiftData($giftData['gift_id']);
+                            $giftUrl = $block->getFreeGiftProductUrl($giftData['gift_id']);
+                            if ($product->isSaleable()) :
+                                ?>
+                                <li class="mw-fg-items">
+                                    <a id="stay-target-<?php /* @noEscape */ echo $giftData['rule_id'].'_'.$block->getCurrentProduct()->getId().'_'.$giftData['gift_id']; ?>" href="<?php /* @noEscape */ echo $giftUrl; ?>" title="<?php /* @noEscape */ echo $block->escapeHtml($product->getName()); ?>" class="product-image">
+                                        <img src="<?php /* @noEscape */ echo $this->helper('Magento\Catalog\Helper\Image')->init($product, 'category_page_list')->constrainOnly(true)->keepAspectRatio(true)->keepFrame(true)->resize(75, 75)->getUrl(); ?>" alt="" height="75" width="75">
+                                    </a>
+                                    <div style="display: none;" id="stay-content-<?php /* @noEscape */ echo $giftData['rule_id'].'_'.$block->getCurrentProduct()->getId().'_'.$giftData['gift_id']; ?>" class="mw-fg-item">
+                                        <div class="mw-fg-item-options">
+                                            <div class="mw-fg-item-option-title"><?php /* @noEscape */ echo $giftData['name'] ?></div>
+                                            <div class="mw-fg-item-option-ct">
+                                                <p class="mw-fg-image-item">
+                                                    <a href="<?php /* @noEscape */ echo $product->getProductUrl(); ?>" title="<?php /* @noEscape */ echo $block->escapeHtml($product->getName()); ?>">
+                                                        <img src="<?php /* @noEscape */ echo $this->helper('Magento\Catalog\Helper\Image')->init($product, 'category_page_list')->constrainOnly(true)->keepAspectRatio(true)->keepFrame(true)->resize(135, 150)->getUrl(); ?>" alt="" height="135" width="150">
+                                                    </a>
+                                                </p>
+                                                <p class="mw-fg-item-name">
+                                                    <a href="<?php /* @noEscape */ echo $product->getProductUrl(); ?>" title="<?php /* @noEscape */ echo $block->escapeHtml($product->getName()); ?>"><?php /* @noEscape */ echo $block->escapeHtml($product->getName()); ?></a>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </ul>
+                <div style="clear: both;"></div>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>

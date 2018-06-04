@@ -1,0 +1,66 @@
+<?php
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+
+<?php
+/** @var $block \Magento\ConfigurableProduct\Block\Product\View\Type\Configurable*/
+$_product    = $block->getProduct();
+$_attributes = $block->decorateArray($block->getAllowAttributes());
+?>
+
+<?php //\Zend_Debug::dump($block->getJsonConfig());
+//    $json = unserialize($block->getJsonConfig());
+$jsonData = json_decode($block->getJsonConfig(), true);
+//\Zend_Debug::dump($json['attributes']);
+//die;
+?>
+
+<?php if ($_product->isSaleable() && count($_attributes)):?>
+    <?php $i = 0;
+    $number_attr = count($_attributes);
+    if($number_attr){ ?>
+        <input type="hidden" name="number_attribute" id="number_attribute" value="<?= /* @escapeNotVerified */ $number_attr ?>"/>
+    <?php }  ?>
+    <?php foreach ($_attributes as $_attribute): ?>
+        <div class="field configurable required">
+            <label class="label" for="attribute<?= /* @escapeNotVerified */ $_attribute->getAttributeId() ?>">
+                <span><?= $block->escapeHtml($_attribute->getProductAttribute()->getStoreLabel()) ?></span>
+            </label>
+            <div class="control">
+                <input type="hidden" label="<?= $block->escapeHtml($_attribute->getProductAttribute()->getStoreLabel()) ?>" name="attribute" id="attribute_id_<?= /* @escapeNotVerified */ $i ?>" value="<?= /* @escapeNotVerified */ $_attribute->getAttributeId() ?>"/>
+                <select name="super_attribute[<?= /* @escapeNotVerified */ $_attribute->getAttributeId() ?>]"
+                        data-selector="super_attribute[<?= /* @escapeNotVerified */ $_attribute->getAttributeId() ?>]"
+                        data-validate="{required:true}"
+                        id="attribute<?= /* @escapeNotVerified */ $_attribute->getAttributeId() ?>"
+                        class="super-attribute-select">
+                    <option value=""><?= /* @escapeNotVerified */ __('Choose an Option...') ?></option>
+                    <?php if(count($jsonData['attributes'][$_attribute->getAttributeId()]['options'])) :
+                        $options = $jsonData['attributes'][$_attribute->getAttributeId()]['options'];
+                        foreach($options as $option){
+                        ?>
+                            <option value="<?php echo $option['id'] ?>"><?php echo $option['label'] ?></option>
+                    <?php } endif; ?>
+                </select>
+            </div>
+        </div>
+        <?php $i++; ?>
+    <?php endforeach; ?>
+
+    <script type="text/x-magento-init">
+        {
+            "#product_addtocart_form": {
+                "configurable": {
+                    "spConfig": <?= /* @escapeNotVerified */ $block->getJsonConfig() ?>,
+                    "gallerySwitchStrategy": "<?php /* @escapeNotVerified */ echo $block->getVar('gallery_switch_strategy',
+            'Magento_ConfigurableProduct') ?: 'replace'; ?>"
+                }
+            }
+        }
+    </script>
+<?php endif;?>

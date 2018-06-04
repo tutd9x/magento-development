@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<page layout="2columns-right" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+
+    <head>
+        <css src="MW_FreeGift::css/skin.css"/>
+        <link src="MW_FreeGift::js/mw_freegift_js.js"/>
+    </head>
+
+    <body>
+        <referenceContainer name="product.info.main">
+            <block class="MW\FreeGift\Block\Category\Freeproduct" template="MW_FreeGift::freegift_image.phtml" before="product.info.price" ifconfig="mw_freegift/group_general/active"/>
+            <block class="MW\FreeGift\Block\Category\Freeproduct" template="MW_FreeGift::catalog_product_view_gift.phtml" before="product.price.tier" ifconfig="mw_freegift/group_general/active"/>
+        </referenceContainer>
+    </body>
+</page>

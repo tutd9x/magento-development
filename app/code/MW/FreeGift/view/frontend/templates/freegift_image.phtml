@@ -1,0 +1,7 @@
+<?php
+$ProductGiftData = $block->getFreeGiftCatalog();
+$urlFreeGiftImage = $block->getUrlFreeGiftImage();
+if (!empty($ProductGiftData)) :
+?>
+<img src="<?php echo $urlFreeGiftImage;?>" alt="" class="label-freegift">
+<?php endif; ?>

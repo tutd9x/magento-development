@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <mw_freegift>
+            <group_general>
+                <active>1</active>
+                <showfreegiftpromotion>1</showfreegiftpromotion>
+                <showfreegiftoncategory>0</showfreegiftoncategory>
+            </group_general>
+        </mw_freegift>
+    </default>
+</config>
