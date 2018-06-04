@@ -183,6 +183,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                     $giftData[$num]['rule_product_id'] = $data['rule_product_id'];
                     $giftData[$num]['gift_id'] = $giftId;
                     $giftData[$num]['buy_x'] = $condition_customized['buy_x_get_y']['bx'];
+                    $giftData[$num]['get_y'] = $condition_customized['buy_x_get_y']['gy'];
                     $giftData[$num]['freegift_parent_key'] = $data['rule_product_id'] . '_' . $data['rule_id'] . '_' . $data['product_id'] . '_' . $giftId;
                     $num++;
                 }
@@ -244,133 +245,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $ids = array_unique($ids); // xóa trùng
 
         return $ids;
-    }
-
-    /**
-     *
-     * @return array()
-     */
-
-    public function _removed_getFreeGiftCatalogProduct($ruleData = null, $getOnlyGiftId = false)
-    {
-        if (is_array($ruleData)) {
-            // giftDataAT, priorityAT use for action_stop = 1
-            $giftData = $giftDataAT = [];
-            $priority = $priorityAT = null;
-            $websiteId = $this->_storeManager->getStore()->getWebsiteId();
-            $customerGroupId = $this->_customerSession->getCustomerGroupId();
-
-            foreach ($ruleData as $data) {
-                if (isset($data['rule_id'])) {
-                    if (!isset($data['rule_gift_ids']) && isset($data['gift_product_ids']) && isset($data['coupon_type'])) {
-                        $data['rule_gift_ids'] = $data['gift_product_ids'];
-                    }
-                    if (isset($data['action_stop']) && ($data['action_stop'] == '1')) {
-                        if ($priorityAT == null) {
-                            $priorityAT = $data['sort_order'];
-                            $giftDataAT = $this->processArrayGiftData($giftDataAT, $data);
-                        } else {
-                            if ($data['sort_order'] == $priorityAT) {
-                                $giftDataAT = $this->processArrayGiftData($giftDataAT, $data);
-                            } elseif ($data['sort_order'] < $priorityAT) {
-                                $priorityAT = $data['sort_order'];
-                                unset($giftDataAT);
-                                $giftDataAT = [];
-                                $giftDataAT = $this->processArrayGiftData($giftDataAT, $data);
-                            }
-                        }
-                    } else {
-                        if ($priority == null) {
-                            $priority = $data['sort_order'];
-                            $giftData = $this->processArrayGiftData($giftData, $data);
-                        } else {
-                            if ($data['sort_order'] == $priority) {
-                                $giftData = $this->processArrayGiftData($giftData, $data);
-                            } elseif ($data['sort_order'] < $priority) {
-                                $priority = $data['sort_order'];
-                                $giftData = $this->processArrayGiftData($giftData, $data);
-                            } else {
-                                $giftData = $this->processArrayGiftData($giftData, $data);
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (!empty($giftDataAT)) {
-                $giftData = $giftDataAT;
-            }
-            if (!empty($giftData)) {
-                if ($getOnlyGiftId === true) {
-                    return $giftData = $this->_prepareFreeGiftIds($giftData);
-                } elseif ($getOnlyGiftId === 'getGiftOfSalesRule') {
-                    $freeGiftSalesRule = [];
-                    $num = 0;
-                    foreach ($giftData as $id => $gift) {
-                        $data = $ruleData[$id];
-                        // $rule_ids use for save to infoBuyRequest
-                        $ruleIds = [];
-                        $ruleIds = explode(',', $data['gift_product_ids']);
-                        if (count($ruleIds) > 1) {
-                            foreach ($ruleIds as $k => $v) {
-                                $freeGiftSalesRule[$num]['rule_gift_ids'] = $v;
-                                $freeGiftSalesRule[$num]['rule_id'] = $data['rule_id'];
-                                $freeGiftSalesRule[$num]['name'] = $data['name'];
-                                $freeGiftSalesRule[$num]['number_of_free_gift'] = $data['number_of_free_gift'];
-                                $num++;
-                            }
-                        } else {
-                            $freeGiftSalesRule[$num]['rule_id'] = $data['rule_id'];
-                            $freeGiftSalesRule[$num]['rule_gift_ids'] = $data['gift_product_ids'];
-                            $freeGiftSalesRule[$num]['name'] = $data['name'];
-                            $freeGiftSalesRule[$num]['number_of_free_gift'] = $data['number_of_free_gift'];
-                            $num++;
-                        }
-                    }
-                    return $freeGiftSalesRule;
-                } else {
-                    $freeGiftCatalog = [];
-                    $num = 0;
-                    foreach ($giftData as $rule_id => $gift) {
-                        $rule_gift_ids = $gift['rule_gift_ids'];
-                        $rule_product_id = $gift['rule_product_id'];
-
-                        $data = $this->_ruleFactory->create()->_getRulesFromProductGift($rule_id, $rule_gift_ids, $websiteId, $customerGroupId, $rule_product_id);
-
-                        if (!empty($data)) :
-                            $condition_customized = unserialize($data['condition_customized']);
-                            // $rule_ids use for save to infoBuyRequest
-                            $ruleIds = [];
-                            $ruleIds = explode(',', $data['rule_gift_ids']);
-                            if (count($ruleIds) > 1) {
-                                foreach ($ruleIds as $k => $v) {
-                                    $freeGiftCatalog[$num]['rule_gift_ids'] = $v;
-                                    $freeGiftCatalog[$num]['product_id'] = $data['product_id'];
-                                    $freeGiftCatalog[$num]['rule_id'] = $data['rule_id'];
-                                    $freeGiftCatalog[$num]['name'] = $data['name'];
-                                    $freeGiftCatalog[$num]['buy_x'] = $condition_customized['buy_x_get_y']['bx'];
-                                    $num++;
-                                }
-                            } else {
-                                $freeGiftCatalog[$num]['product_id'] = $data['product_id'];
-                                $freeGiftCatalog[$num]['rule_id'] = $data['rule_id'];
-                                $freeGiftCatalog[$num]['rule_gift_ids'] = $data['rule_gift_ids'];
-                                $freeGiftCatalog[$num]['name'] = $data['name'];
-                                $freeGiftCatalog[$num]['buy_x'] = $condition_customized['buy_x_get_y']['bx'];
-                                $num++;
-                            }
-                        endif;
-                    }
-                    return $freeGiftCatalog;
-                }
-            }
-        }
-
-        if ($getOnlyGiftId === 'getGiftOfSalesRule') {
-            return $this->checkoutSession->getGiftSalesProductIds() ? $this->checkoutSession->getGiftSalesProductIds() : [];
-        }
-
-        return $this->checkoutSession->getGiftProductIds() ? $this->checkoutSession->getGiftProductIds() : [];
     }
 
     /*

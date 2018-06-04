@@ -138,8 +138,17 @@ class AfterUpdateItems implements ObserverInterface
                         foreach ($result as $key) {
                             $ruleData = $infoGift['freegift_rule_data'][$key];
                             $buy_x = $ruleData['buy_x'];
-                            $infoGift['freegift_qty_info'][$key] = ($buy_x * $item->getQty());
-                            $qtyToUpdate += ($buy_x * $item->getQty());
+                            $get_y = $ruleData['get_y'];
+
+                            // Kiem tra so luong theo ti le buy x get y, khong tinh khi co phan du
+                            $current_qty = $item->getQty();
+                            if ($current_qty % $buy_x != 0) {
+                                $current_qty = ((int)($current_qty / $buy_x)) * $buy_x;
+                            }
+
+                            $qty_for_gift = (int)($current_qty * $get_y / $buy_x);
+                            $infoGift['freegift_qty_info'][$key] = $qty_for_gift;
+                            $qtyToUpdate += $qty_for_gift;
                         }
                     }
                 }

@@ -190,8 +190,8 @@ class Conditions extends Generic implements TabInterface
             'text',
             [
                 'name' => 'buy_x',
-                'label' => __('Minimum Quantity Required'),
-                'title' => __('Minimum Quantity Required'),
+                'label' => __('Minimum Quantity Required (Buy X)'),
+                'title' => __('Minimum Quantity Required (Buy X)'),
                 'required' => false,
                 'style' => 'width: 80px;',
                 'data-form-part' => $formName
@@ -200,9 +200,11 @@ class Conditions extends Generic implements TabInterface
 
         $fieldset->addField(
             'get_y',
-            'hidden',
+            'text',
             [
                 'name' => 'get_y',
+                'label' => __('Maximum Quantity Gift Applied to (Get Y)'),
+                'title' => __('Maximum Quantity Gift Applied to (Get Y)'),
                 'required' => false,
                 'data-form-part' => $formName
             ]

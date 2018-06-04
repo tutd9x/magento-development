@@ -173,18 +173,23 @@ class ProcessApply implements ObserverInterface
                 if (!empty($gift)) {
                     if ($gift['buy_x'] > 0) {
                         $buy_x = $gift['buy_x'];
-                    }
+                        $get_y = $gift['get_y'];
 
-                    $current_qty_gift = $this->_countGiftInCart($gift, $freegift_keys);
-                    $qty_for_gift = (int)($current_qty * $buy_x) - $current_qty_gift;
+                        // Kiem tra so luong theo ti le buy x get y, khong tinh khi co phan du
+                        if ($current_qty % $buy_x != 0) {
+                            $current_qty = ((int)$current_qty / $buy_x) * $buy_x;
+                        }
 
-                    if ($qty_for_gift <= 0) {
-                        continue;
-                    }
+                        $current_qty_gift = $this->_countGiftInCart($gift, $freegift_keys);
+                        $qty_for_gift = (int)($current_qty * $get_y / $buy_x) - $current_qty_gift;
+                        if ($qty_for_gift <= 0) {
+                            continue;
+                        }
 
-                    if ($current_qty * $buy_x >= $qty_for_gift) {
-                        $this->addProduct($gift, $qty_for_gift, $storeId, $gift['freegift_parent_key']);
-                        unset($freegift_keys[$gift['freegift_parent_key']]);
+                        if ((int)($current_qty * $get_y / $buy_x) >= $qty_for_gift) {
+                            $this->addProduct($gift, $qty_for_gift, $storeId, $gift['freegift_parent_key']);
+                            unset($freegift_keys[$gift['freegift_parent_key']]);
+                        }
                     }
                 }
             }
